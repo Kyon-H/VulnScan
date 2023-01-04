@@ -82,6 +82,57 @@ npm ERR!     C:\Users\LOAD\AppData\Local\npm-cache\_logs\2023-01-01T12_46_14_465
 
 解决方法：以管理员身份运行，运行命令`npm cache clear --force`运行命令`npm install --platform=win32` 
 
+
+
+## VulnScan
+
+### 表单校验、分组校验：JSR303
+
+```xml
+<!-- javax.validation -->
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+</dependency>
+```
+
+
+
+```
+package javax.validation.constraints 包下注解
+Entity成员添加注解，可定制报错信息
+@Email(message="email格式不正确",groups={addGroup.class,updateGroup.class})
+不为空
+@NotBlank 至少包含一个空格
+@NotNull 验证注解的元素值不是null
+@NotEmpty 验证注解的元素值不为null且不为空（字符串长度不为0、集合大小不为0）
+@Pattern(regexp="") 正则表达式，自定义校验
+```
+
+```java
+//Controller形参添加@Valid开启校验。紧跟校验参数后加 BindingResult result 获取校验结果
+public R Login(@Valid @RequestBody UsersEntity user, BindingResult result){
+    if(result.hasErrors()){
+            //数据校验不通过
+        }else {
+            //数据校验通过
+        }
+}
+```
+
+### 统一异常处理
+
+**@ControllerAdvice**
+
+```java
+//新建ControllerAdviceException.java，指定异常处理范围
+@ControllerAdvice(basePackages = "com.atlxc.VulnScan.product.controller")
+@ExceptionHandler(value = MethodArgumentNotValidException.class)
+public R handleValidException(MethodArgumentNotValidException exception){}
+```
+
+
+
 ## VulnScan-vue
 
 全局安装webpack、cli

@@ -111,6 +111,7 @@ Entity成员添加注解，可定制报错信息
 
 ```java
 //Controller形参添加@Valid开启校验。紧跟校验参数后加 BindingResult result 获取校验结果
+//使用@Validated({})进行分组校验
 public R Login(@Valid @RequestBody UsersEntity user, BindingResult result){
     if(result.hasErrors()){
             //数据校验不通过
@@ -181,4 +182,21 @@ vue init webpack vulnscan-vue
    新建系统变量，变量名：`NODE_PATH`，变量值：`D:\software\nodejs\node_global\node_modules` *（node_global文件夹下的node_modules文件夹）*。
 
    修改用户变量，将默认的npm路径修改为新建的node_global路径，变量名：`Path`，变量值：`D:\software\nodejs\node_global`
+
+### 解决跨域
+
+config/index.js 修改dev下的proxyTable
+
+```js
+proxyTable: {
+      '/api': {
+        target:'http://127.0.0.1:8080',
+        // secure: false, // 如果是https接口，需要配置这个参数
+        changeOrigin:true,
+        pathRewrite:{
+          '^/api': ''
+        }
+      }
+    },
+```
 

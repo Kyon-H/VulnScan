@@ -1,13 +1,16 @@
 server:
-  port: 80
+  port: 8080
 spring:
+  thymeleaf:
+    cache: false
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://localhost:3306/vulnscan?useUnicode=true&characterEncoding=utf8&useSSL=true&serverTimezone=UTC
-    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/vulnscan?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
+  type-aliases-package: com.atlxc.VulnScan.product.entity
   mapper-locations:
     - classpath:/mapper/**/*.xml
   global-config:

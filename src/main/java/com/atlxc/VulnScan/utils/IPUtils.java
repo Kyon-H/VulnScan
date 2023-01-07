@@ -9,8 +9,7 @@
 package com.atlxc.VulnScan.utils;
 
 import com.alibaba.druid.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,9 +18,8 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Mark sunlightcs@gmail.com
  */
+@Slf4j
 public class IPUtils {
-	private static Logger logger = LoggerFactory.getLogger(IPUtils.class);
-
 	/**
 	 * 获取IP地址
 	 * 
@@ -48,7 +46,7 @@ public class IPUtils {
                 ip = request.getRemoteAddr();
             }
         } catch (Exception e) {
-        	logger.error("IPUtils ERROR ", e);
+        	log.error("IPUtils ERROR ", e);
         }
         
 //        //使用代理，则获取第一个IP地址

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.atlxc.VulnScan.utils.R;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,7 +36,12 @@ public class ControllerAdviceException {
     @ExceptionHandler(value = UserNameExistException.class)
     public R hadleUserNameExistException(UserNameExistException exception){
         log.error("数据校验出现问题{},异常类型{}",exception.getMessage(),exception.getClass());
-        return R.error().put("data",exception.getMessage());
+        return R.error(400,"用户已存在").put("data",exception.getMessage());
+    }
+
+    @ExceptionHandler(value = BindException.class)
+    public R handleBindException(BindException exception){
+        return R.error(400,"数据输入格式错误").put("data",exception.getMessage());
     }
 
     @ExceptionHandler(RRException.class)
@@ -66,9 +72,9 @@ public class ControllerAdviceException {
     }
 
     // 处理任意类型异常
-    @ExceptionHandler(value = Throwable.class)
-    public R handleException(Throwable throwable){
-        log.error("未知异常{},异常类型{}",throwable.getMessage(),throwable.getClass());
+    @ExceptionHandler(value = Exception.class)
+    public R handleException(Exception exception){
+        log.error("未知异常{},异常类型{}",exception.getMessage(),exception.getClass());
         return R.error();
     }
 }

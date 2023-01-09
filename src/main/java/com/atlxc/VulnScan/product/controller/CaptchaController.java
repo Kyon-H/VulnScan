@@ -34,7 +34,7 @@ public class CaptchaController {
     public ModelAndView getKaptchaImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String code = (String)session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        log.debug("******************验证码是: " + code + "******************");
+        log.info("******************验证码是: " + code + "******************");
 
         response.setDateHeader("Expires", 0);
 

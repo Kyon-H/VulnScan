@@ -1,0 +1,7 @@
+function getCaptcha(){
+}
+
+function checkUsername(){
+
+}
+

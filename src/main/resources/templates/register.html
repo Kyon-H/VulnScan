@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>用户注册</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="css/login.css" rel="stylesheet">
+</head>
+<body class="text-center" onload="getCaptcha()">
+
+<form class="form-signin" id="registerForm" onsubmit="RegisterSubmit()">
+    <img class="mb-4" src="icon/vimeo.svg" alt="" width="98" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">VulnScan 注册</h1>
+    <label for="inputUsername" class="sr-only">用户名</label>
+    <input type="text" id="inputUsername" name="username" class="form-control" placeholder="用户名" required autofocus>
+    <label for="inputEmail" class="sr-only">邮箱</label>
+    <input type="email" id="inputEmail" name="email" class="form-control" placeholder="name@example.com" required>
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码" required>
+    <label for="inputRepassword" class="sr-only">确认密码</label>
+    <input type="password" id="inputRepassword" name="repassword" class="form-control" placeholder="确认密码" required>
+    <div>
+        <input type="text" class="form-control" >
+        <img src="" width="100">
+    </div>
+    <button class="btn  btn-primary btn-block" id="registerButton" type="submit">注册</button>
+    <a href="/login"><input type="button" class="btn" value="登录"></a>
+    <p class="mt-5 mb-3 text-muted">&copy; lxc 2023</p>
+</form>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap/js/bootstrap.min.js"></script>
+<script src="js/login.js"></script>
+<script>
+function RegisterSubmit(){
+    $.post("/Register",
+    {"username":$('#inputUsername').val(),
+        "email":$('#inputEmail').val(),
+       "password":$('#inputPassword').val(),
+       "repassword":$('#inputRepassword').val()
+       },
+        function(data,status){
+            if(data.code!=0)
+            alert(data.msg);
+        },'json');
+}
+</script>
+</body>
+</html>

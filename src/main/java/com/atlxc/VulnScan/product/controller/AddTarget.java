@@ -14,7 +14,7 @@ public class AddTarget {
 
     @PostMapping("/addTarget")
     public R addTarget(@RequestBody String target){
-        log.debug("target:{}", target);
+        log.info("target:{}", target);
         return R.ok();
     }
 }

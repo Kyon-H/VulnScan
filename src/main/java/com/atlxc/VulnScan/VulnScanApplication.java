@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 public class VulnScanApplication {
 
 	public static void main(String[] args) {
-		log.debug("app start");
+		log.info("app start");
 		SpringApplication.run(VulnScanApplication.class, args);
 
 	}

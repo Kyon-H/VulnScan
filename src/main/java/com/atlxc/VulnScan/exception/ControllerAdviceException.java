@@ -41,11 +41,13 @@ public class ControllerAdviceException {
 
     @ExceptionHandler(value = BindException.class)
     public R handleBindException(BindException exception){
+        log.error(exception.getMessage());
         return R.error(400,"数据输入格式错误").put("data",exception.getMessage());
     }
 
     @ExceptionHandler(RRException.class)
     public R handleRRException(RRException e){
+        log.error("handelRREx()"+e.getMessage());
         R r = new R();
         r.put("code", e.getCode());
         r.put("msg", e.getMessage());

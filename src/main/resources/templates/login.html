@@ -1,15 +1,11 @@
 <!doctype html>
 <html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>用户登录</title>
-
     <!-- Bootstrap core CSS -->
-<link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-
-
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -25,43 +21,34 @@
           font-size: 3.5rem;
         }
       }
-    </style>
 
-    
+    </style>
     <!-- Custom styles for this template -->
     <link href="css/login.css" rel="stylesheet">
-  </head>
-  <body class="text-center" onload="getCaptcha()">
-    
-<form class="form-signin" action="/Login" method="post">
-  <img class="mb-4" src="img/whitehat.png" alt="" width="98" height="72">
-  <h1 class="h3 mb-3 font-weight-normal">VulnScan 登录</h1>
-  <span th:if="${loginfail}=='T'" style="color:red">用户名或密码错误</span>
+</head>
+<body class="text-center">
+<form class="form-signin" method="post" action="/Login" onsubmit="return LoginSubmit();">
+    <img class="mb-4" src="img/whitehat.png" alt="" width="98" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">VulnScan 登录</h1>
+    <span th:if="${loginfail}=='T'" style="color:red">用户名或密码错误</span>
     <label for="inputUsername" class="sr-only">用户名</label>
-    <input type="text" id="inputUsername" name="username" class="form-control" placeholder="用户名" required autofocus>
-  <label for="inputPassword" class="sr-only">密码</label>
-  <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码" required>
-<!--  <div class="mb-2">-->
-<!--    <label for="inputCaptcha" class="sr-only">验证码</label>-->
-<!--    <input type="text" id="inputCaptcha" name="captcha" class="form-control" placeholder="验证码" required>-->
-<!--  </div>-->
-<!--  <div class="mx-sm-3 mb-2">-->
-<!--    <img src="">-->
-<!--  </div>-->
-
-  <div class="checkbox mb-3">
-    <label>
-      <input type="checkbox" value="remember-me"> Remember me
-    </label>
-  </div>
-  <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
-  <a href="/register"><input type="button" class="btn" value="注册"></a>
-  <p class="mt-5 mb-3 text-muted">&copy; lxc 2023</p>
+    <input type="text" id="inputUsername" name="username"  class="form-control" placeholder="用户名" required autofocus>
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码" required>
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+    <a href="/register"><input type="button" class="btn" value="注册"></a>
+    <p class="mt-5 mb-3 text-muted">&copy; lxc 2023</p>
 </form>
 
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap/js/bootstrap.min.js"></script>
-  <script src="js/login.js"></script>
-  </body>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap/js/bootstrap.min.js"></script>
+<script src="js/layer/layer.js"></script>
+<script src="js/login.js"></script>
+</body>
 </html>

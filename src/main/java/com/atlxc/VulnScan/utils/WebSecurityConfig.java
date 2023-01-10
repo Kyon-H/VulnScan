@@ -39,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/register","/failurl", "/error", "/Login", "/Register").permitAll()
+                .antMatchers("/login", "/register","/failurl", "/error", "/Login", "/Register","/favicon.ico").permitAll()
                 .anyRequest().authenticated();
         //对应表单认证相关的配置
         //返回一个FormLoginConfigurer 对象，

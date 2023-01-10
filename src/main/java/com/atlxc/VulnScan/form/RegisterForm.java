@@ -20,13 +20,13 @@ public class RegisterForm {
     /**
      * 密码
      */
-    @Length(min = 6,max = 20,message = "密码长度必须在6-20之间")
+    @Length(min = 4,max = 20,message = "密码长度必须在6-20之间")
     @NotEmpty(message = "密码必须提交")
     private String password;
     /**
      * 确认密码
      */
-    @Length(min = 6,max = 20,message = "密码长度必须在6-20之间")
+    @Length(min = 4,max = 20,message = "密码长度必须在6-20之间")
     @NotEmpty(message = "密码必须提交")
     private String repassword;
     /**

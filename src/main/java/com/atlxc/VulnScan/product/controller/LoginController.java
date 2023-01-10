@@ -58,7 +58,7 @@ public class LoginController {
         usersEntity.setEmail(registerForm.getEmail());
         usersEntity.setRole("USER");
         usersService.Register(usersEntity);
-        return R.ok("注册成功");
+        return R.ok(200,"注册成功");
     }
 
     @PostMapping("/Login")
@@ -77,7 +77,7 @@ public class LoginController {
                 return R.error("账号或密码不正确...");
             }
 
-            return R.ok("登录成功");
+            return R.ok(200,"登录成功");
         //}else{
         //    return R.error("验证码不正确");
         //}

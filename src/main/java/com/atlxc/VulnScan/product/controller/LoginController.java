@@ -25,25 +25,7 @@ public class LoginController {
     @Autowired
     UsersService usersService;
 
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
-    @GetMapping("/login")
-    public String login(){
-        return "login";
-    }
 
-    @GetMapping("/register")
-    public String register(){
-        return "register";
-    }
-
-    @GetMapping("/failurl")
-    public String error(Model model){
-        model.addAttribute("loginfail","T");
-        return "login";
-    }
 
     @PostMapping("/Register")
     @ResponseBody

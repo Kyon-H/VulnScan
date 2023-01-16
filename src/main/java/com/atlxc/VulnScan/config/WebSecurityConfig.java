@@ -1,4 +1,4 @@
-package com.atlxc.VulnScan.utils;
+package com.atlxc.VulnScan.config;
 
 import com.atlxc.VulnScan.product.service.impl.CustomUserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

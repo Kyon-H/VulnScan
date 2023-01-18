@@ -1,6 +1,7 @@
 package com.atlxc.VulnScan.config;
 
 import com.atlxc.VulnScan.product.service.impl.CustomUserDetailsServiceImpl;
+import com.atlxc.VulnScan.xss.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * //Security配置类必须继承WebSecurityConfigurerAdapter，并且重写configure方法
@@ -39,20 +43,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/register","/failurl", "/error", "/Login", "/Register","/favicon.ico").permitAll()
+                //.antMatchers("/login", "/register","/failurl", "/error", "/Login", "/Register").permitAll()
+                .antMatchers("/kaptcha/getKaptchaImage").permitAll()
                 .anyRequest().authenticated();
         //对应表单认证相关的配置
         //返回一个FormLoginConfigurer 对象，
         //formLogin().x.x 就是配置使用内置的登录验证过滤器，默认实现为 UsernamePasswordAuthenticationFilter
         http.formLogin()
-                // 自定义登陆用户名和密码参数，默认为username和password
-                .usernameParameter("username")
-                .passwordParameter("password")
                 // 用户未登录时，访问任何资源都转跳到该路径，即登录页面
-                .loginPage("/login")
-                .loginProcessingUrl("/Login")
-                .failureUrl("/failurl")
-                .defaultSuccessUrl("/");
+                .loginPage("/login");
+        http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         //对应了注销相关的配置
         http.logout()
                 .logoutUrl("/logout")
@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         // 设置拦截忽略文件夹，可以对静态资源放行
-        web.ignoring().antMatchers("/css/**", "/js/**", "/icon/**", "/img/**");
+        //web.ignoring().antMatchers("/css/**", "/js/**", "/icon/**", "/img/**","/favicon.ico");
     }
 
     @Bean
@@ -75,5 +75,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public LoginFilter loginFilter() throws Exception {
+        LoginFilter loginFilter = new LoginFilter();
+        loginFilter.setFilterProcessesUrl("/Login");
+        loginFilter.setAuthenticationManager(authenticationManagerBean());
+        loginFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
+        loginFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/failurl"));
+        return loginFilter;
     }
 }

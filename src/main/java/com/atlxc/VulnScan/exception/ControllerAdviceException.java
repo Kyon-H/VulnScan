@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.atlxc.VulnScan.utils.R;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,6 +40,11 @@ public class ControllerAdviceException {
         return R.error(400,"用户已存在").put("data",exception.getMessage());
     }
 
+    @ExceptionHandler(value = AuthenticationServiceException.class)
+    public R handleAuthenticationException(AuthenticationServiceException exception){
+        log.error("数据校验出现问题{},异常类型{}",exception.getMessage(),exception.getClass());
+        return R.error(400,"登录错误").put("data",exception.getMessage());
+    }
     @ExceptionHandler(value = BindException.class)
     public R handleBindException(BindException exception){
         log.error(exception.getMessage());

@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 @Slf4j
 @Controller
 @RequestMapping("/kaptcha")
-public class CaptchaController {
+public class KaptchaController {
 
     @Autowired
     private Producer captchaProducer;
@@ -34,7 +34,7 @@ public class CaptchaController {
     public ModelAndView getKaptchaImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String code = (String)session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        log.info("******************验证码是: " + code + "******************");
+
 
         response.setDateHeader("Expires", 0);
 
@@ -55,6 +55,7 @@ public class CaptchaController {
 
         // store the text in the session
         session.setAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
+        log.info("验证码是: {}" , capText);
 
         // create the image with the text
         BufferedImage bi = captchaProducer.createImage(capText);

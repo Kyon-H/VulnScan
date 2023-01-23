@@ -26,10 +26,10 @@ public class LoginController {
 
 
 
-    @PostMapping("/Register")
+    @PostMapping("/doRegister")
     @ResponseBody
     public R Register(@Valid RegisterForm registerForm){
-        log.info("Register({})",registerForm);
+        log.info("Register {}",registerForm);
         if(!registerForm.getPassword().equals(registerForm.getRepassword())){
             return R.error("注册失败");
         }
@@ -42,27 +42,4 @@ public class LoginController {
         return R.ok(200,"注册成功");
     }
 
-    @PostMapping("/Login")
-    @ResponseBody
-    public R Login(HttpServletRequest request, @Valid LoginForm loginForm){
-        log.info("Login");
-        //String sessionCode=(String)request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        //if(sessionCode.equalsIgnoreCase((String)form.getCaptcha())){
-            UsersEntity usersEntity = new UsersEntity();
-//            usersEntity.setUsername(form.getUsername());
-//            usersEntity.setPassword(form.getPassword());
-        usersEntity.setUsername(loginForm.getUsername());
-        usersEntity.setPassword(loginForm.getPassword());
-            UsersEntity result=usersService.Login(usersEntity);
-            if(result==null){
-                return R.error("账号或密码不正确...");
-            }
-
-            return R.ok(200,"登录成功");
-        //}else{
-        //    return R.error("验证码不正确");
-        //}
-
-
-    }
 }

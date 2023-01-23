@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.utils.SslUtils;
@@ -35,7 +36,7 @@ public class DashboardController {
         String url = ConfigConstant.AWVS_API_URL+"info";
         SslUtils.ignoreSsl();
         HttpEntity request=new HttpEntity(headers);
-        ResponseEntity<String> response= template.exchange(url, HttpMethod.GET,request,String.class);
+        ResponseEntity<JSONObject> response= template.exchange(url, HttpMethod.GET,request,JSONObject.class);
         log.info("result:{}", response.getBody());
         return R.ok(200,"success").put("data",response.getBody());
     }

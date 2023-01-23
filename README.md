@@ -25,6 +25,20 @@ CREATE TABLE users (
   create_time DATETIME 
 )COMMENT='用户表';
 
+-- 目标记录表
+CREATE TABLE target_info(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    address VARCHAR(255) COMMENT 'URL',
+    canonical_address VARCHAR(255) COMMENT '规范地址',
+    domain VARCHAR(255),
+    criticality INT COMMENT '危险程度',
+    target_type VARCHAR(255),
+    description VARCHAR(255),
+    target_id VARCHAR(255),
+    type VARCHAR(255),
+    canonical_address_hash VARCHAR(255)
+);
+
 -- 扫描记录表
 CREATE TABLE scan_record (
   id INT PRIMARY KEY AUTO_INCREMENT,

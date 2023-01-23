@@ -34,7 +34,7 @@ public class KaptchaConfig {
         //文本集合，验证码值从此集合中获取
         properties.setProperty("kaptcha.textproducer.char.string", "01234567890qwertyuiopasdfghjklzxcvbnm");
         //验证码长度
-        properties.setProperty("kaptcha.textproducer.char.length", "4");
+        properties.setProperty("kaptcha.textproducer.char.length", "5");
         //字体
         properties.setProperty("kaptcha.textproducer.font.names", "宋体");
         //字体颜色

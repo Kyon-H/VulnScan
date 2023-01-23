@@ -1,4 +1,4 @@
-package com.atlxc.VulnScan.form;
+package com.atlxc.VulnScan.vo;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

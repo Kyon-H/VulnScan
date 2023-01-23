@@ -1,15 +1,13 @@
 package com.atlxc.VulnScan.product.controller;
 
-import com.atlxc.VulnScan.form.LoginForm;
-import com.atlxc.VulnScan.form.RegisterForm;
+import com.atlxc.VulnScan.vo.LoginForm;
+import com.atlxc.VulnScan.vo.RegisterForm;
 import com.atlxc.VulnScan.product.entity.UsersEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.utils.R;
-import com.google.code.kaptcha.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;

@@ -2,11 +2,13 @@ package com.atlxc.VulnScan.product.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
+import com.atlxc.VulnScan.product.apiservice.TargetsService;
 import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.utils.SslUtils;
 import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +22,13 @@ import java.util.Map;
 @RestController
 public class TargetController {
 
+    @Autowired
+    private TargetsService targetsService;
+    @GetMapping("/getTarget")
+    public R getTarget() {
+        JSONObject object=targetsService.getTargets();
+        return R.ok(object);
+    }
     @RequestMapping("/addTarget")
     public R addTarget(@Valid @RequestBody AddTargetVo param) throws Exception {
         log.info("target:{}", param);

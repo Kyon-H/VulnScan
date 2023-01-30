@@ -25,6 +25,8 @@ public class LoginForm {
     /**
      * 验证码
      */
+    @NotEmpty(message = "验证码必须提交")
+    @Length(min = 5,max = 5,message = "验证码不正确")
     private String captcha;
 
 }

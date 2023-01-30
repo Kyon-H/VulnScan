@@ -2,6 +2,8 @@ $.ajaxSetup({
     async : false
 });
 function getCaptcha(){
+    var timenow = new Date().getTime();
+    $('#captchaImg').attr('src', 'http://127.0.0.1:8080/kaptcha/getKaptchaImage?'+timenow);
 }
 
 function checkUsername(username){

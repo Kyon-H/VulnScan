@@ -28,16 +28,17 @@ CREATE TABLE users (
 -- 目标记录表
 CREATE TABLE target_info(
 	id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
     address VARCHAR(255) COMMENT 'URL',
     canonical_address VARCHAR(255) COMMENT '规范地址',
     domain VARCHAR(255),
     criticality INT COMMENT '危险程度',
     target_type VARCHAR(255),
     description VARCHAR(255),
-    target_id VARCHAR(255),
+    target_id VARCHAR(255) NOT NULL,
     type VARCHAR(255),
     canonical_address_hash VARCHAR(255)
-);
+)COMMENT='目标记录表';
 
 -- 扫描记录表
 CREATE TABLE scan_record (
@@ -99,6 +100,30 @@ npm ERR!     C:\Users\LOAD\AppData\Local\npm-cache\_logs\2023-01-01T12_46_14_465
 
 
 ## VulnScan
+
+### 功能介绍
+
+#### 主动扫描：
+
+点击添加扫描按钮，弹出表单，填写url，描述，扫描速度，扫描类型等，点击确定。后端先发送url和描述获取targetId。
+
+```json
+{
+	"address": "127.0.0.1:8080",
+	"criticality": 10,
+	"description": "",
+	"type": "default",
+	"domain": "127.0.0.1",
+	"target_id": "644e089f-57b6-437e-bad2-c0fe8483dde2",
+	"target_type": null,
+	"canonical_address": "localhost",
+	"canonical_address_hash": "77d7e6fbb0a249a2f2c3d5da849834dd"
+}
+```
+
+将结果保存到数据库，之后添加扫描任务，开始扫描。
+
+前端显示：id,扫描状态（completed,failed,aborted,scheduled，processing),扫描目标，扫描类型，漏洞、添加时间、到处报告，删除任务。
 
 ### 表单校验、分组校验：JSR303
 

@@ -1,17 +1,32 @@
 package com.atlxc.VulnScan.vo;
 
 import com.atlxc.VulnScan.product.entity.CriticalityEnum;
+import com.atlxc.VulnScan.product.entity.ScanSpeedEnum;
+import com.atlxc.VulnScan.product.entity.ScanTypeEnum;
 import com.atlxc.VulnScan.utils.EnumValue;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
  * 添加目标接口
+ * username
+ * address
+ * scanType
+ * scanSpeed
+ * description
  */
 @Data
 public class AddTargetVo {
+    /**
+     * 当前用户名
+     */
+    @NotEmpty(message = "用户名不能为空")
+    @Length(min = 4,max = 10,message = "用户名不正确")
+    private String username;
     /**
      * 目标网址:需http或https开头
      */
@@ -23,6 +38,18 @@ public class AddTargetVo {
      */
     @EnumValue(enumClass = CriticalityEnum.class, enumMethod = "isValidValue", message = "危险程度设置不正确")
     private Integer criticality;
+    /**
+     * 扫描类型;
+     */
+    @NotNull(message = "扫描类型不能为空")
+    @EnumValue(enumClass = ScanTypeEnum.class, enumMethod = "isValidValue", message ="扫描类型错误")
+    private String scanType;
+    /**
+     * 扫描速度;
+     */
+    @NotNull(message = "扫描速度不能为空")
+    @EnumValue(enumClass = ScanSpeedEnum.class, enumMethod = "isValidValue", message = "扫描速度错误")
+    private String scanSpeed;
     /**
      * 备注
      */

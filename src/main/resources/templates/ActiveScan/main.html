@@ -1,10 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>漏洞扫描</title>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+
+    </style>
+    <link href="/css/navbar.css" rel="stylesheet">
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">VulnScan</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+            aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
+    <div class="collapse navbar-collapse" id="navbarsExample05">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/ActiveScan">漏洞扫描<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link disabled" href="/404">Disabled</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Dropdown</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-md-0">
+            <input class="form-control" type="text" placeholder="Search">
+        </form>
+        <ul class="">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                    <span sec:authentication="name" style="color:#007bff"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/logout">退出登录</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main role="main" class=" ml-sm-auto">
+    <div class="container">
+        <div class="row justify-content-md-center">
+
+
+            <div class="col-md-8 col-md-auto">
+                <div class="input-group">
+                    <input type="text" id="targetUrl" class="form-control" placeholder="目标地址" required>
+                    <span class="input-group-btn">
+                        <button class="btn btn-outline-secondary" type="button" id="addTargetBtn"
+                                data-toggle="modal" data-target="#myModal" aria-controls="myCollapse"
+                                data-whatever="@mdo" onclick="newTarget()">添加扫描</button>
+                    </span>
+                </div><!-- /input-group -->
+
+            </div>
+
+
+        </div>
+    </div>
+
+</main>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">New Target</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="userName" id="userName" value=${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username}>
+                    <div class="form-group">
+                        <label for="address" class="col-form-label">目标地址</label>
+                        <input type="text" class="form-control" readonly id="address" name="address" value="http://www.example.com/">
+                    </div>
+                    <div class="form-group">
+                        <label for="ScanType" class="col-form-label">扫描类型</label>
+                        <select class="form-control" id="ScanType">
+                            <option value="11">Full Scan</option>
+                            <option value="12">High Risk</option>
+                            <option value="16">Cross-site Scripting</option>
+                            <option value="13">SQL Injection</option>
+                            <option value="15">Weak Passwords</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">扫描速度:</label>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline1" name="customRadioInline" value="sequential" class="custom-control-input">
+                            <label class="custom-control-label" for="customRadioInline1">Slower</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline2" name="customRadioInline" value="slow" class="custom-control-input">
+                            <label class="custom-control-label" for="customRadioInline2">Slow</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline3" name="customRadioInline" value="moderate" class="custom-control-input">
+                            <label class="custom-control-label" for="customRadioInline3">Moderate</label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline4" name="customRadioInline" value="fast" class="custom-control-input" checked>
+                            <label class="custom-control-label" for="customRadioInline4">Fast</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">描述</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="scanSubmitBtn">提交</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/scan.js"></script>
+<script>
+    function newTarget(){
+        var address=$('#targetUrl').val();
+        $('#address').attr('value',address);
+    }
+</script>
 </body>
 </html>

@@ -27,5 +27,10 @@ public class PageController {
         return "login";
     }
 
+    @GetMapping("/ActiveScan")
+    public String ActiveScan(Model model){
+        return "ActiveScan/main";
+    }
+
 
 }

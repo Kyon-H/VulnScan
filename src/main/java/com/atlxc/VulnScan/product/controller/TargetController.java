@@ -30,22 +30,9 @@ public class TargetController {
         return R.ok(object);
     }
     @RequestMapping("/addTarget")
-    public R addTarget(@Valid @RequestBody AddTargetVo param) throws Exception {
+    public R addTarget(@Valid @RequestBody AddTargetVo param) {
         log.info("target:{}", param);
-
-        RestTemplate template = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        JSONObject object=new JSONObject();
-        object.put("address",param.getAddress());
-        object.put("description", param.getDescription());
-        object.put("criticality", param.getCriticality());
-        HttpEntity<String> entity = new HttpEntity<String>(object.toString(),headers);
-        String url = ConfigConstant.AWVS_API_URL+"targets";
-        SslUtils.ignoreSsl();
-        JSONObject result = template.postForObject(url, entity,JSONObject.class);
-        log.info("result:{}", result.toString());
-        return R.ok().put("result", result);
+        JSONObject result = targetsService.addTargets(param);
+        return R.ok(result);
     }
 }

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atlxc.VulnScan.product.entity.TargetInfoEntity;
 import com.atlxc.VulnScan.product.service.TargetInfoService;
-import com.atlxc.VulnScan.common.utils.PageUtils;
-import com.atlxc.VulnScan.common.utils.R;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.utils.R;
 
 
 
@@ -35,7 +35,7 @@ public class TargetInfoController {
      */
     @RequestMapping("/list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = targetInfoService.queryPage(params);
+        PageUtils page = (PageUtils) targetInfoService.queryPage(params);
 
         return R.ok().put("page", page);
     }

@@ -5,8 +5,8 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atlxc.VulnScan.common.utils.PageUtils;
-import com.atlxc.VulnScan.common.utils.Query;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.utils.Query;
 
 import com.atlxc.VulnScan.product.dao.TargetInfoDao;
 import com.atlxc.VulnScan.product.entity.TargetInfoEntity;

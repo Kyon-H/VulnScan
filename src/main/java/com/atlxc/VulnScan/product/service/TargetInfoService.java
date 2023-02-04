@@ -1,7 +1,7 @@
 package com.atlxc.VulnScan.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.atlxc.VulnScan.common.utils.PageUtils;
+import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.TargetInfoEntity;
 
 import java.util.Map;

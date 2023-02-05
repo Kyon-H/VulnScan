@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atlxc.VulnScan.vo.AddTargetVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 
+import javax.validation.Valid;
 
 
 /**
@@ -22,7 +24,7 @@ import com.atlxc.VulnScan.utils.R;
  *
  * @author lxc
  * @email a3171218907@qq.com
- * @date 2023-01-01 22:17:22
+ * @date 2023-02-05 14:45:02
  */
 @RestController
 @RequestMapping("product/scanrecord")
@@ -45,7 +47,7 @@ public class ScanRecordController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-        public R info(@PathVariable("id") Integer id){
+    public R info(@PathVariable("id") Integer id){
 		ScanRecordEntity scanRecord = scanRecordService.getById(id);
 
         return R.ok().put("scanRecord", scanRecord);
@@ -55,8 +57,9 @@ public class ScanRecordController {
      * 保存
      */
     @RequestMapping("/save")
-        public R save(@RequestBody ScanRecordEntity scanRecord){
-		scanRecordService.save(scanRecord);
+    public R save(@Valid @RequestBody AddTargetVo vo){
+
+		//scanRecordService.save(scanRecord);
 
         return R.ok();
     }
@@ -65,7 +68,7 @@ public class ScanRecordController {
      * 修改
      */
     @RequestMapping("/update")
-        public R update(@RequestBody ScanRecordEntity scanRecord){
+    public R update(@RequestBody ScanRecordEntity scanRecord){
 		scanRecordService.updateById(scanRecord);
 
         return R.ok();
@@ -75,7 +78,7 @@ public class ScanRecordController {
      * 删除
      */
     @RequestMapping("/delete")
-        public R delete(@RequestBody Integer[] ids){
+    public R delete(@RequestBody Integer[] ids){
 		scanRecordService.removeByIds(Arrays.asList(ids));
 
         return R.ok();

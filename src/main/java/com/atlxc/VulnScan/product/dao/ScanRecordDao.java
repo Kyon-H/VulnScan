@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
  * 
  * @author lxc
  * @email a3171218907@qq.com
- * @date 2023-01-01 22:17:22
+ * @date 2023-02-05 14:45:02
  */
 @Mapper
 public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {

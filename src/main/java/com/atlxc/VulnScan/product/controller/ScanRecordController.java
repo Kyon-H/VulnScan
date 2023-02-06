@@ -73,20 +73,20 @@ public class ScanRecordController {
      */
     @PostMapping("/save")
     @ResponseBody
-    public R save(@Valid AddTargetVo vo, HttpServletRequest request){
+    public R save(@Valid AddTargetVo vo, Principal principal){
         log.info(vo.toString());
         Map<String, Object> param = new HashMap<String,Object>();
         param.put("address", vo.getAddress());
         param.put("description", vo.getDescription());
         Map<String, Object> map=targetService.addTargets(param);
         ScanRecordEntity scanRecord = new ScanRecordEntity();
-        Principal principal = request.getUserPrincipal();
         String username=principal.getName();
         log.info("当前操作用户为:{}",username);
         scanRecord.setUserId(usersDao.selectIdByUsername(username));
         scanRecord.setAddress(map.get("address").toString());
         scanRecord.setDescription(map.get("description").toString());
         scanRecord.setTargetId(map.get("targetId").toString());
+        targetService.setSpeed(scanRecord.getTargetId(),vo.getScanSpeed());
         String type;
         switch (vo.getScanType()){
             case "12":
@@ -100,11 +100,12 @@ public class ScanRecordController {
             default:
                 type= ConfigConstant.SCAN_TYPE_FullScan;break;
         }
-        scanRecord.setStatus("CREATED");
+        scanRecord.setStatus("running");
         scanRecord.setType(type);
         scanRecord.setScanTime(new Date());
-        scanRecordService.save(scanRecord);
+
         Map<String, Object> result = scansService.postScans(scanRecord);
+        scanRecordService.save(scanRecord);
 
         return R.ok(result);
     }

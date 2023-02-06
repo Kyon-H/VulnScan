@@ -32,7 +32,8 @@ public class TargetController {
     @RequestMapping("/addTarget")
     public R addTarget(@Valid @RequestBody AddTargetVo param) {
         log.info("target:{}", param);
-        JSONObject result = targetsService.addTargets(param);
-        return R.ok(result);
+        //JSONObject result = targetsService.addTargets(param);
+        //return R.ok(result);
+        return R.ok();
     }
 }

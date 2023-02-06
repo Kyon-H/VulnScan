@@ -160,6 +160,18 @@ public R Login(@Valid @RequestBody UsersEntity user, BindingResult result){
 public R handleValidException(MethodArgumentNotValidException exception){}
 ```
 
+### 问题
+
+报错：==PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException==
+
+ssl证书安装：
+
+```
+D:\Program Files\Java\jdk-15\bin> keytool -import -file "D:/MyComputer/Desktop/desktop-jv0cb08.crt" -keystore "D:/Program Files/Java/jdk-15/lib/security/cacerts" -alias server
+口令: changeit
+y
+```
+
 
 
 ## VulnScan-vue

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Kyon-H
  * @date 2023/1/28 13:19
@@ -22,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 public class TargetsService {
 
     /**
+     * 获取所有目标信息
      * Method:GET
      * URL: /api/v1/targets
      * @return
@@ -49,25 +53,29 @@ public class TargetsService {
      * @param param
      * @return
      */
-    public JSONObject addTargets(AddTargetVo param) {
+    public Map<String,Object> addTargets(Map<String,Object> param) {
+        log.info(JSONObject.toJSONString(param));
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         String url=ConfigConstant.AWVS_API_URL+"targets";
         JSONObject object=new JSONObject();
-        object.put("address",param.getAddress());
-        object.put("description", param.getDescription());
-        object.put("criticality", param.getCriticality());
+        object.put("address",param.get("address"));
+        object.put("description", param.get("description"));
         HttpEntity<String> entity = new HttpEntity<String>(object.toString(),headers);
         //SslUtils.ignoreSsl();
         ResponseEntity<JSONObject> result = restTemplate.postForEntity(url, entity,JSONObject.class);
         log.info(String.valueOf(result.getStatusCode()));
+        Map<String,Object> map=new HashMap<String,Object>();
         if(result.getStatusCode().is2xxSuccessful()){
-            return result.getBody();
+            map.put("address",result.getBody().get("address"));
+            map.put("description",result.getBody().get("description"));
+            map.put("targetId",result.getBody().get("target_id"));
         }else{
             throw new RRException("请求错误");
         }
+        return map;
     }
 
     /**

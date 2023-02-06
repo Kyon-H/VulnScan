@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
+import java.util.TimeZone;
+
 @Slf4j
 @MapperScan("com.atlxc.VulnScan.product.dao")
 @SpringBootApplication
@@ -13,6 +15,7 @@ public class VulnScanApplication {
 
 	public static void main(String[] args) {
 		log.info("app start");
+		TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
 		SpringApplication.run(VulnScanApplication.class, args);
 
 	}

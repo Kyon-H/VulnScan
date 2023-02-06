@@ -1,21 +1,27 @@
 package com.atlxc.VulnScan.product.controller;
 
+import java.security.Principal;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
+import com.atlxc.VulnScan.config.ConfigConstant;
+import com.atlxc.VulnScan.product.apiservice.ScansService;
+import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import com.atlxc.VulnScan.product.dao.UsersDao;
+import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
@@ -26,11 +32,20 @@ import javax.validation.Valid;
  * @email a3171218907@qq.com
  * @date 2023-02-05 14:45:02
  */
+@Slf4j
 @RestController
-@RequestMapping("product/scanrecord")
+@RequestMapping("/scan")
 public class ScanRecordController {
     @Autowired
     private ScanRecordService scanRecordService;
+    @Autowired
+    private TargetsService targetService;
+    @Autowired
+    private ScansService scansService;
+    @Autowired
+    private UsersService usersServices;
+    @Autowired
+    private UsersDao usersDao;
 
     /**
      * 列表
@@ -56,12 +71,42 @@ public class ScanRecordController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-    public R save(@Valid @RequestBody AddTargetVo vo){
+    @PostMapping("/save")
+    @ResponseBody
+    public R save(@Valid AddTargetVo vo, HttpServletRequest request){
+        log.info(vo.toString());
+        Map<String, Object> param = new HashMap<String,Object>();
+        param.put("address", vo.getAddress());
+        param.put("description", vo.getDescription());
+        Map<String, Object> map=targetService.addTargets(param);
+        ScanRecordEntity scanRecord = new ScanRecordEntity();
+        Principal principal = request.getUserPrincipal();
+        String username=principal.getName();
+        log.info("当前操作用户为:{}",username);
+        scanRecord.setUserId(usersDao.selectIdByUsername(username));
+        scanRecord.setAddress(map.get("address").toString());
+        scanRecord.setDescription(map.get("description").toString());
+        scanRecord.setTargetId(map.get("targetId").toString());
+        String type;
+        switch (vo.getScanType()){
+            case "12":
+                type= ConfigConstant.SCAN_TYPE_HighRisk;break;
+            case "13":
+                type= ConfigConstant.SCAN_TYPE_SQLInjection;break;
+            case "15":
+                type= ConfigConstant.SCAN_TYPE_WeakPasswords;break;
+            case "16":
+                type= ConfigConstant.SCAN_TYPE_CrossSiteScripting;break;
+            default:
+                type= ConfigConstant.SCAN_TYPE_FullScan;break;
+        }
+        scanRecord.setStatus("CREATED");
+        scanRecord.setType(type);
+        scanRecord.setScanTime(new Date());
+        scanRecordService.save(scanRecord);
+        Map<String, Object> result = scansService.postScans(scanRecord);
 
-		//scanRecordService.save(scanRecord);
-
-        return R.ok();
+        return R.ok(result);
     }
 
     /**

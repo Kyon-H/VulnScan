@@ -109,7 +109,6 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <input type="hidden" name="userName" id="userName" value=${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal.username}>
                     <div class="form-group">
                         <label for="address" class="col-form-label">目标地址</label>
                         <input type="text" class="form-control" readonly id="address" name="address" value="http://www.example.com/">
@@ -159,6 +158,7 @@
 </div>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/layer/layer.js"></script>
 <script src="/js/scan.js"></script>
 <script>
     function newTarget(){

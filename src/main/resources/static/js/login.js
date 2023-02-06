@@ -61,6 +61,8 @@ function RegisterSubmit(){
             if(data.code !=200)
             {
                 layer.alert(data.msg,{icon: 2,title:false});
+            }else{
+                layer.msg(data.msg,{icon: 1,title:false});
             }
 },'json');
 return false;

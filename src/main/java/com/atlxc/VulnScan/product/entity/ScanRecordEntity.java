@@ -33,7 +33,7 @@ public class ScanRecordEntity implements Serializable {
 	/**
 	 * 目标ID
 	 */
-	private Integer targetId;
+	private String targetId;
 	/**
 	 * URL
 	 */

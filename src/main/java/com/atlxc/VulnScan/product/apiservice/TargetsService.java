@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.apiservice;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
@@ -25,49 +26,31 @@ import java.util.Map;
 public class TargetsService {
 
     /**
-     * 获取所有目标信息
-     * Method:GET
-     * URL: /api/v1/targets
-     * @return
-     */
-    public JSONObject getTargets() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        String url=ConfigConstant.AWVS_API_URL+"targets";
-        //SslUtils.ignoreSsl();
-        ResponseEntity<JSONObject> entity=restTemplate.getForEntity(url,JSONObject.class,headers);
-        log.info(String.valueOf(entity.getStatusCode()));
-        if(entity.getStatusCode().is2xxSuccessful()){
-            return entity.getBody();
-        }else {
-            throw new RRException("请求错误");
-        }
-
-    }
-
-    /**
+     * 添加目标
      * Method:POST
      * URL: /api/v1/targets
      * @param param
      * @return
      */
     public Map<String,Object> addTargets(Map<String,Object> param) {
-        log.info(JSONObject.toJSONString(param));
+        log.info("addTargets");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+        JSONObject object=new JSONObject();
+        Map<String,Object> map=new HashMap<String,Object>();
+        //请求头
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
+        //URL
         String url=ConfigConstant.AWVS_API_URL+"targets";
-        JSONObject object=new JSONObject();
+        //请求体
         object.put("address",param.get("address"));
         object.put("description", param.get("description"));
         HttpEntity<String> entity = new HttpEntity<String>(object.toString(),headers);
-        //SslUtils.ignoreSsl();
+        //send post request
         ResponseEntity<JSONObject> result = restTemplate.postForEntity(url, entity,JSONObject.class);
         log.info(String.valueOf(result.getStatusCode()));
-        Map<String,Object> map=new HashMap<String,Object>();
+        //处理
         if(result.getStatusCode().is2xxSuccessful()){
             map.put("address",result.getBody().get("address"));
             map.put("description",result.getBody().get("description"));
@@ -79,44 +62,11 @@ public class TargetsService {
     }
 
     /**
-     * Method:DELETE
-     * URL: /api/v1/targets/{targetId}
-     */
-    public void deleteTargets(String targetId) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        String url=ConfigConstant.AWVS_API_URL+"targets/"+targetId;
-        restTemplate.delete(url,headers);
-    }
-
-    /**
-     * criticality设置
-     * Method:PATCH
-     * URL: /api/v1/targets/{targetId}
-     */
-    public void patchTargets(String targetId,String description,Integer criticality) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        String url=ConfigConstant.AWVS_API_URL+"targets/"+targetId;
-        JSONObject object=new JSONObject();
-        object.put("description", description);
-        object.put("criticality", criticality);
-        HttpEntity<String> entity = new HttpEntity<String>(object.toString(),headers);
-        JSONObject result = restTemplate.patchForObject(url, entity,JSONObject.class);
-        log.info(String.valueOf(result));
-
-    }
-
-    /**
-     * 扫描速度
+     * 扫描速度设置
      * Method:PATCH
      * URL: /api/v1/targets/{target_id}/configuration
      */
-    public void pathSpeed(String targetId,String scanSpeed) {
+    public void setSpeed(String targetId,String scanSpeed) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
@@ -125,8 +75,7 @@ public class TargetsService {
         JSONObject object=new JSONObject();
         object.put("scan_speed", scanSpeed);
         HttpEntity<JSONObject> entity=new HttpEntity<JSONObject>(object,headers);
-        JSONObject result = restTemplate.patchForObject(url, entity,JSONObject.class);
-        log.info(String.valueOf(result));
+        restTemplate.patchForObject(url, entity,JSONObject.class);
     }
 
     /**
@@ -134,7 +83,8 @@ public class TargetsService {
      * Method: PATCH
      * URL: /api/v1/targets/{target_id}/configuration
      */
-    public void patchLogin(String targetId,String credentials) {
+    public void setLogin(String targetId,Map<String,Object> credentials) {
+        if(credentials==null||credentials.equals("")) return;
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
@@ -142,13 +92,12 @@ public class TargetsService {
         String url=ConfigConstant.AWVS_API_URL+"targets/"+targetId+"/configuration";
         JSONObject object=new JSONObject();
         JSONObject kind=new JSONObject();
-        if(credentials==null||credentials.equals("")){
-            kind.put("kind","none/sequence");
-        }else {
-            kind.put("kind","automatic");
-            kind.put("credentials",JSONObject.parseObject(credentials));
-        }
+        JSONObject cre=JSONObject.parseObject(JSON.toJSONString(credentials));
+
+        kind.put("kind","automatic");
+        kind.put("credentials",cre);
         object.put("login",kind);
+
         HttpEntity<JSONObject> entity=new HttpEntity<JSONObject>(object,headers);
         JSONObject result = restTemplate.patchForObject(url, entity,JSONObject.class);
         log.info(String.valueOf(result));

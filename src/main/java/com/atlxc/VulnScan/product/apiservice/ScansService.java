@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.apiservice;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
@@ -52,4 +53,5 @@ public class ScansService {
             throw new RRException("添加扫描失败");
         }
     }
+
 }

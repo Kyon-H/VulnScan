@@ -14,16 +14,21 @@ $("#scanSubmitBtn").on("click", function () {
     console.log(scanSpeed)
     var username=$("#userName").val();
     var formData={
-        "username":username,
-        "address":address,
-        "scanType":scanType,
-        "scanSpeed":scanSpeed,
-        "description":description
+        //username:username,
+        address:address,
+        scanType:scanType,
+        scanSpeed:scanSpeed,
+        description:description
     };
-    $.post('/addTarget',
+    $.post('/scan/save',
         formData,
         function(data){
             console.log(data);
+            if(data.code==200){
+                layer.msg("添加描成功", {icon: 1});
+            }else{
+                layer.msg(data.msg, {icon: 2});
+            }
         },'json'
     );
 });

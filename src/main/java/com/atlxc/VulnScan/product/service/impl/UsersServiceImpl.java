@@ -44,9 +44,8 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String password = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(password);
-        TimeZone timeZone=TimeZone.getTimeZone("Etc/GMT-8");//转换为中国时区
-        TimeZone.setDefault(timeZone);
         user.setCreateTime(new Date());
+        log.info(user.getCreateTime().toString());
         baseMapper.insert(user);
     }
 

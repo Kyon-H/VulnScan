@@ -21,12 +21,7 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class AddTargetVo {
-    /**
-     * 当前用户名
-     */
-//    @NotEmpty(message = "用户名不能为空")
-//    @Length(min = 4,max = 10,message = "用户名不正确")
-//    private String username;
+
     /**
      * 目标网址:需http或https开头
      */

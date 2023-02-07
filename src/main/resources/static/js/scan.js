@@ -14,7 +14,6 @@ $("#scanSubmitBtn").on("click", function () {
     console.log(scanSpeed)
     var username=$("#userName").val();
     var formData={
-        //username:username,
         address:address,
         scanType:scanType,
         scanSpeed:scanSpeed,
@@ -32,3 +31,11 @@ $("#scanSubmitBtn").on("click", function () {
         },'json'
     );
 });
+
+function load(){
+    $.get('/scan/list',
+        function(data){
+            console.log(data);
+        }
+    );
+}

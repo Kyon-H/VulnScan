@@ -29,7 +29,7 @@
     </style>
     <link href="/css/navbar.css" rel="stylesheet">
 </head>
-<body>
+<body onload="load();">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">VulnScan</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
@@ -80,7 +80,6 @@
     <div class="container">
         <div class="row justify-content-md-center">
 
-
             <div class="col-md-8 col-md-auto">
                 <div class="input-group">
                     <input type="text" id="targetUrl" class="form-control" placeholder="目标地址" required>
@@ -90,9 +89,7 @@
                                 data-whatever="@mdo" onclick="newTarget()">添加扫描</button>
                     </span>
                 </div><!-- /input-group -->
-
             </div>
-
 
         </div>
     </div>
@@ -161,6 +158,8 @@
 <script src="/js/layer/layer.js"></script>
 <script src="/js/scan.js"></script>
 <script>
+    windows.location(){
+    }
     function newTarget(){
         var address=$('#targetUrl').val();
         $('#address').attr('value',address);

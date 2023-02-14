@@ -89,12 +89,37 @@
                                 data-whatever="@mdo" onclick="newTarget()">添加扫描</button>
                     </span>
                 </div><!-- /input-group -->
+
             </div>
 
         </div>
+        <div class=" justification-content-md-center">
+            <br>
+            <p class="h2">title</p>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>目标</th>
+                        <th>描述</th>
+                        <th>扫描类型</th>
+                        <th>扫描结果</th>
+                        <th>扫描时间</th>
+                        <th>扫描状态</th>
+                        <th>导出文档</th>
+                        <th>删除</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tablelist"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+
 </main>
+<!-- new target modal -->
 <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -153,13 +178,12 @@
     </div>
 
 </div>
+<!-- new target modal end -->
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/layer/layer.js"></script>
 <script src="/js/scan.js"></script>
 <script>
-    windows.location(){
-    }
     function newTarget(){
         var address=$('#targetUrl').val();
         $('#address').attr('value',address);

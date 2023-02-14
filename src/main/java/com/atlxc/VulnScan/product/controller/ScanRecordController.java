@@ -1,10 +1,7 @@
 package com.atlxc.VulnScan.product.controller;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScansService;

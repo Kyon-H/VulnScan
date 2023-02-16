@@ -1,5 +1,8 @@
 package com.atlxc.VulnScan.product.service.impl;
 
+import com.atlxc.VulnScan.product.apiservice.ScansService;
+import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,6 +19,12 @@ import com.atlxc.VulnScan.product.service.ScanRecordService;
 @Service("scanRecordService")
 public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecordEntity> implements ScanRecordService {
 
+    @Autowired
+    ScanRecordDao scanRecordDao;
+    @Autowired
+    TargetsService targetsService;
+    @Autowired
+    ScansService scansService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<ScanRecordEntity> page = this.page(
@@ -25,5 +34,12 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
 
         return new PageUtils(page);
     }
+
+    @Override
+    public Boolean updateStatus(Integer id, String status) {
+
+        return scanRecordDao.updateStatus(id, status);
+    }
+
 
 }

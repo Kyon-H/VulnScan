@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.dao;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 扫描记录表
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
-	
+	@Update("update scan_record set status = #{status} where id = #{id}")
+    Boolean updateStatus(Integer id, String status);
 }

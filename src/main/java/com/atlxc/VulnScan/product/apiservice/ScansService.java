@@ -55,35 +55,14 @@ public class ScansService {
         }
         return map;
     }
-    /**
-     * 获取目标的扫描 id
-     * Method:GET
-     * URL: /api/v1/scans/{target_id}
-     */
-    public Map<String, Object> getScanId(String targetId) {
-        log.info("getScanId", targetId);
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
-        String url = ConfigConstant.AWVS_API_URL + "scans/"+targetId;
-        HttpEntity<JSONObject> entity = new HttpEntity<>(headers);
-        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, JSONObject.class);
-        Map<String, Object> map;
-        if(responseEntity.getStatusCode().is2xxSuccessful()) {
-            map=JSONObject.toJavaObject(responseEntity.getBody(),Map.class);
-        }else{
-            throw new RRException("获取扫描id失败");
-        }
-        return map;
-    }
+
     /**
      * 获取单个扫描状态
      * Method:GET
      * URL: /api/v1/scans/{scan_id}
      */
-    public Map<String, Object> getStatus(String scanId) {
-        log.info("getStatus{}", scanId);
+    public String getStatus(String scanId) {
+        log.info("getStatus,scanID {}", scanId);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
@@ -91,12 +70,12 @@ public class ScansService {
         String url = ConfigConstant.AWVS_API_URL + "scans/"+scanId;
         HttpEntity<JSONObject> entity = new HttpEntity<>(headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, JSONObject.class);
-        Map<String, Object> map;
         if(responseEntity.getStatusCode().is2xxSuccessful()){
-            map=JSONObject.toJavaObject(responseEntity.getBody(),Map.class);
+            JSONObject map = responseEntity.getBody().getJSONObject("current_session");
+            log.info(map.toString());
+            return map.getString("status");
         }else {
             throw new RRException("获取扫描状态失败");
         }
-        return map;
     }
 }

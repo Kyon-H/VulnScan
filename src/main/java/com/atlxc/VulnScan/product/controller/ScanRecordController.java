@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.controller;
 import java.security.Principal;
 import java.util.*;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
@@ -97,9 +98,15 @@ public class ScanRecordController {
             default:
                 type= ConfigConstant.SCAN_TYPE_FullScan;break;
         }
-        scanRecord.setStatus("running");
+        scanRecord.setStatus("processing");
         scanRecord.setType(type);
         scanRecord.setScanTime(new Date());
+        JSONObject severityCounts = new JSONObject();
+        severityCounts.put("high",0);
+        severityCounts.put("info",0);
+        severityCounts.put("low",0);
+        severityCounts.put("medium",0);
+        scanRecord.setSeverityCounts(severityCounts);
 
         Map<String, Object> result = scansService.postScans(scanRecord);
         scanRecordService.save(scanRecord);

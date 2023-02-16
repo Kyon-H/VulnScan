@@ -183,11 +183,15 @@
 <script src="/js/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/layer/layer.js"></script>
 <script src="/js/scan.js"></script>
+<script src="/js/webSocket.js"></script>
 <script>
     function newTarget(){
         var address=$('#targetUrl').val();
         $('#address').attr('value',address);
     }
+	var domain = document.domain;
+	var wsurl="ws://"+domain+"/ws";
+	initWebSocket(wsurl);
 </script>
 </body>
 </html>

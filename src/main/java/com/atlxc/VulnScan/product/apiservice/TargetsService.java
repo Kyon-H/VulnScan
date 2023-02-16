@@ -9,6 +9,7 @@ import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -105,5 +106,26 @@ public class TargetsService {
         HttpEntity<JSONObject> entity=new HttpEntity<JSONObject>(object,headers);
         JSONObject result = restTemplate.patchForObject(url, entity,JSONObject.class);
         log.info(String.valueOf(result));
+    }
+    /**
+     * 获取目标的扫描 id
+     * Method:GET
+     * URL: /api/v1/targets/{target_id}
+     */
+    public String getScanId(String targetId) {
+        log.info("getScanId(), targetID {}", targetId);
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        String url = ConfigConstant.AWVS_API_URL + "targets/"+targetId;
+        HttpEntity<JSONObject> entity = new HttpEntity<>(headers);
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, JSONObject.class);
+        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+            log.info(responseEntity.getBody().getString("last_scan_id"));
+            return responseEntity.getBody().getString("last_scan_id");
+        }else{
+            throw new RRException("获取扫描id失败");
+        }
     }
 }

@@ -1,3 +1,4 @@
+
 $("#addTargetBtn").on("click", function () {
     var address=$("#targetUrl").val();
     //var pattern = /(https?)://[a-zA-z]+://[^\s]*/
@@ -25,7 +26,9 @@ $("#scanSubmitBtn").on("click", function () {
             console.log(data);
             if(data.code==200||data.code==0){
                 layer.msg("添加描成功", {icon: 1});
-                $("#myModal").modal("dispose");
+
+                $("#myModal").modal("hide");
+                load();
             }else{
                 layer.msg(data.msg, {icon: 2});
             }
@@ -48,9 +51,10 @@ function load(){
 
 //获取扫描记录
 function addTable(data){
-    var count=0;
+    let count=0;
     var item="";
     $.each(data,function (i,m) {
+        count++;
         item+=`<tr><td>${i+1}</td><td>${m.address}</td><td>`;
         if(m.description==""){
             m.description="无";
@@ -74,11 +78,27 @@ function addTable(data){
         item+=`</td><td>${m.severityCounts}</td><td>`;
         item+=formData(m.scanTime);
         //
-        if(m.status=="running"){
+        if(m.status=="processing"){
             item+=`</td><td><div class="d-flex align-items-center">
-                              <strong>running...</strong>
+                              <strong>processing...</strong>
                               <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
                             </div>`;
+            var data={
+                "id":m.id,
+                "targetId":m.targetId,
+                "action":"getStatus"
+                };
+            var domain = document.domain;
+            var wsurl="ws://"+domain+"/ws";
+            initWebSocket(wsurl);
+            sendSock(data,function(backdata){
+                console.log("callback data: " + JSON.stringify(backdata));
+                if(backdata.message!="processing"){
+                    console.log(load());
+                    load();
+                }
+            });
+
         }else{
             item+=`</td><td>${m.status}</td>`;
         }
@@ -101,4 +121,8 @@ function formData(datetime) {
     var date=new Date(datetime);
     var form_date=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
     return form_date;
+}
+
+function test(data){
+    alert(JSON.stringify(data));
 }

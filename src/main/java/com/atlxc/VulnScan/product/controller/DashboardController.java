@@ -34,7 +34,7 @@ public class DashboardController {
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.set(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8");
         String url = ConfigConstant.AWVS_API_URL+"info";
-        SslUtils.ignoreSsl();
+        //SslUtils.ignoreSsl();
         HttpEntity request=new HttpEntity(headers);
         ResponseEntity<JSONObject> response= template.exchange(url, HttpMethod.GET,request,JSONObject.class);
         log.info("result:{}", response.getBody());

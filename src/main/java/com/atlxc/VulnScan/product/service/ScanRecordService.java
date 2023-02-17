@@ -17,5 +17,6 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
     Boolean updateStatus(Integer id, String status);
+    String getStatusById(Integer id);
 }
 

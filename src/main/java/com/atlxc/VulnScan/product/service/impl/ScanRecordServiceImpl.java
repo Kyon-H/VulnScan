@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.service.impl;
 import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,5 +42,10 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         return scanRecordDao.updateStatus(id, status);
     }
 
+    @Override
+    public String getStatusById(Integer id) {
+        ScanRecordEntity entity =baseMapper.selectOne(new QueryWrapper<ScanRecordEntity>().eq("id",id));
+        return entity.getStatus();
+    }
 
 }

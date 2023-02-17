@@ -3,7 +3,10 @@ package com.atlxc.VulnScan.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.impl.ConnectorService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +15,9 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -30,6 +35,7 @@ public class WebSocketServer {
     public static ScansService scanService;
     public static TargetsService targetService;
     public static ScanRecordService scanRecordService;
+    public static ConnectorService connectorService;
 
     /**
      * 连接成功
@@ -60,21 +66,20 @@ public class WebSocketServer {
      * @param message
      */
     @OnMessage
-    public void onMessage(String message, Session session){
+    public void onMessage(String message, Session session) throws ExecutionException, InterruptedException {
         log.info("服务端接收消息成功，Session ID：{}，消息内容：{}", session.getId(), message);
         JSONObject jsonObject=JSONObject.parseObject(message);
 
         switch (jsonObject.getString("action")){
             case "getStatus":
-                String targetId=jsonObject.getString("targetId");
-                String scanId=targetService.getScanId(targetId);
                 while (true){
-                    String status = scanService.getStatus(scanId);
-                    if(!status.equals("processing")){
-                        if(scanRecordService.updateStatus(jsonObject.getInteger("id"),status)){
-                            this.sendMessage(status, session);
-                            break;
-                        }
+                    CompletableFuture<String> getstatus = connectorService.getStatus(jsonObject.getInteger("id"));
+                    CompletableFuture.allOf(getstatus).join();
+                    String status=getstatus.get();
+                    log.info("status:{}",status);
+                    if(status!=null&&!status.equals("processing")){
+                        this.sendMessage(status, session);
+                        break;
                     }
                 }
             default:

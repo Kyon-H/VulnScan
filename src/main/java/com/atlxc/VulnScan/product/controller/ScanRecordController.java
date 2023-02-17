@@ -9,6 +9,7 @@ import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
 import com.atlxc.VulnScan.product.dao.UsersDao;
 import com.atlxc.VulnScan.product.service.UsersService;
+import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,8 @@ public class ScanRecordController {
 
         Map<String, Object> result = scansService.postScans(scanRecord);
         scanRecordService.save(scanRecord);
+        ConnectorService connectorService=new ConnectorService();
+        connectorService.getStatus(scanRecord);
 
         return R.ok(result);
     }

@@ -2,11 +2,14 @@ package com.atlxc.VulnScan.product.entity;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
 /**
@@ -17,7 +20,7 @@ import lombok.Data;
  * @date 2023-02-05 14:45:02
  */
 @Data
-@TableName("scan_record")
+@TableName(value="scan_record",autoResultMap = true)
 public class ScanRecordEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -45,6 +48,7 @@ public class ScanRecordEntity implements Serializable {
 	/**
 	 * 漏洞等级分布
 	 */
+	@TableField(typeHandler = JacksonTypeHandler.class)
 	private JSONObject severityCounts;
 	/**
 	 * 状态

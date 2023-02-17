@@ -75,6 +75,7 @@ function addTable(data){
             default:
                 item+=m.type;break;
         }
+        //
         item+=`</td><td>${m.severityCounts}</td><td>`;
         item+=formData(m.scanTime);
         //

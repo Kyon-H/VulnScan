@@ -61,7 +61,7 @@ public class ScansService {
      * Method:GET
      * URL: /api/v1/scans/{scan_id}
      */
-    public String getStatus(String scanId) {
+    public ScanRecordEntity getStatus(String scanId) {
         log.info("getStatus,scanID {}", scanId);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -71,9 +71,12 @@ public class ScansService {
         HttpEntity<JSONObject> entity = new HttpEntity<>(headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, JSONObject.class);
         if(responseEntity.getStatusCode().is2xxSuccessful()){
+            ScanRecordEntity scanRecord=new ScanRecordEntity();
             JSONObject map = responseEntity.getBody().getJSONObject("current_session");
-            log.info(map.toString());
-            return map.getString("status");
+            scanRecord.setSeverityCounts(map.getJSONObject("severity_counts"));
+            scanRecord.setStatus(map.getString("status"));
+            log.info(scanRecord.toString());
+            return scanRecord;
         }else {
             throw new RRException("获取扫描状态失败");
         }

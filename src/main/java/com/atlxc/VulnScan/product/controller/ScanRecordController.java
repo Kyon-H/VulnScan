@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.product.controller;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
@@ -11,6 +12,7 @@ import com.atlxc.VulnScan.product.dao.UsersDao;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,8 @@ public class ScanRecordController {
     private UsersService usersServices;
     @Autowired
     private UsersDao usersDao;
+    @Autowired
+    private ConnectorService connectorService;
 
     /**
      * 列表
@@ -70,6 +74,7 @@ public class ScanRecordController {
     /**
      * 保存
      */
+    @SneakyThrows
     @PostMapping("/save")
     @ResponseBody
     public R save(@Valid AddTargetVo vo, Principal principal){
@@ -110,10 +115,9 @@ public class ScanRecordController {
         scanRecord.setSeverityCounts(severityCounts);
 
         Map<String, Object> result = scansService.postScans(scanRecord);
+        connectorService.getScanId(scanRecord);
         scanRecordService.save(scanRecord);
-        ConnectorService connectorService=new ConnectorService();
-        connectorService.getStatus(scanRecord);
-
+        //connectorService.getStatus(scanRecord);
         return R.ok(result);
     }
 

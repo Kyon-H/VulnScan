@@ -4,6 +4,7 @@ import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -18,78 +19,96 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Service
 public class ConnectorService {
-    private static final int INTERVAL = 5000;
-
-    @Autowired
-    TargetsService targetsService;
-    @Autowired
-    ScansService scansService;
-    @Autowired
-    ScanRecordService scanRecordService;
-
+    private static final int INTERVAL = 1000;
 
     @Async("connectorExecutor")
-    public void getStatus(ScanRecordEntity entity){
+    public void getScanId(ScanRecordEntity entity) {
+        TargetsService targetsService = (TargetsService) SpringContextUtils.getBean("targetsService");
+        ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
+        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
+        String targetId = entity.getTargetId();
         try {
-            String scanId;
-            while (true){
-                Thread.sleep(500);
-                String tmp = targetsService.getScanId(entity.getTargetId());
-                if(!(tmp.equals("")||tmp==null)){
-                    scanId=tmp;
-                    break;
+            while (true) {
+                Thread.sleep(INTERVAL * 2);
+                String tmp = targetsService.getScanId(targetId);
+                log.info("getScanId:" + tmp);
+                if (tmp != null) {
+                    String scanId = tmp;
+                    ScanRecordEntity tmpEntity = scansService.getStatus(scanId);
+                    entity.setScanId(scanId);
+                    if (tmpEntity.getStatus() == null||tmpEntity.getSeverityCounts() == null) continue;
+                    entity.setStatus(tmpEntity.getStatus());
+                    entity.setSeverityCounts(tmpEntity.getSeverityCounts());
+                    if (scanRecordService.updateById(entity)) {
+                        break;
+                    }
                 }
             }
-            while (true){
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Async("connectorExecutor")
+    public void getStatus(ScanRecordEntity entity) {
+        log.info("getStatus entity");
+        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
+        ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
+        String scanId = entity.getScanId();
+        try {
+            while (true) {
                 ScanRecordEntity status = scansService.getStatus(scanId);
                 entity.setSeverityCounts(status.getSeverityCounts());
                 log.info(entity.getSeverityCounts().toString());
-                if(!status.getStatus().equals("processing")){
+                log.info(entity.getStatus());
+                if (!status.getStatus().equals("processing")) {
                     entity.setStatus(status.getStatus());
-                    log.info(entity.getStatus());
-                    scanRecordService.save(entity);
+                    scanRecordService.updateById(entity);
                     break;
                 }
-                Thread.sleep(500);
+                Thread.sleep(INTERVAL);
             }
-        }catch (InterruptedException e){
-            log.error("监控线程意外中断{}",e.getMessage());
-            Thread.currentThread().interrupt();
+        } catch (InterruptedException e) {
+            log.error("监控线程意外中断{}", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
     @Async("connectorExecutor")
     public CompletableFuture<String> getStatus(Integer id) throws InterruptedException {
-        try{
-            ScanRecordEntity entity=scanRecordService.getById(id);
-            if(entity!=null&&!entity.getStatus().equals("processing")){
+        log.info("getStatus id:{}", id);
+        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
+        TargetsService targetsService = (TargetsService) SpringContextUtils.getBean("targetsService");
+        ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
+        try {
+            ScanRecordEntity entity = scanRecordService.getById(id);
+            if (entity != null && !entity.getStatus().equals("processing")) {
                 return CompletableFuture.completedFuture(entity.getStatus());
             }
-            String scanId;
-            while (true){
-                Thread.sleep(500);
-                String tmp = targetsService.getScanId(entity.getTargetId());
-                if(!(tmp.equals("")||tmp==null)){
-                    scanId=tmp;
-                    break;
-                }
+            while(entity.getScanId() == null) {
+                String scanId = targetsService.getScanId(entity.getTargetId());
+                entity.setScanId(scanId);
             }
-            while (true){
+            while (true) {
+                String scanId = entity.getScanId();
                 ScanRecordEntity status = scansService.getStatus(scanId);
+                if (status.getStatus() == null) continue;
+
+                entity.setStatus(status.getStatus());
                 entity.setSeverityCounts(status.getSeverityCounts());
+
                 log.info(entity.getSeverityCounts().toString());
-                if(!status.getStatus().equals("processing")){
-                    entity.setStatus(status.getStatus());
-                    log.info(entity.getStatus());
-                    scanRecordService.save(entity);
-                    break;
+                log.info(entity.getStatus());
+                if (!entity.getStatus().equals("processing")) {
+                    scanRecordService.updateById(entity);
+                    return CompletableFuture.completedFuture(entity.getStatus());
                 }
-                Thread.sleep(500);
+                Thread.sleep(INTERVAL * 2);
             }
-        }catch (Exception e){
-            log.error("监控线程意外中断{}",e.getMessage());
-            return CompletableFuture.completedFuture(e.getMessage());
+        } catch (Exception e) {
+            log.error("监控线程意外中断{}", e.getMessage());
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

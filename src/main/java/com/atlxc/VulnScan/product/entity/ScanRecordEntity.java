@@ -38,6 +38,10 @@ public class ScanRecordEntity implements Serializable {
 	 */
 	private String targetId;
 	/**
+	 * 扫描ID
+	 */
+	private String scanId;
+	/**
 	 * URL
 	 */
 	private String address;

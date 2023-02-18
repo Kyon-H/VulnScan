@@ -72,15 +72,13 @@ public class WebSocketServer {
 
         switch (jsonObject.getString("action")){
             case "getStatus":
-                while (true){
-                    CompletableFuture<String> getstatus = connectorService.getStatus(jsonObject.getInteger("id"));
-                    CompletableFuture.allOf(getstatus).join();
-                    String status=getstatus.get();
-                    log.info("status:{}",status);
-                    if(status!=null&&!status.equals("processing")){
-                        this.sendMessage(status, session);
-                        break;
-                    }
+                CompletableFuture<String> getstatus = connectorService.getStatus(jsonObject.getInteger("id"));
+                CompletableFuture.allOf(getstatus).join();
+                String status=getstatus.get();
+                log.info("status:{}",status);
+                if(status!=null&&!status.equals("processing")){
+                    this.sendMessage(status, session);
+                    break;
                 }
             default:
                 break;

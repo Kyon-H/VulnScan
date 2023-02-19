@@ -6,6 +6,7 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Service
 public class TargetService {
 
+    private static final String URL = ConfigConstant.AWVS_API_URL+"targets/";
     /**
      * 添加目标
      * Method:POST
@@ -29,14 +31,12 @@ public class TargetService {
      */
     public Map<String, Object> addTargets(Map<String, Object> param) {
         log.info("addTargets() {}", param);
-        //URL
-        String url = ConfigConstant.AWVS_API_URL + "targets";
         //请求体
         JSONObject object = new JSONObject();
         object.put("address", param.get("address"));
         object.put("description", param.get("description"));
         //send post request
-        JSONObject result = new AWVSRequestUtils().POST(url, object);
+        JSONObject result = new AWVSRequestUtils().POST(URL, object);
         //处理
         if (result == null)
             throw new RRException("添加目标失败");
@@ -53,10 +53,9 @@ public class TargetService {
      * URL: /api/v1/targets/{target_id}/configuration
      */
     public void setSpeed(String targetId, String scanSpeed) {
-        String url = ConfigConstant.AWVS_API_URL + "targets/" + targetId + "/configuration";
         JSONObject object = new JSONObject();
         object.put("scan_speed", scanSpeed);
-        new AWVSRequestUtils().PATCH(url, object);
+        new AWVSRequestUtils().PATCH(URL+targetId+"/configuration", object);
     }
 
     /**
@@ -66,8 +65,6 @@ public class TargetService {
      */
     public void setLogin(String targetId, Map<String, Object> credentials) {
         if (credentials == null || credentials.equals("")) return;
-        //url
-        String url = ConfigConstant.AWVS_API_URL + "targets/" + targetId + "/configuration";
         //body
         JSONObject object = new JSONObject();
         JSONObject kind = new JSONObject();
@@ -75,7 +72,7 @@ public class TargetService {
         kind.put("kind", "automatic");
         kind.put("credentials", cre);
         object.put("login", kind);
-        new AWVSRequestUtils().PATCH(url, object);
+        new AWVSRequestUtils().PATCH(URL+targetId+"/configuration", object);
     }
 
     /**
@@ -85,14 +82,22 @@ public class TargetService {
      */
     public String getScanId(String targetId) {
         log.info("getScanId(), targetID {}", targetId);
-        //url
-        String url = ConfigConstant.AWVS_API_URL + "targets/" + targetId;
         //request
-        JSONObject responseEntity = new AWVSRequestUtils().GET(url);
+        JSONObject responseEntity = new AWVSRequestUtils().GET(URL+targetId);
         if (responseEntity == null) {
             throw new RRException("获取扫描id失败");
         }
         log.info(responseEntity.getString("last_scan_id"));
         return responseEntity.getString("last_scan_id");
+    }
+    /**
+     * 删除目标
+     * Method:DELETE
+     * URL: /api/v1/targets/{target_id}
+     */
+    public Boolean deleteTarget(String targetId) {
+        String result = new AWVSRequestUtils().DELETE(URL + targetId);
+        if(result.equals("024")) throw new RRException("删除目标失败");
+        return Boolean.TRUE;
     }
 }

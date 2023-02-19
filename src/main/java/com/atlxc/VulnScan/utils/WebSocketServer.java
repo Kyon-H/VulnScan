@@ -1,19 +1,15 @@
 package com.atlxc.VulnScan.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.product.apiservice.ScansService;
-import com.atlxc.VulnScan.product.apiservice.TargetsService;
-import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,8 +28,8 @@ public class WebSocketServer {
     /** 用来记录当前在线连接数。设计成线程安全的。*/
     private static AtomicInteger onlineCount = new AtomicInteger(0);
     private static ConcurrentHashMap<String, Session> wsServerMAP = new ConcurrentHashMap<>();
-    public static ScansService scanService;
-    public static TargetsService targetService;
+    public static ScanService scanService;
+    public static TargetService targetService;
     public static ScanRecordService scanRecordService;
     public static ConnectorService connectorService;
 

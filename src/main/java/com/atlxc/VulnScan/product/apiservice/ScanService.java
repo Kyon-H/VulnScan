@@ -1,20 +1,13 @@
 package com.atlxc.VulnScan.product.apiservice;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +16,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class ScansService {
+public class ScanService {
 
     /**
      * 添加扫描
@@ -65,5 +58,16 @@ public class ScansService {
         scanRecord.setStatus(map.getString("status"));
         log.info(scanRecord.toString());
         return scanRecord;
+    }
+    /**
+     * 删除扫描
+     * Method:DELETE
+     * URL: /api/v1/scans/{scan_id}
+     */
+    public Boolean deleteScans(String scanId) {
+        String url = ConfigConstant.AWVS_API_URL + "scans/"+scanId;
+        String code = new AWVSRequestUtils().DELETE(url);
+        if(!code.equals("024")) throw new RRException("删除扫描失败");
+        return true;
     }
 }

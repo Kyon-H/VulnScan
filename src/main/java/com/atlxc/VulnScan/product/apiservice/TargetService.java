@@ -5,18 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
-import com.atlxc.VulnScan.utils.SslUtils;
-import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +17,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class TargetsService {
+public class TargetService {
 
     /**
      * 添加目标

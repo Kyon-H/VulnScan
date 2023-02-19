@@ -35,11 +35,17 @@ $("#scanSubmitBtn").on("click", function () {
         },'json'
     );
 });
-
+//默认查询，page:1,limit:10
 function load(){
-    $.get('/scan/list',
+    console.log("load()")
+    let postdata={
+        sidx:"id",
+        order:"desc"
+    };
+    $.post('/scan/list',
+        postdata,
         function(data){
-            console.log(data.page.list);
+            console.log(data.page);
             if(data.code==200||data.code==0){
                 addTable(data.page.list);
             }else{
@@ -48,19 +54,39 @@ function load(){
         }
     );
 }
-
+//分页查询
+function pageLoad(page,limit){
+    let postdata={
+        page:page,
+        limit:limit,
+        sidx:"scan_time",
+        order:"desc"
+    };
+    $.post('/scan/list',
+        postdata,
+        function(data){
+            console.log(data.page.list);
+            if(data.code==200||data.code==0){
+                addTable(data.page.list);
+            }else{
+                layer.msg(data.msg, {icon:2});
+            }
+        }
+    );
+}
 //获取扫描记录
 function addTable(data){
-    let count=0;
     var item="";
     $.each(data,function (i,m) {
-        count++;
-        item+=`<tr><td>${i+1}</td><td>${m.address}</td><td>`;
+        //# address
+        item+=`<tr><td>${i+1}</td><td>${m.address}</td>`;
         if(m.description==""){
             m.description="无";
         }
-        item+=`${m.description}</td><td>`;
-        //
+        //description
+        item+=`<td>${m.description}</td>`;
+        //type
+        item+="<td>";
         switch(m.type){
             case '11111111-1111-1111-1111-111111111111':
                 item+="Full Scan";break;
@@ -75,19 +101,27 @@ function addTable(data){
             default:
                 item+=m.type;break;
         }
-        //
-        item+=`</td><td>${m.severityCounts}</td><td>`;
-        item+=formData(m.scanTime);
-        //
+        item+="</td>";
+        //扫描结果分布
+        let counts=m.severityCounts;
+        item+=`<td>
+            <a href="#" class="badge badge-danger">${counts.high}</a>
+            <a href="#" class="badge badge-warning">${counts.medium}</a>
+            <a href="#" class="badge badge-primary">${counts.low}</a>
+            <a href="#" class="badge badge-success">${counts.info}</a>
+        </td>`;
+        //添加时间
+        item+="<td>"+formData(m.scanTime)+"</td>";
+        //扫描状态
         if(m.status=="processing"){
-            item+=`</td><td><div class="d-flex align-items-center">
-                              <strong>processing...</strong>
-                              <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
-                            </div>`;
+            item+=`<td><div class="d-flex align-items-center">
+                   <strong>processing...</strong>
+                   <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+                   </div></td>`;
             var data={
-                "id":m.id,
-                "targetId":m.targetId,
-                "action":"getStatus"
+                id:m.id,
+                targetId:m.targetId,
+                action:"getStatus"
                 };
             var domain = document.domain;
             var wsurl="ws://"+domain+"/ws";
@@ -95,25 +129,16 @@ function addTable(data){
             sendSock(data,function(backdata){
                 console.log("callback data: " + JSON.stringify(backdata));
                 if(backdata.message!="processing"){
-                    console.log(load());
                     load();
                 }
             });
 
         }else{
-            item+=`</td><td>${m.status}</td>`;
+            item+=`<td>${m.status}</td>`;
         }
         //
         item+=`<td><button type="button" class="btn btn-primary btn-sm">PDF</button></td>
         <td><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
-        if(m.status=="r"){
-            var progress=`<tr><td colspan="9" style="padding:0">
-                <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
-                </div></td></tr>`;
-            item+=progress;
-        }
     });
     $("#tablelist").html(item);
 }

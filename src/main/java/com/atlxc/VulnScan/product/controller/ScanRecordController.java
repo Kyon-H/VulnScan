@@ -9,6 +9,7 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
 import com.atlxc.VulnScan.product.dao.UsersDao;
+import com.atlxc.VulnScan.product.entity.UsersEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
@@ -78,14 +79,13 @@ public class ScanRecordController {
     @PostMapping("/save")
     @ResponseBody
     public R save(@Valid AddTargetVo vo, Principal principal){
-        log.info(vo.toString());
+        log.info("save: {}",vo.toString());
         Map<String, Object> param = new HashMap<String,Object>();
         param.put("address", vo.getAddress());
         param.put("description", vo.getDescription());
         Map<String, Object> map=targetService.addTargets(param);
         ScanRecordEntity scanRecord = new ScanRecordEntity();
         String username=principal.getName();
-        log.info("当前操作用户为:{}",username);
         scanRecord.setUserId(usersDao.selectIdByUsername(username));
         scanRecord.setAddress(map.get("address").toString());
         scanRecord.setDescription(map.get("description").toString());
@@ -109,9 +109,9 @@ public class ScanRecordController {
         scanRecord.setScanTime(new Date());
         JSONObject severityCounts = new JSONObject();
         severityCounts.put("high",0);
-        severityCounts.put("info",0);
-        severityCounts.put("low",0);
         severityCounts.put("medium",0);
+        severityCounts.put("low",0);
+        severityCounts.put("info",0);
         scanRecord.setSeverityCounts(severityCounts);
 
         Map<String, Object> result = scansService.postScans(scanRecord);
@@ -128,6 +128,14 @@ public class ScanRecordController {
     public R update(@RequestBody ScanRecordEntity scanRecord){
 		scanRecordService.updateById(scanRecord);
 
+        return R.ok();
+    }
+    @GetMapping("/update/all")
+    public R updateAll(Principal principal){
+        log.info("updateAll");
+        String username=principal.getName();
+        Integer userId=usersDao.selectIdByUsername(username);
+        scanRecordService.updateAll(userId);
         return R.ok();
     }
 

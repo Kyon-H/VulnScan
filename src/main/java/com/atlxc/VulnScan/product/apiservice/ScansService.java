@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,55 +31,39 @@ public class ScansService {
      * URL: /api/v1/scans
      */
     public Map<String, Object> postScans(ScanRecordEntity scanRecord) {
-        log.info("postScans{}", scanRecord);
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
+        log.info("postScans()");
         String url = ConfigConstant.AWVS_API_URL + "scans";
-        JSONObject object = new JSONObject();
+        JSONObject body = new JSONObject();
         JSONObject schedule = new JSONObject();
         schedule.put("disable", false);
         schedule.put("start_date", null);
         schedule.put("time_sensitive", false);
-        object.put("target_id", scanRecord.getTargetId());
-        object.put("profile_id", scanRecord.getType());
-        object.put("schedule", schedule);
-        HttpEntity<JSONObject> entity = new HttpEntity<>(object, headers);
-        ResponseEntity<JSONObject> responseEntity = restTemplate.postForEntity(url, entity, JSONObject.class);
-        log.info(responseEntity.getBody().toString());
-        Map<String, Object> map;
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            map=JSONObject.toJavaObject(responseEntity.getBody(),Map.class);
-        } else {
+        body.put("target_id", scanRecord.getTargetId());
+        body.put("profile_id", scanRecord.getType());
+        body.put("schedule", schedule);
+        JSONObject responseEntity = new AWVSRequestUtils().POST(url,body);
+        log.info(responseEntity.toString());
+        if(responseEntity==null)
             throw new RRException("添加扫描失败");
-        }
+        Map<String, Object> map=JSONObject.toJavaObject(responseEntity,Map.class);
         return map;
     }
-
     /**
      * 获取单个扫描状态
      * Method:GET
      * URL: /api/v1/scans/{scan_id}
      */
     public ScanRecordEntity getStatus(String scanId) {
-        log.info("getStatus,scanID {}", scanId);
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        headers.add("Content-Type", "application/json;charset=UTF-8");
+        log.info("getStatus(),scanID: {}", scanId);
         String url = ConfigConstant.AWVS_API_URL + "scans/"+scanId;
-        HttpEntity<JSONObject> entity = new HttpEntity<>(headers);
-        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, JSONObject.class);
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            ScanRecordEntity scanRecord=new ScanRecordEntity();
-            JSONObject map = responseEntity.getBody().getJSONObject("current_session");
-            scanRecord.setSeverityCounts(map.getJSONObject("severity_counts"));
-            scanRecord.setStatus(map.getString("status"));
-            log.info(scanRecord.toString());
-            return scanRecord;
-        }else {
+        JSONObject responseEntity = new AWVSRequestUtils().GET(url);
+        if(responseEntity==null)
             throw new RRException("获取扫描状态失败");
-        }
+        ScanRecordEntity scanRecord=new ScanRecordEntity();
+        JSONObject map = responseEntity.getJSONObject("current_session");
+        scanRecord.setSeverityCounts(map.getJSONObject("severity_counts"));
+        scanRecord.setStatus(map.getString("status"));
+        log.info(scanRecord.toString());
+        return scanRecord;
     }
 }

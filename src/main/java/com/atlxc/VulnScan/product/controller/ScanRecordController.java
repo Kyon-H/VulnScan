@@ -5,8 +5,8 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
-import com.atlxc.VulnScan.product.apiservice.ScansService;
-import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
@@ -37,9 +37,9 @@ public class ScanRecordController {
     @Autowired
     private ScanRecordService scanRecordService;
     @Autowired
-    private TargetsService targetService;
+    private TargetService targetService;
     @Autowired
-    private ScansService scansService;
+    private ScanService scanService;
     @Autowired
     private UsersService usersServices;
     @Autowired
@@ -107,7 +107,7 @@ public class ScanRecordController {
         severityCounts.put("info",0);
         scanRecord.setSeverityCounts(severityCounts);
 
-        Map<String, Object> result = scansService.postScans(scanRecord);
+        Map<String, Object> result = scanService.postScans(scanRecord);
         connectorService.getScanId(scanRecord);
         scanRecordService.save(scanRecord);
         //connectorService.getStatus(scanRecord);

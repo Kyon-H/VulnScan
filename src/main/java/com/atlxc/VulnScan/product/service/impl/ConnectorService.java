@@ -1,7 +1,7 @@
 package com.atlxc.VulnScan.product.service.impl;
 
-import com.atlxc.VulnScan.product.apiservice.ScansService;
-import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
@@ -22,18 +22,18 @@ public class ConnectorService {
 
     @Async("connectorExecutor")
     public void getScanId(ScanRecordEntity entity) {
-        TargetsService targetsService = (TargetsService) SpringContextUtils.getBean("targetsService");
+        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetsService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
-        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
         String targetId = entity.getTargetId();
         try {
             while (true) {
                 Thread.sleep(INTERVAL * 2);
-                String tmp = targetsService.getScanId(targetId);
+                String tmp = targetService.getScanId(targetId);
                 log.info("getScanId:" + tmp);
                 if (tmp != null) {
                     String scanId = tmp;
-                    ScanRecordEntity tmpEntity = scansService.getStatus(scanId);
+                    ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
                     entity.setScanId(scanId);
                     if (tmpEntity.getStatus() == null||tmpEntity.getSeverityCounts() == null) continue;
                     entity.setStatus(tmpEntity.getStatus());
@@ -52,12 +52,12 @@ public class ConnectorService {
     @Async("connectorExecutor")
     public void getStatus(ScanRecordEntity entity) {
         log.info("getStatus entity");
-        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         String scanId = entity.getScanId();
         try {
             while (true) {
-                ScanRecordEntity status = scansService.getStatus(scanId);
+                ScanRecordEntity status = scanService.getStatus(scanId);
                 entity.setSeverityCounts(status.getSeverityCounts());
                 log.info(entity.getSeverityCounts().toString());
                 log.info(entity.getStatus());
@@ -77,8 +77,8 @@ public class ConnectorService {
     @Async("connectorExecutor")
     public CompletableFuture<String> getStatus(Integer id) throws InterruptedException {
         log.info("getStatus id:{}", id);
-        ScansService scansService = (ScansService) SpringContextUtils.getBean("scansService");
-        TargetsService targetsService = (TargetsService) SpringContextUtils.getBean("targetsService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
+        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetsService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         try {
             ScanRecordEntity entity = scanRecordService.getById(id);
@@ -86,12 +86,12 @@ public class ConnectorService {
                 return CompletableFuture.completedFuture(entity.getStatus());
             }
             while(entity.getScanId() == null) {
-                String scanId = targetsService.getScanId(entity.getTargetId());
+                String scanId = targetService.getScanId(entity.getTargetId());
                 entity.setScanId(scanId);
             }
             while (true) {
                 String scanId = entity.getScanId();
-                ScanRecordEntity status = scansService.getStatus(scanId);
+                ScanRecordEntity status = scanService.getStatus(scanId);
                 if (status.getStatus() == null) continue;
 
                 entity.setStatus(status.getStatus());

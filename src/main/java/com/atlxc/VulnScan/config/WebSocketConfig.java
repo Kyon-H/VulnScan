@@ -1,7 +1,7 @@
 package com.atlxc.VulnScan.config;
 
-import com.atlxc.VulnScan.product.apiservice.ScansService;
-import com.atlxc.VulnScan.product.apiservice.TargetsService;
+import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.utils.WebSocketServer;
@@ -25,12 +25,12 @@ public class WebSocketConfig {
     }
 
     @Autowired
-    public void setScansService(ScansService scanService){
+    public void setScansService(ScanService scanService){
         WebSocketServer.scanService = scanService;
     }
     @Autowired
-    public void setTargetsService(TargetsService targetsService){
-        WebSocketServer.targetService = targetsService;
+    public void setTargetsService(TargetService targetService){
+        WebSocketServer.targetService = targetService;
     }
     @Autowired
     public void setScanRecordService(ScanRecordService scanRecordService){

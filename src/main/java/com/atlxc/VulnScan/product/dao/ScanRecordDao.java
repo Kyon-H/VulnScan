@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,4 +17,6 @@ import org.apache.ibatis.annotations.Update;
 public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
 	@Update("update scan_record set status = #{status} where id = #{id}")
     Boolean updateStatus(Integer id, String status);
+    @Update("update scan_record set severity_counts = #{severity} where id = #{id}")
+    Boolean updateSeverity(Integer id, String severity);
 }

@@ -2,14 +2,11 @@ package com.atlxc.VulnScan.product.controller;
 
 import java.security.Principal;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScansService;
 import com.atlxc.VulnScan.product.apiservice.TargetsService;
-import com.atlxc.VulnScan.product.dao.UsersDao;
-import com.atlxc.VulnScan.product.entity.UsersEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
@@ -23,7 +20,6 @@ import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
@@ -47,21 +43,19 @@ public class ScanRecordController {
     @Autowired
     private UsersService usersServices;
     @Autowired
-    private UsersDao usersDao;
-    @Autowired
     private ConnectorService connectorService;
 
     /**
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params,Principal principal){
+        Integer userId=usersServices.getIdByName(principal.getName());
+        params.put("userId",principal.getName());
         PageUtils page = scanRecordService.queryPage(params);
 
         return R.ok().put("page", page);
     }
-
-
     /**
      * 信息
      */
@@ -71,7 +65,6 @@ public class ScanRecordController {
 
         return R.ok().put("scanRecord", scanRecord);
     }
-
     /**
      * 保存
      */
@@ -86,7 +79,7 @@ public class ScanRecordController {
         Map<String, Object> map=targetService.addTargets(param);
         ScanRecordEntity scanRecord = new ScanRecordEntity();
         String username=principal.getName();
-        scanRecord.setUserId(usersDao.selectIdByUsername(username));
+        scanRecord.setUserId(usersServices.getIdByName(username));
         scanRecord.setAddress(map.get("address").toString());
         scanRecord.setDescription(map.get("description").toString());
         scanRecord.setTargetId(map.get("targetId").toString());
@@ -120,7 +113,6 @@ public class ScanRecordController {
         //connectorService.getStatus(scanRecord);
         return R.ok(result);
     }
-
     /**
      * 修改
      */
@@ -134,11 +126,10 @@ public class ScanRecordController {
     public R updateAll(Principal principal){
         log.info("updateAll");
         String username=principal.getName();
-        Integer userId=usersDao.selectIdByUsername(username);
+        Integer userId=usersServices.getIdByName(username);
         scanRecordService.updateAll(userId);
         return R.ok();
     }
-
     /**
      * 删除
      */

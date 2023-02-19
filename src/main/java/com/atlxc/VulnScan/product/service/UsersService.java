@@ -18,11 +18,9 @@ import java.util.Map;
 public interface UsersService extends IService<UsersEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-
+    Integer getIdByName(String userName);
     void Register(UsersEntity user) throws UserNameExistException,EmailExistException;
-
     void CheakUsername(String username) throws UserNameExistException;
-
     void CheckEmail(String email) throws EmailExistException;
     UsersEntity Login(UsersEntity user);
 }

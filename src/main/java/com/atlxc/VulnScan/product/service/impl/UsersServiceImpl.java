@@ -36,7 +36,10 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
 
         return new PageUtils(page);
     }
-
+    @Override
+    public Integer getIdByName(String userName) {
+        return baseMapper.selectIdByUsername(userName);
+    }
     @Override
     public void Register(UsersEntity user) throws UserNameExistException, EmailExistException {
         CheakUsername(user.getUsername());
@@ -48,19 +51,15 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
         log.info(user.getCreateTime().toString());
         baseMapper.insert(user);
     }
-
     @Override
     public void CheakUsername(String username) throws UserNameExistException {
         Long count = this.baseMapper.selectCount(new QueryWrapper<UsersEntity>().eq("username", username));
         if(count>0) throw new UserNameExistException();
     }
-
     @Override
     public void CheckEmail(String email) throws EmailExistException {
 
     }
-
-
     /**
      * 用户登录验证
      * @param user
@@ -83,5 +82,4 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
             }
         }
     }
-
 }

@@ -18,6 +18,7 @@ import java.util.Map;
 @Service
 public class ScanService {
 
+    private static final String URL = ConfigConstant.AWVS_API_URL+"scans/";
     /**
      * 添加扫描
      * Method:POST
@@ -25,7 +26,6 @@ public class ScanService {
      */
     public Map<String, Object> postScans(ScanRecordEntity scanRecord) {
         log.info("postScans()");
-        String url = ConfigConstant.AWVS_API_URL + "scans";
         JSONObject body = new JSONObject();
         JSONObject schedule = new JSONObject();
         schedule.put("disable", false);
@@ -34,7 +34,7 @@ public class ScanService {
         body.put("target_id", scanRecord.getTargetId());
         body.put("profile_id", scanRecord.getType());
         body.put("schedule", schedule);
-        JSONObject responseEntity = new AWVSRequestUtils().POST(url,body);
+        JSONObject responseEntity = new AWVSRequestUtils().POST(URL,body);
         log.info(responseEntity.toString());
         if(responseEntity==null)
             throw new RRException("添加扫描失败");
@@ -48,8 +48,7 @@ public class ScanService {
      */
     public ScanRecordEntity getStatus(String scanId) {
         log.info("getStatus(),scanID: {}", scanId);
-        String url = ConfigConstant.AWVS_API_URL + "scans/"+scanId;
-        JSONObject responseEntity = new AWVSRequestUtils().GET(url);
+        JSONObject responseEntity = new AWVSRequestUtils().GET(URL+scanId);
         if(responseEntity==null)
             throw new RRException("获取扫描状态失败");
         ScanRecordEntity scanRecord=new ScanRecordEntity();
@@ -65,9 +64,40 @@ public class ScanService {
      * URL: /api/v1/scans/{scan_id}
      */
     public Boolean deleteScans(String scanId) {
-        String url = ConfigConstant.AWVS_API_URL + "scans/"+scanId;
-        String code = new AWVSRequestUtils().DELETE(url);
+        String code = new AWVSRequestUtils().DELETE(URL+scanId);
         if(!code.equals("024")) throw new RRException("删除扫描失败");
         return true;
+    }
+    /**
+     * 单个扫描概况信息
+     * Method:GET
+     * URL: /api/v1/scans/{scan_id}/results/{scan_session_id}/statistics
+     */
+    public JSONObject getStatistics(String scanId,String scanSessionId) {
+        JSONObject result = new AWVSRequestUtils().GET(URL+scanId+"/results/"+scanSessionId+"/statistics");
+        if(result==null) throw new RRException("获取单个扫描概况信息失败");
+        return result;
+    }
+    /**
+     * 单个扫描漏洞结果
+     * Method:GET
+     * URL: /api/v1/scans/{scan_id}/results/{scan_session_id}/vulnerabilities?l={count}&s=severity:desc
+     */
+    public JSONObject getVulnerabilities(String scanId,String scanSessionId,String count) {
+        String url=URL+scanId+"/results/"+scanSessionId+"/vulnerabilities?l="+count+"&s=severity:desc";
+        JSONObject result = new AWVSRequestUtils().GET(url);
+        if(result==null) throw new RRException("获取单个扫描漏洞结果失败");
+        return result;
+    }
+    /**
+     * 获取当前扫描单个漏洞信息
+     * Method: GET
+     * URL: /api/v1/scans/{scan_id}/results/{scan_session_id}/vulnerabilities/{vuln_id}
+     */
+    public JSONObject getVulnerability(String scanId,String scanSessionId,String vulnId) {
+        String url=URL+scanId+"/results/"+scanSessionId+"/vulnerabilities/"+vulnId;
+        JSONObject result = new AWVSRequestUtils().GET(url);
+        if(result==null) throw new RRException("获取当前扫描单个漏洞失败");
+        return result;
     }
 }

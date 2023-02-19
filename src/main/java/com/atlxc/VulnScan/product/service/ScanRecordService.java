@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
@@ -17,6 +18,11 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
     Boolean updateStatus(Integer id, String status);
+
+    Boolean updateSeverity(Integer id, JSONObject severity);
+
     String getStatusById(Integer id);
+
+    Boolean updateAll(Integer userId);
 }
 

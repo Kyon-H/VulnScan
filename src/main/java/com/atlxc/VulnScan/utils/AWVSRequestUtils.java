@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -13,11 +14,13 @@ import org.springframework.web.client.RestTemplate;
  * @author Kyon-H
  * @date 2023/2/19 20:03
  */
+@Slf4j
 public class AWVSRequestUtils {
     /**
      * POST request
      */
     public JSONObject POST(String url, JSONObject body) {
+        log.info("POST url: {}", url);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);

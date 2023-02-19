@@ -38,7 +38,7 @@ public class TargetsService {
      * @return
      */
     public Map<String, Object> addTargets(Map<String, Object> param) {
-        log.info("addTargets()");
+        log.info("addTargets() {}", param);
         //URL
         String url = ConfigConstant.AWVS_API_URL + "targets";
         //请求体

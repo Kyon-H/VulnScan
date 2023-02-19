@@ -51,7 +51,7 @@ public class ScanRecordController {
     @RequestMapping("/list")
     public R list(@RequestParam Map<String, Object> params,Principal principal){
         Integer userId=usersServices.getIdByName(principal.getName());
-        params.put("userId",principal.getName());
+        params.put("userId",userId);
         PageUtils page = scanRecordService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -72,7 +72,7 @@ public class ScanRecordController {
     @PostMapping("/save")
     @ResponseBody
     public R save(@Valid AddTargetVo vo, Principal principal){
-        log.info("save: {}",vo.toString());
+        log.info("save()");
         Map<String, Object> param = new HashMap<String,Object>();
         param.put("address", vo.getAddress());
         param.put("description", vo.getDescription());

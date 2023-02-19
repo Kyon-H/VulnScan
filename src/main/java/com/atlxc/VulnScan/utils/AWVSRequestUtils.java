@@ -62,4 +62,18 @@ public class AWVSRequestUtils {
         HttpEntity<JSONObject> entity = new HttpEntity<JSONObject>(body, headers);
         restTemplate.patchForObject(url, entity, JSONObject.class);
     }
+
+    /**
+     * DELETE request
+     * @param url
+     */
+    public String DELETE(String url) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, JSONObject.class);
+        return responseEntity.getStatusCode().toString();
+    }
 }

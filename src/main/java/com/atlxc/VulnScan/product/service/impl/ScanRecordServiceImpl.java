@@ -1,9 +1,7 @@
 package com.atlxc.VulnScan.product.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.product.apiservice.ScansService;
-import com.atlxc.VulnScan.product.apiservice.TargetsService;
-import com.atlxc.VulnScan.product.entity.UsersEntity;
+import com.atlxc.VulnScan.product.apiservice.ScanService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,7 @@ import com.atlxc.VulnScan.product.service.ScanRecordService;
 public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecordEntity> implements ScanRecordService {
 
     @Autowired
-    ScansService scansService;
+    ScanService scanService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Integer userId=(Integer) params.get("userId");
@@ -63,7 +61,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     public Boolean updateAll(Integer userId) {
         List<ScanRecordEntity> entities = baseMapper.selectList(new QueryWrapper<ScanRecordEntity>().eq("user_id", userId));
         entities.forEach(entity -> {
-            ScanRecordEntity status = scansService.getStatus(entity.getScanId());
+            ScanRecordEntity status = scanService.getStatus(entity.getScanId());
             baseMapper.updateSeverity(entity.getId(),status.getSeverityCounts().toString());
         });
         return true;

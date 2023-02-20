@@ -62,7 +62,10 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         List<ScanRecordEntity> entities = baseMapper.selectList(new QueryWrapper<ScanRecordEntity>().eq("user_id", userId));
         entities.forEach(entity -> {
             ScanRecordEntity status = scanService.getStatus(entity.getScanId());
-            baseMapper.updateSeverity(entity.getId(),status.getSeverityCounts().toString());
+            entity.setStatus(status.getStatus());
+            entity.setSeverityCounts(status.getSeverityCounts());
+            entity.setScanSessionId(status.getScanSessionId());
+            baseMapper.updateById(entity);
         });
         return true;
     }

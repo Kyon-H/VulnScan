@@ -29,22 +29,18 @@ public class TargetService {
      * @param param
      * @return
      */
-    public Map<String, Object> addTargets(Map<String, Object> param) {
+    public JSONObject addTargets(Map<String, Object> param) {
         log.info("addTargets() {}", param);
         //请求体
-        JSONObject object = new JSONObject();
-        object.put("address", param.get("address"));
-        object.put("description", param.get("description"));
+        JSONObject body = new JSONObject();
+        body.put("address", param.get("address"));
+        body.put("description", param.get("description"));
         //send post request
-        JSONObject result = new AWVSRequestUtils().POST(URL, object);
+        JSONObject result = new AWVSRequestUtils().POST(URL, body);
         //处理
         if (result == null)
             throw new RRException("添加目标失败");
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("address", result.get("address"));
-        map.put("description", result.get("description"));
-        map.put("targetId", result.get("target_id"));
-        return map;
+        return result;
     }
 
     /**
@@ -55,7 +51,8 @@ public class TargetService {
     public void setSpeed(String targetId, String scanSpeed) {
         JSONObject object = new JSONObject();
         object.put("scan_speed", scanSpeed);
-        new AWVSRequestUtils().PATCH(URL+targetId+"/configuration", object);
+        Boolean result = new AWVSRequestUtils().PATCH(URL + targetId + "/configuration", object);
+        if(!result) throw new RRException("设置扫描速度失败");
     }
 
     /**
@@ -72,7 +69,8 @@ public class TargetService {
         kind.put("kind", "automatic");
         kind.put("credentials", cre);
         object.put("login", kind);
-        new AWVSRequestUtils().PATCH(URL+targetId+"/configuration", object);
+        Boolean result = new AWVSRequestUtils().PATCH(URL + targetId + "/configuration", object);
+        if(!result) throw new RRException("设置网站登录失败");
     }
 
     /**
@@ -95,9 +93,8 @@ public class TargetService {
      * Method:DELETE
      * URL: /api/v1/targets/{target_id}
      */
-    public Boolean deleteTarget(String targetId) {
-        String result = new AWVSRequestUtils().DELETE(URL + targetId);
-        if(result.equals("024")) throw new RRException("删除目标失败");
-        return Boolean.TRUE;
+    public void deleteTarget(String targetId) {
+        Boolean result = new AWVSRequestUtils().DELETE(URL + targetId);
+        if(!result) throw new RRException("删除目标失败");
     }
 }

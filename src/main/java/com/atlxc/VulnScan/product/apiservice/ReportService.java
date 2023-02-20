@@ -30,10 +30,8 @@ public class ReportService {
      * Method:DELETE
      * URL: /api/v1/reports/{report_id}
      */
-    public Boolean deleteReport(int report_id) {
-        String result=new AWVSRequestUtils().DELETE(URL+"/"+report_id);
-        log.info(result);
-        if(!result.equals("024")) throw new RRException("删除报告失败");
-        return Boolean.TRUE;
+    public void deleteReport(int report_id) {
+        Boolean result=new AWVSRequestUtils().DELETE(URL+"/"+report_id);
+        if(!result) throw new RRException("删除报告失败");
     }
 }

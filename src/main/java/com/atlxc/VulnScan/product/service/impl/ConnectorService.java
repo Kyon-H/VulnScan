@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.product.service.impl;
 
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
+import com.atlxc.VulnScan.product.apiservice.VulnService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
@@ -22,9 +23,10 @@ public class ConnectorService {
 
     @Async("connectorExecutor")
     public void getScanId(ScanRecordEntity entity) {
-        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetsService");
+        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
-        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
+        VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
         String targetId = entity.getTargetId();
         try {
             while (true) {
@@ -36,11 +38,13 @@ public class ConnectorService {
                     ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
                     entity.setScanId(scanId);
                     if (tmpEntity.getStatus() == null||tmpEntity.getSeverityCounts() == null) continue;
+                    if(tmpEntity.getStatus().equals("processing")) continue;
                     entity.setStatus(tmpEntity.getStatus());
                     entity.setSeverityCounts(tmpEntity.getSeverityCounts());
-                    if (scanRecordService.updateById(entity)) {
-                        break;
-                    }
+                    if(!scanRecordService.updateById(entity))continue;
+                    log.info("update success");
+                    //获取漏洞信息
+                    break;
                 }
             }
         } catch (InterruptedException e) {
@@ -52,7 +56,7 @@ public class ConnectorService {
     @Async("connectorExecutor")
     public void getStatus(ScanRecordEntity entity) {
         log.info("getStatus entity");
-        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         String scanId = entity.getScanId();
         try {
@@ -77,8 +81,8 @@ public class ConnectorService {
     @Async("connectorExecutor")
     public CompletableFuture<String> getStatus(Integer id) throws InterruptedException {
         log.info("getStatus id:{}", id);
-        ScanService scanService = (ScanService) SpringContextUtils.getBean("scansService");
-        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetsService");
+        ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
+        TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         try {
             ScanRecordEntity entity = scanRecordService.getById(id);

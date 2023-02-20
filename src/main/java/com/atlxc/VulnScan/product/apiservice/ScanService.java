@@ -24,7 +24,7 @@ public class ScanService {
      * Method:POST
      * URL: /api/v1/scans
      */
-    public Map<String, Object> postScans(ScanRecordEntity scanRecord) {
+    public JSONObject postScans(ScanRecordEntity scanRecord) {
         log.info("postScans()");
         JSONObject body = new JSONObject();
         JSONObject schedule = new JSONObject();
@@ -34,12 +34,11 @@ public class ScanService {
         body.put("target_id", scanRecord.getTargetId());
         body.put("profile_id", scanRecord.getType());
         body.put("schedule", schedule);
-        JSONObject responseEntity = new AWVSRequestUtils().POST(URL,body);
-        log.info(responseEntity.toString());
-        if(responseEntity==null)
+        JSONObject response = new AWVSRequestUtils().POST(URL,body);
+        log.info(response.toString());
+        if(response==null)
             throw new RRException("添加扫描失败");
-        Map<String, Object> map=JSONObject.toJavaObject(responseEntity,Map.class);
-        return map;
+        return response;
     }
     /**
      * 获取单个扫描状态
@@ -52,9 +51,10 @@ public class ScanService {
         if(responseEntity==null)
             throw new RRException("获取扫描状态失败");
         ScanRecordEntity scanRecord=new ScanRecordEntity();
-        JSONObject map = responseEntity.getJSONObject("current_session");
-        scanRecord.setSeverityCounts(map.getJSONObject("severity_counts"));
-        scanRecord.setStatus(map.getString("status"));
+        JSONObject json = responseEntity.getJSONObject("current_session");
+        scanRecord.setSeverityCounts(json.getJSONObject("severity_counts"));
+        scanRecord.setScanSessionId(json.getString("scan_session_id"));
+        scanRecord.setStatus(json.getString("status"));
         log.info(scanRecord.toString());
         return scanRecord;
     }
@@ -63,10 +63,9 @@ public class ScanService {
      * Method:DELETE
      * URL: /api/v1/scans/{scan_id}
      */
-    public Boolean deleteScans(String scanId) {
-        String code = new AWVSRequestUtils().DELETE(URL+scanId);
-        if(!code.equals("024")) throw new RRException("删除扫描失败");
-        return true;
+    public void deleteScans(String scanId) {
+        Boolean result = new AWVSRequestUtils().DELETE(URL+scanId);
+        if(!result) throw new RRException("删除扫描失败");
     }
     /**
      * 单个扫描概况信息

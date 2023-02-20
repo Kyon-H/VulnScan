@@ -49,93 +49,103 @@ public class ScanRecordController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params,Principal principal){
-        Integer userId=usersServices.getIdByName(principal.getName());
-        params.put("userId",userId);
+    public R list(@RequestParam Map<String, Object> params, Principal principal) {
+        Integer userId = usersServices.getIdByName(principal.getName());
+        params.put("userId", userId);
         PageUtils page = scanRecordService.queryPage(params);
 
         return R.ok().put("page", page);
     }
+
     /**
      * 信息
      */
     @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Integer id){
-		ScanRecordEntity scanRecord = scanRecordService.getById(id);
+    public R info(@PathVariable("id") Integer id) {
+        ScanRecordEntity scanRecord = scanRecordService.getById(id);
 
         return R.ok().put("scanRecord", scanRecord);
     }
+
     /**
      * 保存
      */
     @SneakyThrows
     @PostMapping("/save")
     @ResponseBody
-    public R save(@Valid AddTargetVo vo, Principal principal){
+    public R save(@Valid AddTargetVo vo, Principal principal) {
         log.info("save()");
-        Map<String, Object> param = new HashMap<String,Object>();
+        Map<String, Object> param = new HashMap<String, Object>();
         param.put("address", vo.getAddress());
         param.put("description", vo.getDescription());
-        Map<String, Object> map=targetService.addTargets(param);
+        JSONObject json = targetService.addTargets(param);
         ScanRecordEntity scanRecord = new ScanRecordEntity();
-        String username=principal.getName();
+        String username = principal.getName();
         scanRecord.setUserId(usersServices.getIdByName(username));
-        scanRecord.setAddress(map.get("address").toString());
-        scanRecord.setDescription(map.get("description").toString());
-        scanRecord.setTargetId(map.get("targetId").toString());
-        targetService.setSpeed(scanRecord.getTargetId(),vo.getScanSpeed());
+        scanRecord.setAddress(json.getString("address"));
+        scanRecord.setDescription(json.getString("description"));
+        scanRecord.setTargetId(json.getString("target_id"));
+        targetService.setSpeed(scanRecord.getTargetId(), vo.getScanSpeed());
         String type;
-        switch (vo.getScanType()){
+        switch (vo.getScanType()) {
             case "12":
-                type= ConfigConstant.SCAN_TYPE_HighRisk;break;
+                type = ConfigConstant.SCAN_TYPE_HighRisk;
+                break;
             case "13":
-                type= ConfigConstant.SCAN_TYPE_SQLInjection;break;
+                type = ConfigConstant.SCAN_TYPE_SQLInjection;
+                break;
             case "15":
-                type= ConfigConstant.SCAN_TYPE_WeakPasswords;break;
+                type = ConfigConstant.SCAN_TYPE_WeakPasswords;
+                break;
             case "16":
-                type= ConfigConstant.SCAN_TYPE_CrossSiteScripting;break;
+                type = ConfigConstant.SCAN_TYPE_CrossSiteScripting;
+                break;
             default:
-                type= ConfigConstant.SCAN_TYPE_FullScan;break;
+                type = ConfigConstant.SCAN_TYPE_FullScan;
+                break;
         }
         scanRecord.setStatus("processing");
         scanRecord.setType(type);
         scanRecord.setScanTime(new Date());
         JSONObject severityCounts = new JSONObject();
-        severityCounts.put("high",0);
-        severityCounts.put("medium",0);
-        severityCounts.put("low",0);
-        severityCounts.put("info",0);
+        severityCounts.put("high", 0);
+        severityCounts.put("medium", 0);
+        severityCounts.put("low", 0);
+        severityCounts.put("info", 0);
         scanRecord.setSeverityCounts(severityCounts);
 
-        Map<String, Object> result = scanService.postScans(scanRecord);
+        JSONObject result = scanService.postScans(scanRecord);
         connectorService.getScanId(scanRecord);
         scanRecordService.save(scanRecord);
         //connectorService.getStatus(scanRecord);
         return R.ok(result);
     }
+
     /**
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody ScanRecordEntity scanRecord){
-		scanRecordService.updateById(scanRecord);
+    public R update(@RequestBody ScanRecordEntity scanRecord) {
+        scanRecordService.updateById(scanRecord);
 
         return R.ok();
     }
+
     @GetMapping("/update/all")
-    public R updateAll(Principal principal){
+    public R updateAll(Principal principal) {
         log.info("updateAll");
-        String username=principal.getName();
-        Integer userId=usersServices.getIdByName(username);
+        String username = principal.getName();
+        Integer userId = usersServices.getIdByName(username);
         scanRecordService.updateAll(userId);
         return R.ok();
     }
+
     /**
      * 删除
      */
     @RequestMapping("/delete")
-    public R delete(@RequestBody Integer[] ids){
-		scanRecordService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        scanRecordService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

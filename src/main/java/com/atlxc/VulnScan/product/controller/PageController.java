@@ -26,11 +26,17 @@ public class PageController {
         model.addAttribute("loginfail","T");
         return "login";
     }
-
-    @GetMapping("/ActiveScan")
-    public String ActiveScan(Model model){
-        return "ActiveScan/main";
+    @GetMapping("/navbar")
+    public String navbar(){
+        return "navbar";
     }
-
+    @GetMapping("/ActiveScan/scans")
+    public String scans(){
+        return "ActiveScan/scans";
+    }
+    @GetMapping("/ActiveScan/vulnerabilities")
+    public String vulnerabilities(){
+        return "ActiveScan/vulnerabilities";
+    }
 
 }

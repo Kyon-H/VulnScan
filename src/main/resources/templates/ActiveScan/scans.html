@@ -1,80 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>漏洞扫描</title>
-    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
-    <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-
-
-    </style>
-    <link href="/css/navbar.css" rel="stylesheet">
 </head>
 <body onload="load();">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">VulnScan</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
-            aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarsExample05">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Home </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/ActiveScan">漏洞扫描<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="/404">Disabled</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Dropdown</a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-md-0">
-            <input class="form-control" type="text" placeholder="Search">
-        </form>
-        <ul class="">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                    <span sec:authentication="name" style="color:#007bff"></span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout">退出登录</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-</nav>
+<!--Navigation bar-->
+<div id="nav-placeholder"></div>
 
 <main role="main" class=" ml-sm-auto">
     <div class="container">
@@ -189,18 +122,17 @@
 </div>
 <!-- new target modal end -->
 <script src="/js/jquery.min.js"></script>
-<script src="/js/bootstrap/js/bootstrap.min.js"></script>
-<script src="/js/layer/layer.js"></script>
 <script src="/js/scan.js"></script>
 <script src="/js/webSocket.js"></script>
 <script>
-    function newTarget(){
-        var address=$('#targetUrl').val();
-        $('#address').attr('value',address);
-    }
-<!--	var domain = document.domain;-->
-<!--	var wsurl="ws://"+domain+"/ws";-->
-<!--	initWebSocket(wsurl);-->
+function newTarget(){
+    var address=$('#targetUrl').val();
+    $('#address').attr('value',address);
+}
+$(function(){
+    $("#nav-placeholder").load("/navbar");
+    $("#scans").addClass("active");
+});
 </script>
 </body>
 </html>

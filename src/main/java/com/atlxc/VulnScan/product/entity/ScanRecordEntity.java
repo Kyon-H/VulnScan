@@ -42,6 +42,10 @@ public class ScanRecordEntity implements Serializable {
 	 */
 	private String scanId;
 	/**
+	 * 扫描会话 id
+	 */
+	private String scanSessionId;
+	/**
 	 * URL
 	 */
 	private String address;

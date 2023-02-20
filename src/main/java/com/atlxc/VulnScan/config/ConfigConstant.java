@@ -51,5 +51,9 @@ public class ConfigConstant {
      * 恶意软件扫描
      */
     public static final String SCAN_TYPE_Malware_Scan="11111111-1111-1111-1111-111111111120";
-
+    /**
+     * AWVS response code
+     */
+    public static final String RESPONSE_DELETE="204";
+    public static final String RESPONSE_PATCH="204";
 }

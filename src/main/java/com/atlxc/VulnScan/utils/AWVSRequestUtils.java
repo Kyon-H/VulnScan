@@ -52,7 +52,7 @@ public class AWVSRequestUtils {
     /**
      * PATCH request
      */
-    public void PATCH(String url, JSONObject body) {
+    public Boolean PATCH(String url, JSONObject body) {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         restTemplate.setRequestFactory(requestFactory);
@@ -60,20 +60,27 @@ public class AWVSRequestUtils {
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> entity = new HttpEntity<JSONObject>(body, headers);
-        restTemplate.patchForObject(url, entity, JSONObject.class);
+        ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, entity, JSONObject.class);
+        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     /**
      * DELETE request
      * @param url
      */
-    public String DELETE(String url) {
+    public Boolean DELETE(String url) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, JSONObject.class);
-        return responseEntity.getStatusCode().toString();
+        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 }

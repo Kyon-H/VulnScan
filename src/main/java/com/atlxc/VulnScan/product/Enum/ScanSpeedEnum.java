@@ -1,4 +1,4 @@
-package com.atlxc.VulnScan.product.entity;
+package com.atlxc.VulnScan.product.Enum;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

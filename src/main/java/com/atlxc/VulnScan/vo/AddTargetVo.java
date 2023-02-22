@@ -1,14 +1,12 @@
 package com.atlxc.VulnScan.vo;
 
-import com.atlxc.VulnScan.product.entity.CriticalityEnum;
-import com.atlxc.VulnScan.product.entity.ScanSpeedEnum;
-import com.atlxc.VulnScan.product.entity.ScanTypeEnum;
+import com.atlxc.VulnScan.product.Enum.CriticalityEnum;
+import com.atlxc.VulnScan.product.Enum.ScanSpeedEnum;
+import com.atlxc.VulnScan.product.Enum.ScanTypeEnum;
 import com.atlxc.VulnScan.utils.EnumValue;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**

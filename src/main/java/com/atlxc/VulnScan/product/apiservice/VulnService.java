@@ -20,7 +20,7 @@ public class VulnService {
      * Method:GET
      * URL: /api/v1/vulnerabilities?l=20&q=status:open
      */
-    public JSONObject getAllVulns(String l, String q) {
+    public JSONObject getAllVulns(Integer l, String q) {
         JSONObject result = new AWVSRequestUtils().GET(URL + "?l=" + l + "&q=status:" + q);
         if(result==null) throw new RRException("获取漏洞信息失败");
         return result;

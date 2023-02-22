@@ -3,6 +3,9 @@ package com.atlxc.VulnScan.product.dao;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 漏洞信息表
@@ -13,5 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface VulnInfoDao extends BaseMapper<VulnInfoEntity> {
+    @Select("select vuln_info.* from scan_record vuln_info where scan_record_id = #{scanRecordId}")
+    List<VulnInfoEntity> selectByTargetId(Integer scanRecordId);
 	
 }

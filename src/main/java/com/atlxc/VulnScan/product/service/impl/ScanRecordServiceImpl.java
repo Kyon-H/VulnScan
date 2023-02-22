@@ -69,4 +69,18 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         });
         return true;
     }
+
+    @Override
+    public ScanRecordEntity getByTargetId(String targetId) {
+        return baseMapper.selectOne(new QueryWrapper<ScanRecordEntity>().eq("target_id", targetId));
+    }
+
+    @Override
+    public List<ScanRecordEntity> getByUserId(Integer userId) {
+        return baseMapper.selectByUserId(userId);
+    }
+    @Override
+    public List<ScanRecordEntity> getByUserName(String userName) {
+        return baseMapper.selectIdByUserName(userName);
+    }
 }

@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 
 
-
 /**
  * 漏洞信息表
  *
@@ -25,7 +25,7 @@ import com.atlxc.VulnScan.utils.R;
  * @date 2023-01-01 22:17:22
  */
 @RestController
-@RequestMapping("product/vulninfo")
+@RequestMapping("/vulninfo")
 public class VulnInfoController {
     @Autowired
     private VulnInfoService vulnInfoService;
@@ -34,7 +34,8 @@ public class VulnInfoController {
      * 列表
      */
     @RequestMapping("/list")
-        public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params, Principal principal) {
+        params.put("userName", principal.getName());
         PageUtils page = vulnInfoService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -45,8 +46,8 @@ public class VulnInfoController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-        public R info(@PathVariable("id") Integer id){
-		VulnInfoEntity vulnInfo = vulnInfoService.getById(id);
+    public R info(@PathVariable("id") Integer id) {
+        VulnInfoEntity vulnInfo = vulnInfoService.getById(id);
 
         return R.ok().put("vulnInfo", vulnInfo);
     }
@@ -55,8 +56,8 @@ public class VulnInfoController {
      * 保存
      */
     @RequestMapping("/save")
-        public R save(@RequestBody VulnInfoEntity vulnInfo){
-		vulnInfoService.save(vulnInfo);
+    public R save(@RequestBody VulnInfoEntity vulnInfo) {
+        vulnInfoService.save(vulnInfo);
 
         return R.ok();
     }
@@ -65,9 +66,15 @@ public class VulnInfoController {
      * 修改
      */
     @RequestMapping("/update")
-        public R update(@RequestBody VulnInfoEntity vulnInfo){
-		vulnInfoService.updateById(vulnInfo);
+    public R update(@RequestBody VulnInfoEntity vulnInfo) {
+        vulnInfoService.updateById(vulnInfo);
 
+        return R.ok();
+    }
+
+    @RequestMapping("/update/all")
+    public R updateAll() {
+        vulnInfoService.updateAll();
         return R.ok();
     }
 
@@ -75,8 +82,8 @@ public class VulnInfoController {
      * 删除
      */
     @RequestMapping("/delete")
-        public R delete(@RequestBody Integer[] ids){
-		vulnInfoService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        vulnInfoService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

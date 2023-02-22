@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,5 +25,9 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
     String getStatusById(Integer id);
 
     Boolean updateAll(Integer userId);
+
+    ScanRecordEntity getByTargetId(String targetId);
+    List<ScanRecordEntity> getByUserId(Integer userId);
+    List<ScanRecordEntity> getByUserName(String UserName);
 }
 

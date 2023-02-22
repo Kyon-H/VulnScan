@@ -27,18 +27,26 @@ public class VulnInfoEntity implements Serializable {
 	/**
 	 * 
 	 */
-	private String name;
+	private Integer scanRecordId;
 	/**
 	 * 
 	 */
-	private String level;
+	private String vulnId;
 	/**
-	 * 
+	 * 描述
 	 */
 	private String description;
 	/**
-	 * 
+	 *严重性
 	 */
-	private String fixSuggestion;
+	private Integer severity;
+	/**
+	 *漏洞名
+	 */
+	private String vulnerability;
+	/**
+	 * target_address
+	 */
+	private String targetAddress;
 
 }

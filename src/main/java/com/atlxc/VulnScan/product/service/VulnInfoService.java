@@ -16,5 +16,7 @@ import java.util.Map;
 public interface VulnInfoService extends IService<VulnInfoEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    Boolean updateAll();
 }
 

@@ -7,12 +7,15 @@ import com.atlxc.VulnScan.product.apiservice.VulnService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.UsersService;
+import com.atlxc.VulnScan.utils.DateUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -69,18 +72,14 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
                         vulnInfo=new VulnInfoEntity();
                         vulnInfo.setScanRecordId(scanRecord.getId());
                         vulnInfo.setVulnId(item.getString("vuln_id"));
-                        vulnInfo.setDescription(item.getString("description"));
                         vulnInfo.setSeverity(item.getInteger("severity"));
                         vulnInfo.setVulnerability(item.getString("vt_name"));
                         vulnInfo.setTargetAddress(item.getString("affects_url"));
+                        vulnInfo.setConfidence(item.getInteger("confidence"));
+                        Date last_seen = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
+                        vulnInfo.setLastSeen(last_seen);
                         baseMapper.insert(vulnInfo);
                     }
-//                    else {
-//                        vulnInfo.setScanRecordId(scanRecord.getId());
-//                        vulnInfo.setVulnId(item.getString("vuln_id"));
-//                        vulnInfo.setDescription(item.getString("description"));
-//                        baseMapper.updateById(vulnInfo);
-//                    }
                 }
             }
             counts-=20;

@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
@@ -27,6 +28,8 @@ public class DateUtils {
 	public final static String DATE_PATTERN = "yyyy-MM-dd";
 	/** 时间格式(yyyy-MM-dd HH:mm:ss) */
 	public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /** 时间格式(yyyy-MM-ddTHH:mm:ss.SSSSSS+00:00)带时区 */
+    public final static String DATE_TIME_ZONE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZ";
 
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd

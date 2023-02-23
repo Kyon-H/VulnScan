@@ -7,6 +7,8 @@ import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * @author Kyon-H
  * @date 2023/2/19 23:36
@@ -28,10 +30,27 @@ public class VulnService {
     /**
      * 条件筛选漏洞信息
      * Method:GET
-     * URL: /api/v1/vulnerabilities?q=severity:{int};criticality:{int};status:{string};cvss_score:{logic expression};target_id:{target_id};group_id:{group_id}
+     * URL: /api/v1/vulnerabilities?q=severity:{int};status:{string};target_id:{target_id};confidence:{confidence};
      */
-    public JSONObject selectVulns(String q, int severity, int criticality, String status, String cv,String target_id,String group_id) {
-        String url=URL+"?q=severity:"+severity+";criticality:"+criticality+";status:"+status+";cvss_score:"+cv+";target_id:"+target_id+";group_id:"+group_id;
+    public JSONObject selectVulns(Map<String, Object> params) {
+        StringBuilder sb = new StringBuilder().append(URL+"?q=");
+        String severity=params.get("severity").toString();
+        if(severity!=null){
+            sb.append("severity:").append(severity).append(";");
+        }
+        String status=params.get("status").toString();
+        if(status!=null){
+            sb.append("status:").append(status).append(";");
+        }
+        String target_id=params.get("target_id").toString();
+        if(target_id!=null){
+            sb.append("target_id:").append(target_id).append(";");
+        }
+        String confidence=params.get("confidence").toString();
+        if(confidence!=null){
+            sb.append("confidence:").append(confidence).append(";");
+        }
+        String url=sb.toString();
         JSONObject result = new AWVSRequestUtils().GET(url);
         if(result==null) throw new RRException("筛选漏洞信息失败");
         return result;

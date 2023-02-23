@@ -1,15 +1,23 @@
 package com.atlxc.VulnScan.product.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.apiservice.VulnService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.VulnInfoService;
+import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,6 +35,7 @@ public class ConnectorService {
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
+        VulnInfoService vulnInfoService=(VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
         String targetId = entity.getTargetId();
         try {
             while (true) {
@@ -44,6 +53,24 @@ public class ConnectorService {
                     if(!scanRecordService.updateById(entity))continue;
                     log.info("update success");
                     //获取漏洞信息
+                    Map<String,Object>params = new HashMap<>();
+                    params.put("target_id",entity.getTargetId());
+                    JSONObject jsonObject = vulnService.selectVulns(params);
+                    JSONArray vulnInfoArray=jsonObject.getJSONArray("vulnerabilities");
+                    Integer scanRecordId = entity.getId();
+                    for(int i=0;i<vulnInfoArray.size();i++){
+                        JSONObject item=vulnInfoArray.getJSONObject(i);
+                        Date lastSeen = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
+                        VulnInfoEntity vulnInfo = new VulnInfoEntity();
+                        vulnInfo.setScanRecordId(scanRecordId);
+                        vulnInfo.setVulnId(item.getString("vuln_id"));
+                        vulnInfo.setSeverity(item.getInteger("severity"));
+                        vulnInfo.setVulnerability(item.getString("vulnerability"));
+                        vulnInfo.setTargetAddress(item.getString("affects_url"));
+                        vulnInfo.setConfidence(item.getInteger("confidence"));
+                        vulnInfo.setLastSeen(lastSeen);
+                        vulnInfoService.save(vulnInfo);
+                    }
                     break;
                 }
             }

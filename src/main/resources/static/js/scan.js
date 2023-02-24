@@ -38,21 +38,7 @@ $("#scanSubmitBtn").on("click", function () {
 //默认查询，page:1,limit:10
 function load(){
     console.log("load()")
-    let postdata={
-        sidx:"id",
-        order:"desc"
-    };
-    $.post('/scan/list',
-        postdata,
-        function(data){
-            console.log(data.page);
-            if(data.code==200||data.code==0){
-                addTable(data.page.list);
-            }else{
-                layer.msg(data.msg, {icon: 2});
-            }
-        }
-    );
+    pageLoad(page=1,limit=3);
 }
 //分页查询
 function pageLoad(page,limit){

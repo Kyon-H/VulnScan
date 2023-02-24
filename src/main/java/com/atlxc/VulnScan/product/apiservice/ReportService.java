@@ -22,7 +22,7 @@ public class ReportService {
      * URL: /api/v1/reports?l={count}
      */
     public JSONObject getALLReports(int count) {
-        JSONObject result = new AWVSRequestUtils().GET(URL + "?l=" + count);
+        JSONObject result = AWVSRequestUtils.GET(URL + "?l=" + count);
         if (result == null) throw new RRException("获取所有报告失败");
         return result;
     }
@@ -33,7 +33,7 @@ public class ReportService {
      * URL: /api/v1/reports/{report_id}
      */
     public void deleteReport(int report_id) {
-        Boolean result = new AWVSRequestUtils().DELETE(URL + "/" + report_id);
+        Boolean result = AWVSRequestUtils.DELETE(URL + "/" + report_id);
         if (!result) throw new RRException("删除报告失败");
     }
 }

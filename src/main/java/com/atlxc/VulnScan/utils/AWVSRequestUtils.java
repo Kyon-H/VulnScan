@@ -19,7 +19,7 @@ public class AWVSRequestUtils {
     /**
      * POST request
      */
-    public JSONObject POST(String url, JSONObject body) {
+    public static JSONObject POST(String url, JSONObject body) {
         log.info("POST url: {}", url);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -36,7 +36,7 @@ public class AWVSRequestUtils {
     /**
      * GET request
      */
-    public JSONObject GET(String url) {
+    public static JSONObject GET(String url) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
@@ -52,7 +52,7 @@ public class AWVSRequestUtils {
     /**
      * PATCH request
      */
-    public Boolean PATCH(String url, JSONObject body) {
+    public static Boolean PATCH(String url, JSONObject body) {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         restTemplate.setRequestFactory(requestFactory);
@@ -71,7 +71,7 @@ public class AWVSRequestUtils {
      * DELETE request
      * @param url
      */
-    public Boolean DELETE(String url) {
+    public static Boolean DELETE(String url) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);

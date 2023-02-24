@@ -37,7 +37,7 @@ public class TargetService {
         body.put("address", param.get("address"));
         body.put("description", param.get("description"));
         //send post request
-        JSONObject result = new AWVSRequestUtils().POST(URL, body);
+        JSONObject result = AWVSRequestUtils.POST(URL, body);
         //处理
         if (result == null)
             throw new RRException("添加目标失败");
@@ -52,7 +52,7 @@ public class TargetService {
     public void setSpeed(String targetId, String scanSpeed) {
         JSONObject object = new JSONObject();
         object.put("scan_speed", scanSpeed);
-        Boolean result = new AWVSRequestUtils().PATCH(URL + "/" + targetId + "/configuration", object);
+        Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", object);
         if (!result) throw new RRException("设置扫描速度失败");
     }
 
@@ -70,7 +70,7 @@ public class TargetService {
         kind.put("kind", "automatic");
         kind.put("credentials", cre);
         object.put("login", kind);
-        Boolean result = new AWVSRequestUtils().PATCH(URL + "/" + targetId + "/configuration", object);
+        Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", object);
         if (!result) throw new RRException("设置网站登录失败");
     }
 
@@ -82,7 +82,7 @@ public class TargetService {
     public String getScanId(String targetId) {
         log.info("getScanId(), targetID {}", targetId);
         //request
-        JSONObject responseEntity = new AWVSRequestUtils().GET(URL + "/" + targetId);
+        JSONObject responseEntity = AWVSRequestUtils.GET(URL + "/" + targetId);
         if (responseEntity == null) {
             throw new RRException("获取扫描id失败");
         }
@@ -96,7 +96,7 @@ public class TargetService {
      * URL: /api/v1/targets/{target_id}
      */
     public void deleteTarget(String targetId) {
-        Boolean result = new AWVSRequestUtils().DELETE(URL + "/" + targetId);
+        Boolean result = AWVSRequestUtils.DELETE(URL + "/" + targetId);
         if (!result) throw new RRException("删除目标失败");
     }
 }

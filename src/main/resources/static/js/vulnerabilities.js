@@ -13,7 +13,7 @@ function load(){
 $('#pagePre').click(function(){
     let currentPage = parseInt($('.page-item.active a').text());
     if (currentPage > 1) {
-      loadPage(URl,currentPage - 1,pageSize,sidx,order,addVulnInfo);
+      loadPage(URL,currentPage - 1,pageSize,sidx,order,addVulnInfo);
     }
 });
 // 绑定下一页按钮点击事件

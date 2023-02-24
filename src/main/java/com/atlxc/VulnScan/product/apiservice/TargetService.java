@@ -20,7 +20,8 @@ import java.util.Map;
 @Service
 public class TargetService {
 
-    private static final String URL = ConfigConstant.AWVS_API_URL+"targets/";
+    private static final String URL = ConfigConstant.AWVS_API_URL + "targets";
+
     /**
      * 添加目标
      * Method:POST
@@ -51,8 +52,8 @@ public class TargetService {
     public void setSpeed(String targetId, String scanSpeed) {
         JSONObject object = new JSONObject();
         object.put("scan_speed", scanSpeed);
-        Boolean result = new AWVSRequestUtils().PATCH(URL + targetId + "/configuration", object);
-        if(!result) throw new RRException("设置扫描速度失败");
+        Boolean result = new AWVSRequestUtils().PATCH(URL + "/" + targetId + "/configuration", object);
+        if (!result) throw new RRException("设置扫描速度失败");
     }
 
     /**
@@ -69,8 +70,8 @@ public class TargetService {
         kind.put("kind", "automatic");
         kind.put("credentials", cre);
         object.put("login", kind);
-        Boolean result = new AWVSRequestUtils().PATCH(URL + targetId + "/configuration", object);
-        if(!result) throw new RRException("设置网站登录失败");
+        Boolean result = new AWVSRequestUtils().PATCH(URL + "/" + targetId + "/configuration", object);
+        if (!result) throw new RRException("设置网站登录失败");
     }
 
     /**
@@ -81,20 +82,21 @@ public class TargetService {
     public String getScanId(String targetId) {
         log.info("getScanId(), targetID {}", targetId);
         //request
-        JSONObject responseEntity = new AWVSRequestUtils().GET(URL+targetId);
+        JSONObject responseEntity = new AWVSRequestUtils().GET(URL + "/" + targetId);
         if (responseEntity == null) {
             throw new RRException("获取扫描id失败");
         }
         log.info(responseEntity.getString("last_scan_id"));
         return responseEntity.getString("last_scan_id");
     }
+
     /**
      * 删除目标
      * Method:DELETE
      * URL: /api/v1/targets/{target_id}
      */
     public void deleteTarget(String targetId) {
-        Boolean result = new AWVSRequestUtils().DELETE(URL + targetId);
-        if(!result) throw new RRException("删除目标失败");
+        Boolean result = new AWVSRequestUtils().DELETE(URL + "/" + targetId);
+        if (!result) throw new RRException("删除目标失败");
     }
 }

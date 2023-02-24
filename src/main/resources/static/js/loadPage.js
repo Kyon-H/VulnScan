@@ -16,21 +16,35 @@ function loadPage(URL,page=1,limit=10,sidx,order="desc",callback){
                 var $pagination = $('.pagination');
                 var $pages = $pagination.find('.page-item:not(#pagePre,#pageNext)');
                 $pages.removeClass('active');
-                //更新
-                if(page==1){
+                if(data.page.totalPage<=2){
                     $('#pagePre').parent().addClass('disabled');
-                    $('#page1').parent().addClass('active');
-                }else if(page==data.page.totalPage){
                     $('#pageNext').parent().addClass('disabled');
-                    $('#page3').parent().addClass('active');
+                    if(data.page.totalPage==1){
+                        $('#page1').parent().addClass('active');
+                        $('#page2').parent().addClass('disabled');
+                        $('#page3').parent().addClass('disabled');
+                    }else if(data.page.totalPage==2){
+                        $('#page3').parent().addClass('disabled');
+                        $pages.eq(page).addClass('active');
+                    }
                 }else{
-                    $('#page1').text(page-1);
-                    $('#page2').text(page);
-                    $('#page3').text(page+1);
-                    $('#page2').parent().addClass('active');
-                    $('#pagePre').parent().removeClass('disabled');
-                    $('#pageNext').parent().removeClass('disabled');
+                    //更新
+                    if(page==1){
+                        $('#pagePre').parent().addClass('disabled');
+                        $('#page1').parent().addClass('active');
+                    }else if(page==data.page.totalPage){
+                        $('#pageNext').parent().addClass('disabled');
+                        $('#page3').parent().addClass('active');
+                    }else{
+                        $('#page1').text(page-1);
+                        $('#page2').text(page);
+                        $('#page3').text(page+1);
+                        $('#page2').parent().addClass('active');
+                        $('#pagePre').parent().removeClass('disabled');
+                        $('#pageNext').parent().removeClass('disabled');
+                    }
                 }
+
                 callback(data.page);
             }else{
                 layer.msg(data.msg, {icon:2});

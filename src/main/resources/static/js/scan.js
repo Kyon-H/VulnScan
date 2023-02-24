@@ -1,4 +1,11 @@
-
+var currPage=1;
+var pageSize=10;
+var totalCount
+var totalPage
+var URL="/scan/list";
+var sidx="scan_time";
+var order="desc";
+////////////////////////////////
 $("#addTargetBtn").on("click", function () {
     var address=$("#targetUrl").val();
     //var pattern = /(https?)://[a-zA-z]+://[^\s]*/
@@ -37,33 +44,36 @@ $("#scanSubmitBtn").on("click", function () {
 });
 //默认查询，page:1,limit:10
 function load(){
-    console.log("load()")
-    pageLoad(page=1,limit=3);
+    loadPage(URL,currPage,pageSize,sidx,order,addTable);
 }
-//分页查询
-function pageLoad(page,limit){
-    let postdata={
-        page:page,
-        limit:limit,
-        sidx:"scan_time",
-        order:"desc"
-    };
-    $.post('/scan/list',
-        postdata,
-        function(data){
-            console.log(data.page.list);
-            if(data.code==200||data.code==0){
-                addTable(data.page.list);
-            }else{
-                layer.msg(data.msg, {icon:2});
-            }
-        }
-    );
-}
+
+//绑定上一页按钮点击事件
+$('#pagePre').click(function(){
+    let currentPage = parseInt($('.page-item.active a').text());
+    if (currentPage > 1) {
+      loadPage(URl,currentPage - 1,pageSize,sidx,order,addTable);
+    }
+});
+// 绑定下一页按钮点击事件
+$('#pageNext').click(function(){
+   let currentPage = parseInt($('.page-item.active a').text());
+   if (currentPage < totalPage) {
+     loadPage(URL,currentPage + 1,pageSize,sidx,order,addTable);
+   }
+})
+// 绑定页码按钮点击事件
+$('.page-link:not(#pagePre,#pageNext)').click(function(e) {
+    let page = parseInt($(this).text());
+    loadPage(URL,page,pageSize,sidx,order,addTable);
+});
 //获取扫描记录
 function addTable(data){
+    currPage=data.currPage;
+    pageSize=data.pageSize;
+    totalCount=data.totalCount;
+    totalPage=data.totalPage;
     var item="";
-    $.each(data,function (i,m) {
+    $.each(data.list,function (i,m) {
         //# address
         item+=`<tr><td>${i+1}</td><td>${m.address}</td>`;
         if(m.description==""){
@@ -135,6 +145,3 @@ function formData(datetime) {
     return form_date;
 }
 
-function test(data){
-    alert(JSON.stringify(data));
-}

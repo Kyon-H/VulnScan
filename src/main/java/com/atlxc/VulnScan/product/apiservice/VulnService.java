@@ -16,53 +16,60 @@ import java.util.Map;
 @Slf4j
 @Service
 public class VulnService {
-    private static final String URL=ConfigConstant.AWVS_API_URL+"vulnerabilities";
+    private static final String URL = ConfigConstant.AWVS_API_URL + "vulnerabilities";
+
     /**
      * 获取所有漏洞信息
      * Method:GET
      * URL: /api/v1/vulnerabilities?l=20&q=status:open
      */
     public JSONObject getAllVulns(Integer l, String q) {
-        JSONObject result = new AWVSRequestUtils().GET(URL + "?l=" + l + "&q=status:" + q);
-        if(result==null) throw new RRException("获取漏洞信息失败");
+        StringBuilder sb = new StringBuilder();
+        sb.append(URL).append("?");
+        if(l!= null) {
+            sb.append("l=").append(l).append("&");
+        }
+        if(q!= null) {
+            sb.append("q=status:").append(q).append("&");
+        }
+        JSONObject result = new AWVSRequestUtils().GET(sb.toString());
+        if (result == null) throw new RRException("获取漏洞信息失败");
         return result;
     }
+
     /**
      * 条件筛选漏洞信息
      * Method:GET
      * URL: /api/v1/vulnerabilities?q=severity:{int};status:{string};target_id:{target_id};confidence:{confidence};
      */
     public JSONObject selectVulns(Map<String, Object> params) {
-        StringBuilder sb = new StringBuilder().append(URL+"?q=");
-        String severity=params.get("severity").toString();
-        if(severity!=null){
-            sb.append("severity:").append(severity).append(";");
+        StringBuilder sb = new StringBuilder().append(URL + "?q=");
+        if (params.get("severity") != null) {
+            sb.append("severity:").append(params.get("severity").toString()).append(";");
         }
-        String status=params.get("status").toString();
-        if(status!=null){
-            sb.append("status:").append(status).append(";");
+        if (params.get("status") != null) {
+            sb.append("status:").append(params.get("status").toString()).append(";");
         }
-        String target_id=params.get("target_id").toString();
-        if(target_id!=null){
-            sb.append("target_id:").append(target_id).append(";");
+        if (params.get("target_id") != null) {
+            sb.append("target_id:").append(params.get("target_id").toString()).append(";");
         }
-        String confidence=params.get("confidence").toString();
-        if(confidence!=null){
-            sb.append("confidence:").append(confidence).append(";");
+        if (params.get("confidence") != null) {
+            sb.append("confidence:").append(params.get("confidence").toString()).append(";");
         }
-        String url=sb.toString();
+        String url = sb.toString();
         JSONObject result = new AWVSRequestUtils().GET(url);
-        if(result==null) throw new RRException("筛选漏洞信息失败");
+        if (result == null) throw new RRException("筛选漏洞信息失败");
         return result;
     }
+
     /**
      * 获取单个漏洞信息
      * Method:GET
      * URL: api/v1/vulnerabilities/{vuln_id}
      */
     public JSONObject getVuln(String vuln_id) {
-        JSONObject result = new AWVSRequestUtils().GET(URL+"/"+vuln_id);
-        if(result==null) throw new RRException("获取单个漏洞信息失败");
+        JSONObject result = new AWVSRequestUtils().GET(URL + "/" + vuln_id);
+        if (result == null) throw new RRException("获取单个漏洞信息失败");
         return result;
     }
 }

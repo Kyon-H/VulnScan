@@ -35,7 +35,7 @@ public class ConnectorService {
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
-        VulnInfoService vulnInfoService=(VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
+        VulnInfoService vulnInfoService = (VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
         String targetId = entity.getTargetId();
         try {
             while (true) {
@@ -46,26 +46,27 @@ public class ConnectorService {
                     String scanId = tmp;
                     ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
                     entity.setScanId(scanId);
-                    if (tmpEntity.getStatus() == null||tmpEntity.getSeverityCounts() == null) continue;
-                    if(tmpEntity.getStatus().equals("processing")) continue;
+                    if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
+                    if (tmpEntity.getStatus().equals("processing")) continue;
                     entity.setStatus(tmpEntity.getStatus());
                     entity.setSeverityCounts(tmpEntity.getSeverityCounts());
-                    if(!scanRecordService.updateById(entity))continue;
+                    entity.setScanSessionId(tmpEntity.getScanSessionId());
+                    if (!scanRecordService.updateById(entity)) continue;
                     log.info("update success");
                     //获取漏洞信息
-                    Map<String,Object>params = new HashMap<>();
-                    params.put("target_id",entity.getTargetId());
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("target_id", entity.getTargetId());
                     JSONObject jsonObject = vulnService.selectVulns(params);
-                    JSONArray vulnInfoArray=jsonObject.getJSONArray("vulnerabilities");
+                    JSONArray vulnInfoArray = jsonObject.getJSONArray("vulnerabilities");
                     Integer scanRecordId = entity.getId();
-                    for(int i=0;i<vulnInfoArray.size();i++){
-                        JSONObject item=vulnInfoArray.getJSONObject(i);
+                    for (int i = 0; i < vulnInfoArray.size(); i++) {
+                        JSONObject item = vulnInfoArray.getJSONObject(i);
                         Date lastSeen = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
                         VulnInfoEntity vulnInfo = new VulnInfoEntity();
                         vulnInfo.setScanRecordId(scanRecordId);
                         vulnInfo.setVulnId(item.getString("vuln_id"));
                         vulnInfo.setSeverity(item.getInteger("severity"));
-                        vulnInfo.setVulnerability(item.getString("vulnerability"));
+                        vulnInfo.setVulnerability(item.getString("vt_name"));
                         vulnInfo.setTargetAddress(item.getString("affects_url"));
                         vulnInfo.setConfidence(item.getInteger("confidence"));
                         vulnInfo.setLastSeen(lastSeen);
@@ -116,7 +117,7 @@ public class ConnectorService {
             if (entity != null && !entity.getStatus().equals("processing")) {
                 return CompletableFuture.completedFuture(entity.getStatus());
             }
-            while(entity.getScanId() == null) {
+            while (entity.getScanId() == null) {
                 String scanId = targetService.getScanId(entity.getTargetId());
                 entity.setScanId(scanId);
             }

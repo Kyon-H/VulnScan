@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ import com.atlxc.VulnScan.utils.R;
  * @email a3171218907@qq.com
  * @date 2023-01-01 22:17:22
  */
+@Slf4j
 @RestController
 @RequestMapping("/vulninfo")
 public class VulnInfoController {

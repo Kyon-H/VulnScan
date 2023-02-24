@@ -32,7 +32,7 @@ public class VulnService {
         if(q!= null) {
             sb.append("q=status:").append(q).append("&");
         }
-        JSONObject result = new AWVSRequestUtils().GET(sb.toString());
+        JSONObject result = AWVSRequestUtils.GET(sb.toString());
         if (result == null) throw new RRException("获取漏洞信息失败");
         return result;
     }
@@ -57,7 +57,7 @@ public class VulnService {
             sb.append("confidence:").append(params.get("confidence").toString()).append(";");
         }
         String url = sb.toString();
-        JSONObject result = new AWVSRequestUtils().GET(url);
+        JSONObject result = AWVSRequestUtils.GET(url);
         if (result == null) throw new RRException("筛选漏洞信息失败");
         return result;
     }
@@ -68,7 +68,7 @@ public class VulnService {
      * URL: api/v1/vulnerabilities/{vuln_id}
      */
     public JSONObject getVuln(String vuln_id) {
-        JSONObject result = new AWVSRequestUtils().GET(URL + "/" + vuln_id);
+        JSONObject result = AWVSRequestUtils.GET(URL + "/" + vuln_id);
         if (result == null) throw new RRException("获取单个漏洞信息失败");
         return result;
     }

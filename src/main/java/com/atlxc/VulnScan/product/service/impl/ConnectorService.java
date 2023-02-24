@@ -36,6 +36,7 @@ public class ConnectorService {
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
         VulnInfoService vulnInfoService = (VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
+        //
         String targetId = entity.getTargetId();
         try {
             while (true) {

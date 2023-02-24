@@ -23,7 +23,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String captcha = request.getParameter("captcha");
         String sessionCaptcha = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (!StringUtils.isEmpty(captcha) && !StringUtils.isEmpty(sessionCaptcha) && captcha.equalsIgnoreCase(sessionCaptcha)) {
-            log.error("Captcha is right!");
+            log.info("Captcha is right!");
             return super.attemptAuthentication(request, response);
         }
         log.error("Captcha is wrong!");

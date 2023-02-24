@@ -1,30 +1,32 @@
 var currPage=1;
-var pageSize=3;
+var pageSize=10;
 var totalCount
 var totalPage
 var URL="/vulninfo/list";
+var sidx="last_seen";
+var order="desc";
 ////////////////////////////////
 function load(){
-    loadPage(URL,currPage,pageSize,"last_seen","desc",addVulnInfo);
+    loadPage(URL,currPage,pageSize,sidx,order,addVulnInfo);
 }
 //绑定上一页按钮点击事件
 $('#pagePre').click(function(){
     let currentPage = parseInt($('.page-item.active a').text());
     if (currentPage > 1) {
-      loadPage(URl,currentPage - 1,pageSize,"last_seen","desc",addVulnInfo);
+      loadPage(URl,currentPage - 1,pageSize,sidx,order,addVulnInfo);
     }
 });
 // 绑定下一页按钮点击事件
 $('#pageNext').click(function(){
    let currentPage = parseInt($('.page-item.active a').text());
    if (currentPage < totalPage) {
-     loadPage(URL,currentPage + 1,pageSize,"last_seen","desc",addVulnInfo);
+     loadPage(URL,currentPage + 1,pageSize,sidx,order,addVulnInfo);
    }
 })
 // 绑定页码按钮点击事件
 $('.page-link:not(#pagePre,#pageNext)').click(function(e) {
     let page = parseInt($(this).text());
-    loadPage(URL,page,pageSize,"last_seen","desc",addVulnInfo);
+    loadPage(URL,page,pageSize,sidx,order,addVulnInfo);
 });
 //
 function addVulnInfo(data){

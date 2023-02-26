@@ -75,7 +75,7 @@ function addTable(data){
     var item="";
     $.each(data.list,function (i,m) {
         //# address
-        item+=`<tr><td>${i+1}</td><td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
+        item+=`<tr><td align="center">${i+1}</td><td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
         if(m.description==""){
             m.description="无";
         }
@@ -133,8 +133,8 @@ function addTable(data){
             item+=`<td>${m.status}</td>`;
         }
         //
-        item+=`<td><button type="button" class="btn btn-primary btn-sm">PDF</button></td>
-        <td><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
+        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm">PDF</button></td>
+        <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }

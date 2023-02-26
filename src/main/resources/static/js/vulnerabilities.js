@@ -45,17 +45,32 @@ function addVulnInfo(data){
     console.log("currPage:"+currPage);
     $.each(data.list,function(i,m){
         //# address
-        item+=`<tr><td>${i+1}</td><td>${m.severity}</td>`;
+        item+=`<tr><td align="center">${i+1}</td>`;
+        //severity
+        switch(m.severity){
+            case 0:
+                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:ForestGreen" title="informational"></i></td>`;
+                break;
+            case 1:
+                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:cornflowerblue" title="low"></i></td>`;
+                break;
+            case 2:
+                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:GoldenRod" title="medium"></i></td>`;
+                break;
+            case 3:
+                item+=`<td align="center"><i class="bi bi-bug-fill"style="color:Crimson" title="high"></i></td>`;
+                break;
+        }
         //vulnerability
         item+=`<td>${m.vulnerability}</td>`;
         //targetAddress
         item+=`<td>${m.targetAddress}</td>`;
         //confidence
-        item+=`<td>${m.confidence}</td>`;
+        item+=`<td align="center">${m.confidence}</td>`;
         //lastSeen
         item+=`<td>${formData(m.lastSeen)}</td>`;
         //导出文档
-        item+=`<td><button type="button" class="btn btn-primary btn-sm">PDF</button></td></tr>`;
+        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm">PDF</button></td></tr>`;
         $("#tablelist").html(item);
     })
 }

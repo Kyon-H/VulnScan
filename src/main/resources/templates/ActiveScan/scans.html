@@ -49,6 +49,7 @@
                     </thead>
                     <tbody id="tablelist"></tbody>
                 </table>
+<!--                分页工具 -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end">
                         <li class="page-item disabled"><a id="pagePre" class="page-link" href="#">Previous</a></li>
@@ -58,6 +59,7 @@
                         <li class="page-item"><a id="pageNext" class="page-link">Next</a></li>
                     </ul>
                 </nav>
+<!--                分页工具 end -->
             </div>
         </div>
     </div>
@@ -135,10 +137,8 @@ function newTarget(){
     var address=$('#targetUrl').val();
     $('#address').attr('value',address);
 }
-$(function(){
-    $("#nav-placeholder").load("/navbar");
-    $("#scans").addClass("active");
-});
+$("#nav-placeholder").load("/navbar");
+$.getScript("/js/navbar.js",function(){console.log("导入script成功");});
 </script>
 </body>
 </html>

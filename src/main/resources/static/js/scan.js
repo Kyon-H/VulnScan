@@ -51,7 +51,7 @@ function load(){
 $('#pagePre').click(function(){
     let currentPage = parseInt($('.page-item.active a').text());
     if (currentPage > 1) {
-      loadPage(URl,currentPage - 1,pageSize,sidx,order,addTable);
+      loadPage(URL,currentPage - 1,pageSize,sidx,order,addTable);
     }
 });
 // 绑定下一页按钮点击事件
@@ -75,7 +75,7 @@ function addTable(data){
     var item="";
     $.each(data.list,function (i,m) {
         //# address
-        item+=`<tr><td>${i+1}</td><td>${m.address}</td>`;
+        item+=`<tr><td>${i+1}</td><td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
         if(m.description==""){
             m.description="无";
         }
@@ -101,10 +101,10 @@ function addTable(data){
         //扫描结果分布
         let counts=m.severityCounts;
         item+=`<td>
-            <a href="#" class="badge badge-danger">${counts.high}</a>
-            <a href="#" class="badge badge-warning">${counts.medium}</a>
-            <a href="#" class="badge badge-primary">${counts.low}</a>
-            <a href="#" class="badge badge-success">${counts.info}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=3&scan_record_id=${m.id}" class="badge badge-danger">${counts.high}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=2&scan_record_id=${m.id}" class="badge badge-warning">${counts.medium}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=1&scan_record_id=${m.id}" class="badge badge-primary">${counts.low}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=0&scan_record_id=${m.id}" class="badge badge-success">${counts.info}</a>
         </td>`;
         //添加时间
         item+="<td>"+formData(m.scanTime)+"</td>";
@@ -125,7 +125,7 @@ function addTable(data){
             sendSock(data,function(backdata){
                 console.log("callback data: " + JSON.stringify(backdata));
                 if(backdata.message!="processing"){
-                    load();
+                    windows.location.reload();
                 }
             });
 

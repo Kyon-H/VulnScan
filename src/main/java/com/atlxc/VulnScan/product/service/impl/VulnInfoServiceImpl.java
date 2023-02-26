@@ -7,6 +7,7 @@ import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +43,29 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
             Integer scanRecordId = scanRecordEntity.getId();
             scanRecordIds.add(scanRecordId);
         });
-        IPage<VulnInfoEntity> page = this.page(
-                new Query<VulnInfoEntity>().getPage(params),
-                new QueryWrapper<VulnInfoEntity>().in("scan_record_id", scanRecordIds)
-        );
-        return new PageUtils(page);
+        QueryWrapper<VulnInfoEntity> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.isNotEmpty((String)params.get("scan_record_id"))){
+            queryWrapper.eq("scan_record_id",params.get("scan_record_id").toString());
+        }
+        if(StringUtils.isNotEmpty((String)params.get("severity"))){
+            queryWrapper.eq("severity",params.get("severity").toString());
+        }
+        if(StringUtils.isNotEmpty((String) params.get("sidx"))){
+            Boolean isAsc=params.get("order").toString().equals("asc")?Boolean.TRUE:Boolean.FALSE;
+            //排序
+            queryWrapper.in("scan_record_id",scanRecordIds);
+            IPage<VulnInfoEntity> page = this.page(
+                    new Query<VulnInfoEntity>().getPage(params,params.get("sidx").toString(),isAsc),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        }else{
+            IPage<VulnInfoEntity> page = this.page(
+                    new Query<VulnInfoEntity>().getPage(params),
+                    queryWrapper
+            );
+            return new PageUtils(page);
+        }
     }
 
     @Override

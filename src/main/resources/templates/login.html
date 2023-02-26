@@ -40,9 +40,16 @@
     <input type="text" id="inputUsername" name="username" class="form-control" placeholder="用户名" required autofocus>
     <label for="inputPassword" class="sr-only">密码</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="密码" required>
-    <label for="inputCode" class="sr-only">验证码</label>
-    <input type="text" id="inputCode" name="captcha" class="form-control" placeholder="验证码"  required>
-    <img id="captchaImg" alt="点击更换验证码" src="/kaptcha/getKaptchaImage" onclick="getCaptcha()">
+    <div class="row">
+        <div class="col">
+            <label for="inputCode" class="sr-only">验证码</label>
+            <input type="text" id="inputCode" name="captcha" class="form-control" placeholder="验证码"  required>
+        </div>
+        <div class="col">
+
+            <img id="captchaImg" alt="点击更换验证码" src="/kaptcha/getKaptchaImage" onclick="getCaptcha()">
+        </div>
+    </div>
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
     <a href="/register"><input type="button" class="btn" value="注册"></a>

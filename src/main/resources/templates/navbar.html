@@ -36,14 +36,14 @@
 
   <div class="collapse navbar-collapse" id="navbarsExample05">
     <ul class="navbar-nav mr-auto">
-      <li id="home" class="nav-item">
-        <a class="nav-link" href="/">Home </a>
+      <li class="nav-item active">
+        <a id="home" class="nav-link" href="/">Home </a>
       </li>
-      <li id="scans" class="nav-item">
-        <a class="nav-link" href="/ActiveScan/scans">漏洞扫描</a>
+      <li class="nav-item">
+        <a id="scans" class="nav-link" href="/ActiveScan/scans">漏洞扫描</a>
       </li>
-      <li class="nav-item" id="vulnerabilities">
-        <a class="nav-link" href="/ActiveScan/vulnerabilities">漏洞信息</a>
+      <li class="nav-item">
+        <a id="vulnerabilities" class="nav-link" href="/ActiveScan/vulnerabilities">漏洞信息</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Dropdown</a>
@@ -72,17 +72,5 @@
     </ul>
   </div>
 </nav>
-<script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/js/layer/layer.js"></script>
-<script type="text/javascript">
-  $(function(){
-$('.navbar-nav li a').click(function(){
-        $('.navbar-nav li').removeClass('active');
-        $(this).parent().addClass('active');
-
-   })
-
-})
-</script>
 </body>
 </html>

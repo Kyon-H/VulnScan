@@ -7,7 +7,14 @@ var sidx="last_seen";
 var order="desc";
 ////////////////////////////////
 function load(){
-    loadPage(URL,currPage,pageSize,sidx,order,addVulnInfo);
+    let severity=$.getUrlParam("severity");
+    let scanRecordId=$.getUrlParam("scan_record_id");
+    var params={
+        scan_record_id:scanRecordId,
+        severity:severity,
+    };
+
+    loadPage(URL,currPage,pageSize,sidx,order,addVulnInfo,params);
 }
 //绑定上一页按钮点击事件
 $('#pagePre').click(function(){
@@ -59,3 +66,12 @@ function formData(datetime) {
     var form_date=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
     return form_date;
 }
+//getUrlParam
+(function ($) {
+    $.getUrlParam = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURI(r[2]);
+        return null;
+    }
+})(jQuery);

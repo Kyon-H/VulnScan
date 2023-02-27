@@ -62,7 +62,8 @@ public class ConnectorService {
                     Integer scanRecordId = entity.getId();
                     for (int i = 0; i < vulnInfoArray.size(); i++) {
                         JSONObject item = vulnInfoArray.getJSONObject(i);
-                        Date lastSeen = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
+                        Date date = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
+                        Date lastSeen=DateUtils.addDateHours(date, 8);
                         VulnInfoEntity vulnInfo = new VulnInfoEntity();
                         vulnInfo.setScanRecordId(scanRecordId);
                         vulnInfo.setVulnId(item.getString("vuln_id"));
@@ -119,10 +120,12 @@ public class ConnectorService {
                 return CompletableFuture.completedFuture(entity.getStatus());
             }
             while (entity.getScanId() == null) {
+                Thread.sleep(INTERVAL * 2);
                 String scanId = targetService.getScanId(entity.getTargetId());
                 entity.setScanId(scanId);
             }
             while (true) {
+                Thread.sleep(INTERVAL * 2);
                 String scanId = entity.getScanId();
                 ScanRecordEntity status = scanService.getStatus(scanId);
                 if (status.getStatus() == null) continue;
@@ -132,11 +135,11 @@ public class ConnectorService {
 
                 log.info(entity.getSeverityCounts().toString());
                 log.info(entity.getStatus());
-                if (!entity.getStatus().equals("processing")) {
-                    scanRecordService.updateById(entity);
-                    return CompletableFuture.completedFuture(entity.getStatus());
-                }
-                Thread.sleep(INTERVAL * 2);
+                if(entity.getStatus().equals("processing")) continue;
+                scanRecordService.updateById(entity);
+                log.info("update success");
+                return CompletableFuture.completedFuture(entity.getStatus());
+
             }
         } catch (Exception e) {
             log.error("监控线程意外中断{}", e.getMessage());

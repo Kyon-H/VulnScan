@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
@@ -18,5 +19,7 @@ public interface VulnInfoService extends IService<VulnInfoEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     Boolean updateAll();
+
+    JSONObject getDetail(Map<String, Object> params);
 }
 

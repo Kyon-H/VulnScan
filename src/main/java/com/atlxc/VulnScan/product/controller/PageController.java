@@ -38,5 +38,6 @@ public class PageController {
     public String vulnerabilities(){
         return "ActiveScan/vulnerabilities";
     }
-
+    @GetMapping("/ActiveScan/vulnerabilities/detail")
+    public String detail(){return "ActiveScan/detail";}
 }

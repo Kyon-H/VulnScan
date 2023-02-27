@@ -97,4 +97,24 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         return Boolean.TRUE;
     }
 
+    @Override
+    public JSONObject getDetail(Map<String, Object> params) {
+        String userName = params.get("userName").toString();
+        Integer vulnInfoId= Integer.parseInt(params.get("vulninfo_id").toString());
+        List<ScanRecordEntity> scanRecordEntities = scanRecordService.getByUserName(userName);
+        List<Integer> scanRecordIds = new ArrayList<>();
+        scanRecordEntities.forEach(scanRecordEntity -> {
+            scanRecordIds.add(scanRecordEntity.getId());
+        });
+        VulnInfoEntity vulnInfoEntity=baseMapper.selectOne(
+                new QueryWrapper<VulnInfoEntity>()
+                        .in("scan_record_id",scanRecordIds)
+                        .eq("id",vulnInfoId)
+        );
+        if(vulnInfoEntity==null){return null;}
+        String vulnId=vulnInfoEntity.getVulnId();
+        JSONObject detail = vulnService.getVuln(vulnId);
+        return detail;
+    }
+
 }

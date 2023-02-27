@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,12 @@ public class VulnInfoController {
         VulnInfoEntity vulnInfo = vulnInfoService.getById(id);
 
         return R.ok().put("vulnInfo", vulnInfo);
+    }
+    @RequestMapping("/detail")
+    public R detail(@RequestParam Map<String, Object> params, Principal principal) {
+        params.put("userName", principal.getName());
+        JSONObject detail = vulnInfoService.getDetail(params);
+        return R.ok().put("detail", detail);
     }
 
     /**

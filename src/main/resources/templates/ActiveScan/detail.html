@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>详细信息</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/navbar.css" rel="stylesheet">
+    <link href="/icon/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body onload="load();">
+<!--Navigation bar-->
+<div id="nav-placeholder"></div>
+
+<main role="main" class=" ml-sm-auto">
+    <button type="button" class="btn btn-primary">
+        <i class="bi bi-arrow-90deg-left"></i>
+        Button
+    </button>
+    <div class="container">
+
+        <div>
+
+            <h2>漏洞信息</h2>
+        </div>
+
+
+        <div class="accordion" id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingVtName">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseVtName" aria-expanded="true" aria-controls="collapseVtName">
+                            漏洞名称
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="collapseVtName" class="collapse show" aria-labelledby="headingVtName">
+                    <div class="card-body">
+                        <p id="vt_name" class="h4">name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingDescription">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                            漏洞描述
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseDescription" class="collapse show" aria-labelledby="headingDescription">
+                    <div class="card-body">
+                        <p id="description">description</p>
+                        The vulnerability affects <b id="affects_url">affects_url</b>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingRequest">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseRequest" aria-expanded="true" aria-controls="collapseRequest">
+                            HTTP Request
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseRequest" class="collapse show" aria-labelledby="headingRequest">
+                    <div class="card-body">
+                        <pre id="request">request</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingImpact">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseImpact" aria-expanded="true" aria-controls="collapseImpact">
+                            该漏洞的影响
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseImpact" class="collapse show" aria-labelledby="headingImpact">
+                    <div class="card-body">
+                        <p id="impact">impact</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingRecommendation">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseRecommendation" aria-expanded="true" aria-control="collapseRecommendation">
+                            修复建议
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseRecommendation" class="collapse show" aria-labelled="headingRecommendation">
+                    <div class="card-body">
+                        <p id="recommendation">recommendation</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingReferences">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseReferences" aria-expanded="true" aria-control="collapseReferences">
+                            参考资料
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseReferences" class="collapse show" aria-labelled="headingReferences">
+                    <div id="references" class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/detail.js"></script>
+<script type="text/javascript">
+$(function(){
+    $("#nav-placeholder").load("/navbar");
+    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
+});
+</script>
+</body>
+</html>

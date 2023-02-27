@@ -62,7 +62,7 @@ function addVulnInfo(data){
                 break;
         }
         //vulnerability
-        item+=`<td>${m.vulnerability}</td>`;
+        item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}">${m.vulnerability}</a></td>`;
         //targetAddress
         item+=`<td>${m.targetAddress}</td>`;
         //confidence
@@ -74,6 +74,11 @@ function addVulnInfo(data){
         $("#tablelist").html(item);
     })
 }
+
+$('#tablelist tr').click(function(){
+    var id=this.id;
+    alert(id);
+})
 
 //格式化时间
 function formData(datetime) {

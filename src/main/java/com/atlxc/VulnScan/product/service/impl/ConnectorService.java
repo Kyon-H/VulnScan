@@ -2,16 +2,20 @@ package com.atlxc.VulnScan.product.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.atlxc.VulnScan.product.apiservice.ReportService;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.apiservice.VulnService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +34,7 @@ public class ConnectorService {
     private static final int INTERVAL = 1000;
 
     @Async("connectorExecutor")
-    public void getScanId(ScanRecordEntity entity) {
+    public void getScanId(@NotNull ScanRecordEntity entity) {
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
@@ -84,7 +88,7 @@ public class ConnectorService {
     }
 
     @Async("connectorExecutor")
-    public void getStatus(ScanRecordEntity entity) {
+    public void getStatus(@NotNull ScanRecordEntity entity) {
         log.info("getStatus entity");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
@@ -145,5 +149,23 @@ public class ConnectorService {
             log.error("监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    @Async("connectorExecutor")
+    public CompletableFuture<String> getReportStatus(Integer id){
+        log.info("getReportStatus id:{}", id);
+        ScanReportService scanReportService=(ScanReportService) SpringContextUtils.getBean("scanReportService");
+        ReportService reportService=(ReportService) SpringContextUtils.getBean("reportService");
+        ScanReportEntity scanReportEntity=scanReportService.getById(id);
+        // TODO
+        try {
+            do {
+                reportService.getReport(scanReportEntity.getRecordId());
+            }while (true);
+        }catch (Exception e) {
+
+        }
+
+        return null;
     }
 }

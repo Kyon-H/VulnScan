@@ -4,6 +4,9 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atlxc.VulnScan.product.apiservice.ReportService;
+import com.atlxc.VulnScan.product.service.UsersService;
+import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +33,12 @@ import com.atlxc.VulnScan.utils.R;
 public class ScanReportController {
     @Autowired
     private ScanReportService scanReportService;
+    @Autowired
+    private UsersService usersService;
+    @Autowired
+    private ReportService reportService;
+    @Autowired
+    private ConnectorService connectorService;
 
     /**
      * 列表
@@ -55,11 +64,12 @@ public class ScanReportController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
-    public R save(@RequestBody ScanReportEntity scanReport, Principal principal){
-
-		scanReportService.save(scanReport);
-
+    @RequestMapping("/add")
+    public R add(@RequestBody ScanReportEntity scanReport, Principal principal){
+        String userName= principal.getName();
+        Integer userId = usersService.getIdByName(userName);
+        scanReport.setUserId(userId);
+        scanReportService.addReport(scanReport);
         return R.ok();
     }
 

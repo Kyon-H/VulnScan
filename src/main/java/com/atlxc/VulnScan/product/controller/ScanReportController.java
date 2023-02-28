@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -22,10 +23,10 @@ import com.atlxc.VulnScan.utils.R;
  *
  * @author lxc
  * @email a3171218907@qq.com
- * @date 2023-01-01 22:17:22
+ * @date 2023-02-28 20:39:25
  */
 @RestController
-@RequestMapping("product/scanreport")
+@RequestMapping("report")
 public class ScanReportController {
     @Autowired
     private ScanReportService scanReportService;
@@ -34,7 +35,7 @@ public class ScanReportController {
      * 列表
      */
     @RequestMapping("/list")
-        public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params){
         PageUtils page = scanReportService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -45,7 +46,7 @@ public class ScanReportController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-        public R info(@PathVariable("id") Integer id){
+    public R info(@PathVariable("id") Integer id){
 		ScanReportEntity scanReport = scanReportService.getById(id);
 
         return R.ok().put("scanReport", scanReport);
@@ -55,7 +56,8 @@ public class ScanReportController {
      * 保存
      */
     @RequestMapping("/save")
-        public R save(@RequestBody ScanReportEntity scanReport){
+    public R save(@RequestBody ScanReportEntity scanReport, Principal principal){
+
 		scanReportService.save(scanReport);
 
         return R.ok();
@@ -65,7 +67,7 @@ public class ScanReportController {
      * 修改
      */
     @RequestMapping("/update")
-        public R update(@RequestBody ScanReportEntity scanReport){
+    public R update(@RequestBody ScanReportEntity scanReport){
 		scanReportService.updateById(scanReport);
 
         return R.ok();
@@ -75,7 +77,7 @@ public class ScanReportController {
      * 删除
      */
     @RequestMapping("/delete")
-        public R delete(@RequestBody Integer[] ids){
+    public R delete(@RequestBody Integer[] ids){
 		scanReportService.removeByIds(Arrays.asList(ids));
 
         return R.ok();

@@ -28,6 +28,11 @@ function addDetail(data){
     $('#references').html(item);
 }
 
+$('#goBack').click(function(){
+    //返回上一页：
+    window.history.go(-1);
+});
+
 //getUrlParam
 (function ($) {
     $.getUrlParam = function (name) {

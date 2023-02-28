@@ -8,6 +8,7 @@ import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -98,7 +99,7 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     }
 
     @Override
-    public JSONObject getDetail(Map<String, Object> params) {
+    public JSONObject getDetail(@NotNull Map<String, Object> params) {
         String userName = params.get("userName").toString();
         Integer vulnInfoId= Integer.parseInt(params.get("vulninfo_id").toString());
         List<ScanRecordEntity> scanRecordEntities = scanRecordService.getByUserName(userName);

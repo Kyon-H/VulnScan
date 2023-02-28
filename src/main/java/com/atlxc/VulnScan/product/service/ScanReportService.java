@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author lxc
  * @email a3171218907@qq.com
- * @date 2023-01-01 22:17:22
+ * @date 2023-02-28 20:39:25
  */
 public interface ScanReportService extends IService<ScanReportEntity> {
 

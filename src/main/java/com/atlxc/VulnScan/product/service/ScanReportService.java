@@ -17,6 +17,6 @@ public interface ScanReportService extends IService<ScanReportEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    void addReport(ScanReportEntity scanReport);
+    ScanReportEntity getByReportId(String reportId);
 }
 

@@ -33,15 +33,8 @@ public class ScanReportServiceImpl extends ServiceImpl<ScanReportDao, ScanReport
     }
 
     @Override
-    public void addReport(ScanReportEntity scanReport) {
-        reportService.addReport(scanReport);
-        JSONObject jsonObject = reportService.getALLReports(null);
-        JSONArray allReports=jsonObject.getJSONArray("reports");
-        for(int i=0;i<allReports.size();i++){
-            JSONObject report = allReports.getJSONObject(i);
-            String templateId = report.getString("template_id");
-            JSONObject source = report.getJSONObject("source");
-        }
+    public ScanReportEntity getByReportId(String reportId) {
+        return baseMapper.selectOne(new QueryWrapper<ScanReportEntity>().eq("report_id", reportId));
     }
 
 }

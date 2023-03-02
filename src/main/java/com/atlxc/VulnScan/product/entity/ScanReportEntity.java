@@ -1,11 +1,14 @@
 package com.atlxc.VulnScan.product.entity;
 
+import com.atlxc.VulnScan.validator.group.AddGroup;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 扫描报告表
@@ -31,7 +34,7 @@ public class ScanReportEntity implements Serializable {
 	/**
 	 * 报告id
 	 */
-	private String recordId;
+	private String reportId;
 	/**
 	 * html报告下载地址
 	 */
@@ -43,10 +46,12 @@ public class ScanReportEntity implements Serializable {
 	/**
 	 * 模板id
 	 */
+	@NotBlank(groups = {AddGroup.class})
 	private String templateId;
 	/**
 	 * 模板名
 	 */
+	@NotBlank(groups = {AddGroup.class})
 	private String templateName;
 	/**
 	 * 描述
@@ -55,10 +60,12 @@ public class ScanReportEntity implements Serializable {
 	/**
 	 * id_list中id类型
 	 */
+	@NotBlank(groups = {AddGroup.class})
 	private String listType;
 	/**
 	 * id : scan_id,vuln_id
 	 */
+	@NotBlank(groups = {AddGroup.class})
 	private String idList;
 	/**
 	 * 生成报告状态

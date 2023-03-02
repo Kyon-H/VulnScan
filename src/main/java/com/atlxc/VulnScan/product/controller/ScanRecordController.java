@@ -115,8 +115,8 @@ public class ScanRecordController {
         scanRecord.setSeverityCounts(severityCounts);
 
         JSONObject result = scanService.postScans(scanRecord);
-        connectorService.getScanId(scanRecord);
         scanRecordService.save(scanRecord);
+        connectorService.getScanRecordStatus(scanRecord.getScanId());
         //connectorService.getStatus(scanRecord);
         return R.ok(result);
     }

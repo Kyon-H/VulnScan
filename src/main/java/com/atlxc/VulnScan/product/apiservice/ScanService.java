@@ -14,7 +14,7 @@ import java.util.Map;
  * @author Kyon-H
  * @date 2023/1/28 13:19
  */
-@Slf4j
+
 @Service
 public class ScanService {
 
@@ -26,7 +26,6 @@ public class ScanService {
      * URL: /api/v1/scans
      */
     public JSONObject postScans(ScanRecordEntity scanRecord) {
-        log.info("postScans()");
         JSONObject body = new JSONObject();
         JSONObject schedule = new JSONObject();
         schedule.put("disable", false);
@@ -36,7 +35,6 @@ public class ScanService {
         body.put("profile_id", scanRecord.getType());
         body.put("schedule", schedule);
         JSONObject response = AWVSRequestUtils.POST(URL, body);
-        log.info(response.toString());
         if (response == null)
             throw new RRException("添加扫描失败");
         return response;
@@ -48,7 +46,6 @@ public class ScanService {
      * URL: /api/v1/scans/{scan_id}
      */
     public ScanRecordEntity getStatus(String scanId) {
-        log.info("getStatus(),scanID: {}", scanId);
         JSONObject responseEntity = AWVSRequestUtils.GET(URL + "/" + scanId);
         if (responseEntity == null)
             throw new RRException("获取扫描状态失败");
@@ -57,7 +54,6 @@ public class ScanService {
         scanRecord.setSeverityCounts(json.getJSONObject("severity_counts"));
         scanRecord.setScanSessionId(json.getString("scan_session_id"));
         scanRecord.setStatus(json.getString("status"));
-        log.info(scanRecord.toString());
         return scanRecord;
     }
 

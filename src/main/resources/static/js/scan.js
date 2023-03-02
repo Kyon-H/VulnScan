@@ -125,7 +125,7 @@ function addTable(data){
             sendSock(data,function(backdata){
                 console.log("callback data: " + JSON.stringify(backdata));
                 if(backdata.message!="processing"){
-                    windows.location.reload();
+                    window.location.reload();
                 }
             });
 

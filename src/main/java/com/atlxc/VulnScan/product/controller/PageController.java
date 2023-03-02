@@ -40,4 +40,8 @@ public class PageController {
     }
     @GetMapping("/ActiveScan/vulnerabilities/detail")
     public String detail(){return "ActiveScan/detail";}
+    @GetMapping("/ActiveScan/reports")
+    public String reports(){
+        return "ActiveScan/reports";
+    }
 }

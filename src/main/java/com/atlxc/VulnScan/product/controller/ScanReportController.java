@@ -28,7 +28,7 @@ import com.atlxc.VulnScan.utils.R;
  * @date 2023-02-28 20:39:25
  */
 @RestController
-@RequestMapping("report")
+@RequestMapping("/report")
 public class ScanReportController {
     @Autowired
     private ScanReportService scanReportService;

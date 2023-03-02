@@ -1,5 +1,6 @@
 var scans_reg =new RegExp(".*/ActiveScan/scans.*");
 var vulnInfo_reg=new RegExp(".*/ActiveScan/vulnerabilities.*");
+var report_reg=new RegExp(".*/ActiveScan/reports.*");
 
 if(scans_reg.test(window.location.href)) {
     $('#home').parent().removeClass('active');
@@ -7,4 +8,7 @@ if(scans_reg.test(window.location.href)) {
 }else if(vulnInfo_reg.test(window.location.href)){
     $('#home').parent().removeClass('active');
     $('#vulnerabilities').parent().addClass('active');
+}else if(report_reg.test(window.location.href)){
+    $('#home').parent().removeClass('active');
+    $('#reports').parent().addClass('active');
 }

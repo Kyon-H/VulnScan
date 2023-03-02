@@ -7,9 +7,15 @@ import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.Map;
 
 /**
@@ -51,9 +57,10 @@ public class ReportService {
      * 添加报告
      * Method:POST
      * URL: /api/v1/reports
-     * 只返回201状态码
+     * 返回201状态码
+     * headers: {location: "/api/v1/reports/{report_id}"}
      */
-    public Boolean addReport(ScanReportEntity scanReport) {
+    public String addReport(ScanReportEntity scanReport) {
         JSONObject body = new JSONObject();
         JSONObject source = new JSONObject();
         JSONArray list = new JSONArray();
@@ -65,8 +72,19 @@ public class ReportService {
 
         body.put("template_id", scanReport.getTemplateId());
         body.put("source", source);
-        AWVSRequestUtils.POST(URL, body);
-        return Boolean.TRUE;
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(body, headers);
+
+        URI uri = restTemplate.postForLocation(URL, httpEntity, JSONObject.class);
+        String location = uri.toString();
+        if(StringUtils.contains(location,"/api/v1/reports/")){
+            return StringUtils.substring(location,16);
+        }
+        throw new RRException("添加报告失败");
     }
 
     /**

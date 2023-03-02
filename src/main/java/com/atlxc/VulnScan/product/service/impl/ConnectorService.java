@@ -34,14 +34,14 @@ public class ConnectorService {
     private static final int INTERVAL = 1000;
 
     @Async("connectorExecutor")
-    public void getScanId(@NotNull ScanRecordEntity entity) {
+    public void getScanRecordStatus(String targetId) {
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
         VulnInfoService vulnInfoService = (VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
         //
-        String targetId = entity.getTargetId();
+        ScanRecordEntity entity=scanRecordService.getByTargetId(targetId);
         try {
             while (true) {
                 Thread.sleep(INTERVAL * 2);
@@ -82,32 +82,7 @@ public class ConnectorService {
                 }
             }
         } catch (InterruptedException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Async("connectorExecutor")
-    public void getStatus(@NotNull ScanRecordEntity entity) {
-        log.info("getStatus entity");
-        ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
-        ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
-        String scanId = entity.getScanId();
-        try {
-            while (true) {
-                ScanRecordEntity status = scanService.getStatus(scanId);
-                entity.setSeverityCounts(status.getSeverityCounts());
-                log.info(entity.getSeverityCounts().toString());
-                log.info(entity.getStatus());
-                if (!status.getStatus().equals("processing")) {
-                    entity.setStatus(status.getStatus());
-                    scanRecordService.updateById(entity);
-                    break;
-                }
-                Thread.sleep(INTERVAL);
-            }
-        } catch (InterruptedException e) {
-            log.error("监控线程意外中断{}", e.getMessage());
+            log.error("getScanRecordStatus 监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -146,26 +121,33 @@ public class ConnectorService {
 
             }
         } catch (Exception e) {
-            log.error("监控线程意外中断{}", e.getMessage());
+            log.error("getStatus 监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     @Async("connectorExecutor")
-    public CompletableFuture<String> getReportStatus(Integer id){
-        log.info("getReportStatus id:{}", id);
+    public CompletableFuture<String> getReportStatus(String ReportId){
         ScanReportService scanReportService=(ScanReportService) SpringContextUtils.getBean("scanReportService");
         ReportService reportService=(ReportService) SpringContextUtils.getBean("reportService");
-        ScanReportEntity scanReportEntity=scanReportService.getById(id);
-        // TODO
+        //
+        ScanReportEntity entity=scanReportService.getByReportId(ReportId);
         try {
-            do {
-                reportService.getReport(scanReportEntity.getRecordId());
-            }while (true);
+            while (true) {
+                Thread.sleep(INTERVAL*2);
+                JSONObject report = reportService.getReport(entity.getReportId());
+                JSONArray download=report.getJSONArray("download");
+                if(report.getString("status").equals("processing")) continue;
+                entity.setStatus(report.getString("status"));
+                entity.setDescription(report.getString("description"));
+                entity.setHtmlUrl(download.getString(0));
+                entity.setPdfUrl(download.getString(1));
+                if(!scanReportService.updateById(entity)) continue;
+                return CompletableFuture.completedFuture(entity.getStatus());
+            }
         }catch (Exception e) {
-
+            log.error("getReportStatus 监控线程意外中断{}", e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 }

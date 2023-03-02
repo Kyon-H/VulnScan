@@ -2,17 +2,16 @@ package com.atlxc.VulnScan.product.controller;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import com.atlxc.VulnScan.product.apiservice.ReportService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
+import com.atlxc.VulnScan.validator.group.AddGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.product.service.ScanReportService;
@@ -64,12 +63,19 @@ public class ScanReportController {
     /**
      * 保存
      */
-    @RequestMapping("/add")
-    public R add(@RequestBody ScanReportEntity scanReport, Principal principal){
+    @PostMapping("/save")
+    public R add(@Validated(AddGroup.class) @RequestBody ScanReportEntity scanReport, Principal principal){
+        //保存基本数据
         String userName= principal.getName();
         Integer userId = usersService.getIdByName(userName);
         scanReport.setUserId(userId);
-        scanReportService.addReport(scanReport);
+        scanReport.setStatus("processing");
+        scanReport.setGenerationDate(new Date());
+        String reportId=reportService.addReport(scanReport);
+        scanReport.setReportId(reportId);
+        scanReportService.save(scanReport);
+        //获取status、download_url、description
+        connectorService.getReportStatus(scanReport.getReportId());
         return R.ok();
     }
 

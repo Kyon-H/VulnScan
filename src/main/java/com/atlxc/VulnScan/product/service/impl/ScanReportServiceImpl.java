@@ -1,9 +1,8 @@
 package com.atlxc.VulnScan.product.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.product.apiservice.ReportService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,20 +15,27 @@ import com.atlxc.VulnScan.product.dao.ScanReportDao;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.product.service.ScanReportService;
 
-
+@Slf4j
 @Service("scanReportService")
 public class ScanReportServiceImpl extends ServiceImpl<ScanReportDao, ScanReportEntity> implements ScanReportService {
 
-    @Autowired
-    ReportService reportService;
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage<ScanReportEntity> page = this.page(
-                new Query<ScanReportEntity>().getPage(params),
-                new QueryWrapper<ScanReportEntity>()
-        );
-
-        return new PageUtils(page);
+    public PageUtils queryPage(@NotNull Map<String, Object> params) {
+        Integer userId= (Integer) params.get("userId");
+        if(StringUtils.isNotEmpty((String) params.get("sidx"))) {
+            Boolean isAsc=params.get("order").toString().equals("asc")?Boolean.TRUE:Boolean.FALSE;
+            IPage<ScanReportEntity> page = this.page(
+                    new Query<ScanReportEntity>().getPage(params,params.get("sidx").toString(),isAsc),
+                    new QueryWrapper<ScanReportEntity>().eq("user_id",userId)
+            );
+            return new PageUtils(page);
+        }else {
+            IPage<ScanReportEntity> page = this.page(
+                    new Query<ScanReportEntity>().getPage(params),
+                    new QueryWrapper<ScanReportEntity>().eq("user_id",userId)
+            );
+            return new PageUtils(page);
+        }
     }
 
     @Override

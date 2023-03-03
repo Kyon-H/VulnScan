@@ -34,6 +34,7 @@ function addTable(data){
     totalCount=data.totalCount;
     totalPage=data.totalPage;
     var item="";
+    console.log(data);
     $.each(data.list,function(i,m){
 
     });

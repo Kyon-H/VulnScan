@@ -43,7 +43,9 @@ public class ScanReportController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params,Principal principal){
+        Integer userId = usersService.getIdByName(principal.getName());
+        params.put("userId",userId);
         PageUtils page = scanReportService.queryPage(params);
 
         return R.ok().put("page", page);

@@ -132,7 +132,7 @@ function addTable(data){
         }
         //
         item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.id}>生成报告</button></td>
+            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.scanId}>生成报告</button></td>
         <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);

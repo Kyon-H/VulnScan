@@ -128,6 +128,7 @@ public class ConnectorService {
 
     @Async("connectorExecutor")
     public CompletableFuture<String> getReportStatus(String ReportId){
+        log.info("getReportStatus");
         ScanReportService scanReportService=(ScanReportService) SpringContextUtils.getBean("scanReportService");
         ReportService reportService=(ReportService) SpringContextUtils.getBean("reportService");
         //
@@ -137,9 +138,11 @@ public class ConnectorService {
                 Thread.sleep(INTERVAL*2);
                 JSONObject report = reportService.getReport(entity.getReportId());
                 JSONArray download=report.getJSONArray("download");
+                log.info("status:processing");
                 if(report.getString("status").equals("processing")) continue;
                 entity.setStatus(report.getString("status"));
-                entity.setDescription(report.getString("description"));
+                log.info("status:{}", entity.getStatus());
+                entity.setDescription(report.getJSONObject("source").getString("description"));
                 entity.setHtmlUrl(download.getString(0));
                 entity.setPdfUrl(download.getString(1));
                 if(!scanReportService.updateById(entity)) continue;

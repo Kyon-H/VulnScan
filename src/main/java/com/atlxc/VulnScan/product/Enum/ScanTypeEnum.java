@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.product.Enum;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Kyon-H
@@ -20,6 +21,7 @@ public enum ScanTypeEnum {
     private final String code;
     private final String message;
 
+    @NotNull
     public static Boolean isValidValue(String value){
         for(ScanTypeEnum item : ScanTypeEnum.values()){
             if(item.getCode().equals(value)){

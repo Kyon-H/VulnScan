@@ -1,5 +1,8 @@
 package com.atlxc.VulnScan.product.entity;
 
+import com.atlxc.VulnScan.product.Enum.ListTypeEnum;
+import com.atlxc.VulnScan.product.Enum.TemplateEnum;
+import com.atlxc.VulnScan.utils.EnumValue;
 import com.atlxc.VulnScan.validator.group.AddGroup;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -47,6 +50,7 @@ public class ScanReportEntity implements Serializable {
 	 * 模板id
 	 */
 	@NotBlank(groups = {AddGroup.class})
+	@EnumValue(enumClass=TemplateEnum.class,enumMethod = "isValidValue",groups = {AddGroup.class})
 	private String templateId;
 	/**
 	 * 模板名
@@ -60,6 +64,7 @@ public class ScanReportEntity implements Serializable {
 	 * id_list中id类型
 	 */
 	@NotBlank(groups = {AddGroup.class})
+	@EnumValue(enumClass = ListTypeEnum.class,enumMethod = "isValidValue",groups = {AddGroup.class})
 	private String listType;
 	/**
 	 * id : scan_id,vuln_id

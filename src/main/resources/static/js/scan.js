@@ -6,12 +6,10 @@ var URL="/scan/list";
 var sidx="scan_time";
 var order="desc";
 ////////////////////////////////
-$("#addTargetBtn").on("click", function () {
-    var address=$("#targetUrl").val();
-    //var pattern = /(https?)://[a-zA-z]+://[^\s]*/
-
-});
-
+function newTarget(){
+    var address=$('#targetUrl').val();
+    $('#address').attr('value',address);
+}
 $("#scanSubmitBtn").on("click", function () {
     var address=$("#address").val();
     console.log(address)
@@ -133,11 +131,44 @@ function addTable(data){
             item+=`<td>${m.status}</td>`;
         }
         //
-        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm">PDF</button></td>
+        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.id}>生成报告</button></td>
         <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }
+//report
+$("#tablelist").delegate("td button.btn-primary","click",function(){
+    $("#scanRecordId").attr("value",$(this).data("id"));
+})
+$("#reportSubmitBtn").click(function(){
+    let scanRecordId=$("#scanRecordId").val();
+    let templateId=$("#template_id").val();
+    console.log(scanRecordId)
+    console.log(templateId)
+    let postdata={
+        "templateId":templateId,
+        "listType":"scans",
+        "idList":scanRecordId
+    }
+    //submit
+    $.ajax({
+      url: '/report/save',
+      type: 'POST',
+      data: JSON.stringify(postdata),  // 将 JavaScript 对象转换为 JSON 字符串
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(data) {
+        console.log(data);
+        if(data.code==200||data.code==0){
+            window.location.href="/ActiveScan/reports";
+        }else{
+            layer.msg(data.msg, {icon: 2});
+        }
+
+      }
+    });
+})
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

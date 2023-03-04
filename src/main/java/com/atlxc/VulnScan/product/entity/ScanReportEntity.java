@@ -51,7 +51,6 @@ public class ScanReportEntity implements Serializable {
 	/**
 	 * 模板名
 	 */
-	@NotBlank(groups = {AddGroup.class})
 	private String templateName;
 	/**
 	 * 描述

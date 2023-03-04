@@ -72,10 +72,15 @@ public class WebSocketServer {
                 CompletableFuture.allOf(getstatus).join();
                 String status=getstatus.get();
                 log.info("status:{}",status);
-                if(status!=null&&!status.equals("processing")){
-                    this.sendMessage(status, session);
-                    break;
-                }
+                this.sendMessage(status, session);
+                break;
+            case "getReportStatus":
+                CompletableFuture<String> reportStatus=connectorService.getReportStatus(jsonObject.getString("reportId"));
+                CompletableFuture.allOf(reportStatus).join();
+                String rstatus = reportStatus.get();
+                log.info("status:{}",rstatus);
+                this.sendMessage(rstatus, session);
+                break;
             default:
                 break;
         }

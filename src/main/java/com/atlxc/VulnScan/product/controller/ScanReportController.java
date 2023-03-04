@@ -112,6 +112,11 @@ public class ScanReportController {
 
         return R.ok();
     }
+    @RequestMapping("/download/{url}")
+    public R download(@PathVariable("url") String url,Principal principal){
+        // TODO :下载文件
+        return R.ok();
+    }
 
     /**
      * 删除

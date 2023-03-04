@@ -65,4 +65,22 @@ function loadPage(URL,page=1,limit=10,sidx,order="desc",callback,params){
         }
     );
 }
-
+//绑定上一页按钮点击事件
+$('#pagePre').click(function(){
+    let currentPage = parseInt($('.page-item.active a').text());
+    if (currentPage > 1) {
+      loadPage(URL,currentPage - 1,pageSize,sidx,order,addTable);
+    }
+});
+// 绑定下一页按钮点击事件
+$('#pageNext').click(function(){
+   let currentPage = parseInt($('.page-item.active a').text());
+   if (currentPage < totalPage) {
+     loadPage(URL,currentPage + 1,pageSize,sidx,order,addTable);
+   }
+})
+// 绑定页码按钮点击事件
+$('.page-link:not(#pagePre,#pageNext)').click(function(e) {
+    let page = parseInt($(this).text());
+    loadPage(URL,page,pageSize,sidx,order,addTable);
+});

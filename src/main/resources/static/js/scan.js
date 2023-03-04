@@ -45,25 +45,6 @@ function load(){
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
 }
 
-//绑定上一页按钮点击事件
-$('#pagePre').click(function(){
-    let currentPage = parseInt($('.page-item.active a').text());
-    if (currentPage > 1) {
-      loadPage(URL,currentPage - 1,pageSize,sidx,order,addTable);
-    }
-});
-// 绑定下一页按钮点击事件
-$('#pageNext').click(function(){
-   let currentPage = parseInt($('.page-item.active a').text());
-   if (currentPage < totalPage) {
-     loadPage(URL,currentPage + 1,pageSize,sidx,order,addTable);
-   }
-})
-// 绑定页码按钮点击事件
-$('.page-link:not(#pagePre,#pageNext)').click(function(e) {
-    let page = parseInt($(this).text());
-    loadPage(URL,page,pageSize,sidx,order,addTable);
-});
 //获取扫描记录
 function addTable(data){
     currPage=data.currPage;
@@ -126,30 +107,30 @@ function addTable(data){
                     window.location.reload();
                 }
             });
-
         }else{
             item+=`<td>${m.status}</td>`;
         }
         //
-        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.scanId}>生成报告</button></td>
-        <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
+        item+=`<td><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.scanId}>
+            生成报告</button></td>
+            <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }
 //report
 $("#tablelist").delegate("td button.btn-primary","click",function(){
-    $("#scanRecordId").attr("value",$(this).data("id"));
+    $("#scan_id").attr("value",$(this).data("id"));
 })
 $("#reportSubmitBtn").click(function(){
-    let scanRecordId=$("#scanRecordId").val();
+    let scanId=$("#scan_id").val();
     let templateId=$("#template_id").val();
-    console.log(scanRecordId)
+    console.log(scanId)
     console.log(templateId)
     let postdata={
         "templateId":templateId,
         "listType":"scans",
-        "idList":scanRecordId
+        "idList":scanId
     }
     //submit
     $.ajax({
@@ -165,7 +146,6 @@ $("#reportSubmitBtn").click(function(){
         }else{
             layer.msg(data.msg, {icon: 2});
         }
-
       }
     });
 })

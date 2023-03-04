@@ -143,8 +143,8 @@ public class ConnectorService {
                 entity.setStatus(report.getString("status"));
                 log.info("status:{}", entity.getStatus());
                 entity.setDescription(report.getJSONObject("source").getString("description"));
-                entity.setHtmlUrl(download.getString(0));
-                entity.setPdfUrl(download.getString(1));
+                entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/",""));
+                entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/",""));
                 if(!scanReportService.updateById(entity)) continue;
                 return CompletableFuture.completedFuture(entity.getStatus());
             }

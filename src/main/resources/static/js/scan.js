@@ -86,7 +86,7 @@ function addTable(data){
             <a href="/ActiveScan/vulnerabilities?severity=0&scan_record_id=${m.id}" class="badge badge-success">${counts.info}</a>
         </td>`;
         //添加时间
-        item+="<td>"+formData(m.scanTime)+"</td>";
+        item+=`<td>${formData(m.scanTime)}</td>`;
         //扫描状态
         if(m.status=="processing"){
             item+=`<td><div class="d-flex align-items-center">

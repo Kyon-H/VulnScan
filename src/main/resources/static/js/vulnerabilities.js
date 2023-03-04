@@ -14,29 +14,10 @@ function load(){
         severity:severity,
     };
 
-    loadPage(URL,currPage,pageSize,sidx,order,addVulnInfo,params);
+    loadPage(URL,currPage,pageSize,sidx,order,addTable,params);
 }
-//绑定上一页按钮点击事件
-$('#pagePre').click(function(){
-    let currentPage = parseInt($('.page-item.active a').text());
-    if (currentPage > 1) {
-      loadPage(URL,currentPage - 1,pageSize,sidx,order,addVulnInfo);
-    }
-});
-// 绑定下一页按钮点击事件
-$('#pageNext').click(function(){
-   let currentPage = parseInt($('.page-item.active a').text());
-   if (currentPage < totalPage) {
-     loadPage(URL,currentPage + 1,pageSize,sidx,order,addVulnInfo);
-   }
-})
-// 绑定页码按钮点击事件
-$('.page-link:not(#pagePre,#pageNext)').click(function(e) {
-    let page = parseInt($(this).text());
-    loadPage(URL,page,pageSize,sidx,order,addVulnInfo);
-});
 //
-function addVulnInfo(data){
+function addTable(data){
     currPage=data.currPage;
     pageSize=data.pageSize;
     totalCount=data.totalCount;
@@ -70,16 +51,43 @@ function addVulnInfo(data){
         //lastSeen
         item+=`<td>${formData(m.lastSeen)}</td>`;
         //导出文档
-        item+=`<td align="center"><button type="button" class="btn btn-primary btn-sm">PDF</button></td></tr>`;
+        item+=`<td><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+            data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo"
+            data-id=${m.vulnId}>生成报告</button></td></tr>`;
         $("#tablelist").html(item);
     })
 }
-
-$('#tablelist tr').click(function(){
-    var id=this.id;
-    alert(id);
+//report
+$("#tablelist").delegate("td button.btn-primary","click",function(){
+    $("#vuln_id").attr("value",$(this).data("id"));
 })
-
+$("#reportSubmitBtn").click(function(){
+    let vulnId=$("#vuln_id").val();
+    let templateId=$("#template_id").val();
+    console.log(vulnId)
+    console.log(templateId)
+    let postdata={
+        "templateId":templateId,
+        "listType":"vulnerabilities",
+        "idList":vulnId
+    }
+    //submit
+    $.ajax({
+      url: '/report/save',
+      type: 'POST',
+      data: JSON.stringify(postdata),  // 将 JavaScript 对象转换为 JSON 字符串
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function(data) {
+        console.log(data);
+        if(data.code==200||data.code==0){
+            window.location.href="/ActiveScan/reports";
+        }else{
+            layer.msg(data.msg, {icon: 2});
+        }
+      }
+    });
+})
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

@@ -52,7 +52,7 @@ public class ConnectorService {
                     ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
                     entity.setScanId(scanId);
                     if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
-                    if (tmpEntity.getStatus().equals("processing")) continue;
+                    if (!tmpEntity.getStatus().equals("completed")) continue;
                     entity.setStatus(tmpEntity.getStatus());
                     entity.setSeverityCounts(tmpEntity.getSeverityCounts());
                     entity.setScanSessionId(tmpEntity.getScanSessionId());
@@ -114,7 +114,7 @@ public class ConnectorService {
 
                 log.info(entity.getSeverityCounts().toString());
                 log.info(entity.getStatus());
-                if(entity.getStatus().equals("processing")) continue;
+                if(!entity.getStatus().equals("completed")) continue;
                 scanRecordService.updateById(entity);
                 log.info("update success");
                 return CompletableFuture.completedFuture(entity.getStatus());
@@ -139,7 +139,7 @@ public class ConnectorService {
                 JSONObject report = reportService.getReport(entity.getReportId());
                 JSONArray download=report.getJSONArray("download");
                 log.info("status:processing");
-                if(report.getString("status").equals("processing")) continue;
+                if(!report.getString("status").equals("completed")) continue;
                 entity.setStatus(report.getString("status"));
                 log.info("status:{}", entity.getStatus());
                 entity.setDescription(report.getJSONObject("source").getString("description"));

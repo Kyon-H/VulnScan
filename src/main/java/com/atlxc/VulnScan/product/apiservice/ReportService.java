@@ -7,16 +7,22 @@ import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 
 /**
  * @author Kyon-H
@@ -34,7 +40,7 @@ public class ReportService {
      */
     public JSONObject getALLReports(Integer count) {
         StringBuilder sb = new StringBuilder(URL);
-        if(count!= null){
+        if (count != null) {
             sb.append("?l=").append(count);
         }
         JSONObject result = AWVSRequestUtils.GET(sb.toString());
@@ -81,8 +87,8 @@ public class ReportService {
 
         URI uri = restTemplate.postForLocation(URL, httpEntity, JSONObject.class);
         String location = uri.toString();
-        if(StringUtils.contains(location,"/api/v1/reports/")){
-            return StringUtils.substring(location,16);
+        if (StringUtils.contains(location, "/api/v1/reports/")) {
+            return StringUtils.substring(location, 16);
         }
         throw new RRException("添加报告失败");
     }
@@ -96,4 +102,42 @@ public class ReportService {
         Boolean result = AWVSRequestUtils.DELETE(URL + "/" + report_id);
         if (!result) throw new RRException("删除报告失败");
     }
+
+    /**
+     * 下载报告
+     */
+    public String downloadReport(String filename, String URI) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        String filePath = "D:/upload/" + filename;
+        String url = URL + "/download/" + URI;
+        //headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        //headers.add("Content-Type", "application/json;charset=UTF-8");
+        //HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RRException("下载报告失败");
+            }
+            byte[] body = response.getBody();
+            if (body == null) throw new RRException("下载报告失败");
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
+            }
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(body, 0, body.length);
+            outputStream.flush();
+            outputStream.close();
+            return filePath;
+        } catch (HttpClientErrorException e) {
+            // uri已失效，需重新获取
+            return null;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.dao;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 扫描报告表
@@ -13,5 +14,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ScanReportDao extends BaseMapper<ScanReportEntity> {
-	
+	@Select("select * from scan_report where id = #{id} and user_id = #{userId}")
+    ScanReportEntity getById(Integer id, Integer userId);
 }

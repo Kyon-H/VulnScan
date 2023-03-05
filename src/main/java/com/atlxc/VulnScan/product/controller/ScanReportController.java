@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import java.io.*;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Date;
@@ -11,8 +12,10 @@ import com.atlxc.VulnScan.product.Enum.TemplateEnum;
 import com.atlxc.VulnScan.product.apiservice.ReportService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
+import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.validator.group.AddGroup;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,7 @@ import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -112,10 +116,39 @@ public class ScanReportController {
 
         return R.ok();
     }
-    @RequestMapping("/download/{url}")
-    public R download(@PathVariable("url") String url,Principal principal){
-        // TODO :下载文件
-        return R.ok();
+    @RequestMapping("/download")
+    public R download(@RequestParam Integer id, @RequestParam String type, Principal principal, HttpServletResponse response){
+        Integer userId = usersService.getIdByName(principal.getName());
+        ScanReportEntity scanReport=scanReportService.getById(id,userId);
+        if(scanReport==null){return R.error();}
+        // 下载文件
+        String path = scanReportService.downloadReport(scanReport,type);
+        File file = new File(path);
+        if(!file.exists()){
+            return R.ok("下载文件不存在");
+        }
+        response.reset();
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("utf-8");
+        response.setContentLength((int) file.length());
+        StringBuilder sb =new StringBuilder();
+        sb.append(DateUtils.format(new Date(),DateUtils.DATETIME_FILE_PATTERN))
+                .append("_").append(scanReport.getTemplateName())
+                .append(".").append(type);
+        response.setHeader("Content-Disposition", "attachment;filename=" + sb);
+        try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] buff = new byte[1024];
+            OutputStream os  = response.getOutputStream();
+            int i = 0;
+            while ((i = bis.read(buff)) != -1) {
+                os.write(buff, 0, i);
+                os.flush();
+            }
+        } catch (IOException e) {
+            log.error("{}",e);
+            return R.ok("下载成功");
+        }
+        return R.ok("下载成功");
     }
 
     /**

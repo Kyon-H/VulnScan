@@ -27,6 +27,7 @@ public class DateUtils {
 	public final static String DATE_PATTERN = "yyyy-MM-dd";
 	/** 时间格式(yyyy-MM-dd HH:mm:ss) */
 	public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    public final static String DATETIME_FILE_PATTERN = "yyyyMMddHHmmss";
     /** 时间格式(yyyy-MM-ddTHH:mm:ss.SSSSSS+00:00)带时区 */
     public final static String DATE_TIME_ZONE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZ";
 

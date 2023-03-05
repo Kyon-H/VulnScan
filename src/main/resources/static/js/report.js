@@ -16,7 +16,6 @@ function addTable(data){
     totalCount=data.totalCount;
     totalPage=data.totalPage;
     var item="";
-    console.log(data);
     $.each(data.list,function(i,m){
         item+=`<tr><td align="center">${i+1}</td><td>${m.templateName}</td><td>${m.listType}</td>
             <td>${formData(m.generationDate)}</td><td>${m.description}</td>`;
@@ -42,11 +41,20 @@ function addTable(data){
             item+=`<td>${m.status}</td>`;
         }
         //download
-        item+=`<td><a class="btn btn-success btn-sm" href="#">HTML</a> <a class="btn btn-primary btn-sm" href="#">PDF</a></td>
+        item+=`<td><a class="btn btn-success btn-sm" href="/report/download?id=${m.id}&type=html" data-id="${m.id}" data-type="html">HTML</a>
+                   <a class="btn btn-primary btn-sm" href="/report/download?id=${m.id}&type=pdf" data-id="${m.id}" data-type="pdf">PDF</a></td>
             <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }
+//
+$("#tablelist").delegate("td a.btn","click",function(){
+    let url="/report/download?id"
+    let postdata={
+        id: $(this).data("id"),
+        type: $(this).data("type")
+    }
+})
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

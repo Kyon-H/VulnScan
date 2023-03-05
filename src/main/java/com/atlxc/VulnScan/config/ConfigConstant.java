@@ -92,4 +92,8 @@ public class ConfigConstant {
     public static final String templateName_ScanComparison = "Scan Comparison";
     public static final String templateName_STIGDISA = "STIG DISA";
     public static final String templateName_WASCThreatClassification = "WASC Threat Classification";
+    /**
+     * filedownload
+     */
+    public static final String FILE_PATH = "D:/upload/";
 }

@@ -44,12 +44,28 @@ function addTable(data){
             item+=`<td>${m.status}</td>`;
         }
         //download
-        item+=`<td><a class="btn btn-success btn-sm" href="/report/download?id=${m.id}&type=html" data-id="${m.id}" data-type="html">HTML</a>
-                   <a class="btn btn-primary btn-sm" href="/report/download?id=${m.id}&type=pdf" data-id="${m.id}" data-type="pdf">PDF</a></td>
-            <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
+        item+=`<td><a class="btn btn-success btn-sm" href="/report/download?id=${m.id}&type=html">HTML</a>
+                   <a class="btn btn-primary btn-sm" href="/report/download?id=${m.id}&type=pdf">PDF</a></td>
+            <td align="center"><button type="button" class="btn btn-danger btn-sm" data-id="${m.id}">删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }
+//
+$('#tablelist').delegate('td button.btn.btn-danger.btn-sm','click',function(){
+    let id=$(this).data('id');
+    layer.alert('确定要删除吗?', function(index){
+      $.get('/report/delete/' + id,function(data){
+        console.log(data);
+        layer.msg(data.msg);
+        if(data.code==0){
+            setTimeout(function(){
+                window.location.reload();
+            },1000);
+        }
+      });
+      layer.close(index);
+    });
+});
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

@@ -77,4 +77,9 @@ public class ScanReportServiceImpl extends ServiceImpl<ScanReportDao, ScanReport
         return baseMapper.getById(id,userId);
     }
 
+    @Override
+    public Integer removeById(Integer id, Integer userId) {
+        return baseMapper.removeById(id,userId);
+    }
+
 }

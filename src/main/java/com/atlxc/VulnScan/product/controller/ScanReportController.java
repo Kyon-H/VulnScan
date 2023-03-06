@@ -52,7 +52,7 @@ public class ScanReportController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params,Principal principal){
+    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal){
         Integer userId = usersService.getIdByName(principal.getName());
         params.put("userId",userId);
         PageUtils page = scanReportService.queryPage(params);
@@ -75,7 +75,7 @@ public class ScanReportController {
      * 保存
      */
     @PostMapping("/save")
-    public R add(@Validated(AddGroup.class) @RequestBody ScanReportEntity scanReport, Principal principal){
+    public R add(@NotNull @Validated(AddGroup.class) @RequestBody ScanReportEntity scanReport, @NotNull Principal principal){
         log.info("/report/sava {}",scanReport.toString());
         //保存基本数据
         String userName= principal.getName();
@@ -117,7 +117,7 @@ public class ScanReportController {
         return R.ok();
     }
     @RequestMapping("/download")
-    public R download(@RequestParam Integer id, @RequestParam String type, Principal principal, HttpServletResponse response){
+    public R download(@RequestParam Integer id, @RequestParam String type, @NotNull Principal principal, HttpServletResponse response){
         Integer userId = usersService.getIdByName(principal.getName());
         ScanReportEntity scanReport=scanReportService.getById(id,userId);
         if(scanReport==null){return R.error();}
@@ -154,11 +154,15 @@ public class ScanReportController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    public R delete(@RequestBody Integer[] ids){
-		scanReportService.removeByIds(Arrays.asList(ids));
-
-        return R.ok();
+    @RequestMapping("/delete/{id}")
+    public R delete(@PathVariable("id") Integer id, @NotNull Principal principal){
+        Integer userId = usersService.getIdByName(principal.getName());
+        ScanReportEntity scanReport=scanReportService.getById(id);
+        if(scanReportService.removeById(id,userId)==0){
+            return R.error("删除失败");
+        }
+        reportService.deleteReport(scanReport.getReportId());
+        return R.ok("删除成功");
     }
 
 }

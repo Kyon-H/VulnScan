@@ -26,10 +26,10 @@ public class VulnService {
     public JSONObject getAllVulns(Integer l, String q) {
         StringBuilder sb = new StringBuilder();
         sb.append(URL).append("?");
-        if(l!= null) {
+        if (l != null) {
             sb.append("l=").append(l).append("&");
         }
-        if(q!= null) {
+        if (q != null) {
             sb.append("q=status:").append(q).append("&");
         }
         JSONObject result = AWVSRequestUtils.GET(sb.toString());

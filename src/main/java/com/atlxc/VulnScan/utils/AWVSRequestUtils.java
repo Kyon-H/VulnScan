@@ -61,7 +61,7 @@ public class AWVSRequestUtils {
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> entity = new HttpEntity<JSONObject>(body, headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.PATCH, entity, JSONObject.class);
-        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -69,6 +69,7 @@ public class AWVSRequestUtils {
 
     /**
      * DELETE request
+     *
      * @param url
      */
     public static Boolean DELETE(String url) {
@@ -78,7 +79,7 @@ public class AWVSRequestUtils {
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<JSONObject> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, JSONObject.class);
-        if(responseEntity.getStatusCode().is2xxSuccessful()) {
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;

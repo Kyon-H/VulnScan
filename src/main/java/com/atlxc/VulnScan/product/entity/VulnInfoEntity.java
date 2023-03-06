@@ -2,12 +2,10 @@ package com.atlxc.VulnScan.product.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
-
-import lombok.Data;
 
 /**
  * 漏洞信息表

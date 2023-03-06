@@ -15,7 +15,6 @@ import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,7 @@ public class ConnectorService {
         VulnService vulnService = (VulnService) SpringContextUtils.getBean("vulnService");
         VulnInfoService vulnInfoService = (VulnInfoService) SpringContextUtils.getBean("vulnInfoService");
         //
-        ScanRecordEntity entity=scanRecordService.getByTargetId(targetId);
+        ScanRecordEntity entity = scanRecordService.getByTargetId(targetId);
         try {
             while (true) {
                 Thread.sleep(INTERVAL * 2);
@@ -67,7 +66,7 @@ public class ConnectorService {
                     for (int i = 0; i < vulnInfoArray.size(); i++) {
                         JSONObject item = vulnInfoArray.getJSONObject(i);
                         Date date = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
-                        Date lastSeen=DateUtils.addDateHours(date, 8);
+                        Date lastSeen = DateUtils.addDateHours(date, 8);
                         VulnInfoEntity vulnInfo = new VulnInfoEntity();
                         vulnInfo.setScanRecordId(scanRecordId);
                         vulnInfo.setVulnId(item.getString("vuln_id"));
@@ -114,7 +113,7 @@ public class ConnectorService {
 
                 log.info(entity.getSeverityCounts().toString());
                 log.info(entity.getStatus());
-                if(!entity.getStatus().equals("completed")) continue;
+                if (!entity.getStatus().equals("completed")) continue;
                 scanRecordService.updateById(entity);
                 log.info("update success");
                 return CompletableFuture.completedFuture(entity.getStatus());
@@ -127,28 +126,28 @@ public class ConnectorService {
     }
 
     @Async("connectorExecutor")
-    public CompletableFuture<String> getReportStatus(String ReportId){
+    public CompletableFuture<String> getReportStatus(String ReportId) {
         log.info("getReportStatus");
-        ScanReportService scanReportService=(ScanReportService) SpringContextUtils.getBean("scanReportService");
-        ReportService reportService=(ReportService) SpringContextUtils.getBean("reportService");
+        ScanReportService scanReportService = (ScanReportService) SpringContextUtils.getBean("scanReportService");
+        ReportService reportService = (ReportService) SpringContextUtils.getBean("reportService");
         //
-        ScanReportEntity entity=scanReportService.getByReportId(ReportId);
+        ScanReportEntity entity = scanReportService.getByReportId(ReportId);
         try {
             while (true) {
-                Thread.sleep(INTERVAL*2);
+                Thread.sleep(INTERVAL * 2);
                 JSONObject report = reportService.getReport(entity.getReportId());
-                JSONArray download=report.getJSONArray("download");
+                JSONArray download = report.getJSONArray("download");
                 log.info("status:processing");
-                if(!report.getString("status").equals("completed")) continue;
+                if (!report.getString("status").equals("completed")) continue;
                 entity.setStatus(report.getString("status"));
                 log.info("status:{}", entity.getStatus());
                 entity.setDescription(report.getJSONObject("source").getString("description"));
-                entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/",""));
-                entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/",""));
-                if(!scanReportService.updateById(entity)) continue;
+                entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/", ""));
+                entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/", ""));
+                if (!scanReportService.updateById(entity)) continue;
                 return CompletableFuture.completedFuture(entity.getStatus());
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("getReportStatus 监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
         }

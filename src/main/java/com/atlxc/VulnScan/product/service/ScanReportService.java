@@ -1,8 +1,8 @@
 package com.atlxc.VulnScan.product.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
 
@@ -19,7 +19,7 @@ public interface ScanReportService extends IService<ScanReportEntity> {
 
     ScanReportEntity getByReportId(String reportId);
 
-    String downloadReport(ScanReportEntity scanReport,String type);
+    String downloadReport(ScanReportEntity scanReport, String type);
 
     ScanReportEntity getById(Integer id, Integer userId);
 

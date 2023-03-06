@@ -2,24 +2,23 @@ package com.atlxc.VulnScan.product.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.dao.ScanRecordDao;
+import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.utils.Query;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atlxc.VulnScan.utils.PageUtils;
-import com.atlxc.VulnScan.utils.Query;
-
-import com.atlxc.VulnScan.product.dao.ScanRecordDao;
-import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
-import com.atlxc.VulnScan.product.service.ScanRecordService;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("scanRecordService")
@@ -29,39 +28,44 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     ScanService scanService;
     @Autowired
     VulnInfoService vulnInfoService;
+
     @Override
     public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        Integer userId=(Integer) params.get("userId");
-        if(StringUtils.isNotEmpty((String) params.get("sidx"))) {
-            Boolean isAsc=params.get("order").toString().equals("asc")?Boolean.TRUE:Boolean.FALSE;
+        Integer userId = (Integer) params.get("userId");
+        if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
+            Boolean isAsc = params.get("order").toString().equals("asc") ? Boolean.TRUE : Boolean.FALSE;
             //排序
             IPage<ScanRecordEntity> page = this.page(
-                    new Query<ScanRecordEntity>().getPage(params,params.get("sidx").toString(),isAsc),
-                    new QueryWrapper<ScanRecordEntity>().eq("user_id",userId)
+                    new Query<ScanRecordEntity>().getPage(params, params.get("sidx").toString(), isAsc),
+                    new QueryWrapper<ScanRecordEntity>().eq("user_id", userId)
             );
             return new PageUtils(page);
-        }else {
+        } else {
             IPage<ScanRecordEntity> page = this.page(
                     new Query<ScanRecordEntity>().getPage(params),
-                    new QueryWrapper<ScanRecordEntity>().eq("user_id",userId)
+                    new QueryWrapper<ScanRecordEntity>().eq("user_id", userId)
             );
             return new PageUtils(page);
         }
     }
+
     @Override
     public Boolean updateStatus(Integer id, String status) {
 
         return baseMapper.updateStatus(id, status);
     }
+
     @Override
     public Boolean updateSeverity(Integer id, @NotNull JSONObject severity) {
         return baseMapper.updateSeverity(id, severity.toString());
     }
+
     @Override
     public String getStatusById(Integer id) {
-        ScanRecordEntity entity =baseMapper.selectOne(new QueryWrapper<ScanRecordEntity>().eq("id",id));
+        ScanRecordEntity entity = baseMapper.selectOne(new QueryWrapper<ScanRecordEntity>().eq("id", id));
         return entity.getStatus();
     }
+
     @Override
     public Boolean updateAll(Integer userId) {
         List<ScanRecordEntity> entities = baseMapper.selectList(new QueryWrapper<ScanRecordEntity>().eq("user_id", userId));
@@ -84,6 +88,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     public List<ScanRecordEntity> getByUserId(Integer userId) {
         return baseMapper.selectByUserId(userId);
     }
+
     @Override
     public List<ScanRecordEntity> getByUserName(String userName) {
         return baseMapper.selectIdByUserName(userName);
@@ -97,7 +102,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     @Transactional
     @Override
     public Boolean removeByIds(Integer id, List<Integer> vulnIds) {
-        if(vulnInfoService.removeByIds(vulnIds)&&baseMapper.deleteById(id)!=0){
+        if (vulnInfoService.removeByIds(vulnIds) && baseMapper.deleteById(id) != 0) {
             return true;
         }
         return false;

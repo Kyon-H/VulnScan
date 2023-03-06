@@ -25,7 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class WebSocketServer {
 
-    /** 用来记录当前在线连接数。设计成线程安全的。*/
+    /**
+     * 用来记录当前在线连接数。设计成线程安全的。
+     */
     private static AtomicInteger onlineCount = new AtomicInteger(0);
     private static ConcurrentHashMap<String, Session> wsServerMAP = new ConcurrentHashMap<>();
     public static ScanService scanService;
@@ -35,17 +37,20 @@ public class WebSocketServer {
 
     /**
      * 连接成功
+     *
      * @param session
      */
     @OnOpen
     public void onOpen(Session session) {
         log.info("连接成功");
-        wsServerMAP.put(session.getId(),session);
+        wsServerMAP.put(session.getId(), session);
         onlineCount.incrementAndGet();
         log.info("客户端连接建立成功，Session ID：{}，当前在线数：{}", session.getId(), onlineCount.get());
     }
+
     /**
      * 连接关闭
+     *
      * @param session
      */
     @OnClose
@@ -57,54 +62,60 @@ public class WebSocketServer {
         wsServerMAP.remove(session.getId());
         log.info("客户端连接关闭成功，Session ID：{}，当前在线数：{}", session.getId(), onlineCount.get());
     }
+
     /**
      * 接收到消息
+     *
      * @param message
      */
     @OnMessage
     public void onMessage(String message, Session session) throws ExecutionException, InterruptedException {
         log.info("服务端接收消息成功，Session ID：{}，消息内容：{}", session.getId(), message);
-        JSONObject jsonObject=JSONObject.parseObject(message);
+        JSONObject jsonObject = JSONObject.parseObject(message);
 
-        switch (jsonObject.getString("action")){
+        switch (jsonObject.getString("action")) {
             case "getStatus":
                 CompletableFuture<String> getstatus = connectorService.getStatus(jsonObject.getInteger("id"));
                 CompletableFuture.allOf(getstatus).join();
-                String status=getstatus.get();
-                log.info("status:{}",status);
+                String status = getstatus.get();
+                log.info("status:{}", status);
                 this.sendMessage(status, session);
                 break;
             case "getReportStatus":
-                CompletableFuture<String> reportStatus=connectorService.getReportStatus(jsonObject.getString("reportId"));
+                CompletableFuture<String> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
                 CompletableFuture.allOf(reportStatus).join();
                 String rstatus = reportStatus.get();
-                log.info("status:{}",rstatus);
+                log.info("status:{}", rstatus);
                 this.sendMessage(rstatus, session);
                 break;
             default:
                 break;
         }
     }
+
     /**
      * 处理消息，并响应给客户端
+     *
      * @param message 客户端发送的消息内容
      * @param session 客户端连接对象
      */
-    public void sendMessage(String message,Session session){
+    public void sendMessage(String message, Session session) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", message);
-        String response= jsonObject.toString();
-        for(Map.Entry<String,Session>sessionEntry:wsServerMAP.entrySet()){
-            Session s=sessionEntry.getValue();
+        String response = jsonObject.toString();
+        for (Map.Entry<String, Session> sessionEntry : wsServerMAP.entrySet()) {
+            Session s = sessionEntry.getValue();
             //过滤自己
-            if((session.getId().equals(s.getId()))){
+            if ((session.getId().equals(s.getId()))) {
                 log.info("服务端发送消息成功，Session ID：{}，消息内容：{}", s.getId(), response);
                 s.getAsyncRemote().sendText(response);
             }
         }
     }
+
     /**
      * 连接异常
+     *
      * @param session
      * @param error
      */

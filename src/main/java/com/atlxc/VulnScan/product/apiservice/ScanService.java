@@ -5,10 +5,7 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * @author Kyon-H

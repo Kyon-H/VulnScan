@@ -13,6 +13,7 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * WebSocket配置类
+ *
  * @author Kyon-H
  * @date 2023/2/14 23:09
  */
@@ -25,19 +26,22 @@ public class WebSocketConfig {
     }
 
     @Autowired
-    public void setScansService(ScanService scanService){
+    public void setScansService(ScanService scanService) {
         WebSocketServer.scanService = scanService;
     }
+
     @Autowired
-    public void setTargetsService(TargetService targetService){
+    public void setTargetsService(TargetService targetService) {
         WebSocketServer.targetService = targetService;
     }
+
     @Autowired
-    public void setScanRecordService(ScanRecordService scanRecordService){
-        WebSocketServer.scanRecordService=scanRecordService;
+    public void setScanRecordService(ScanRecordService scanRecordService) {
+        WebSocketServer.scanRecordService = scanRecordService;
     }
+
     @Autowired
-    public void setConnectorService(ConnectorService connectorService){
+    public void setConnectorService(ConnectorService connectorService) {
         WebSocketServer.connectorService = connectorService;
     }
 }

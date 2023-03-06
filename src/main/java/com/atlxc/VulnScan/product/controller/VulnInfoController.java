@@ -1,23 +1,18 @@
 package com.atlxc.VulnScan.product.controller;
 
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONObject;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -49,12 +44,13 @@ public class VulnInfoController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+//    @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         VulnInfoEntity vulnInfo = vulnInfoService.getById(id);
 
         return R.ok().put("vulnInfo", vulnInfo);
     }
+
     @RequestMapping("/detail")
     public R detail(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
         params.put("userName", principal.getName());
@@ -65,7 +61,7 @@ public class VulnInfoController {
     /**
      * 保存
      */
-    @RequestMapping("/save")
+//    @RequestMapping("/save")
     public R save(@RequestBody VulnInfoEntity vulnInfo) {
         vulnInfoService.save(vulnInfo);
 
@@ -75,7 +71,7 @@ public class VulnInfoController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
+//    @RequestMapping("/update")
     public R update(@RequestBody VulnInfoEntity vulnInfo) {
         vulnInfoService.updateById(vulnInfo);
 
@@ -91,7 +87,7 @@ public class VulnInfoController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
+//    @RequestMapping("/delete")
     public R delete(@RequestBody Integer[] ids) {
         vulnInfoService.removeByIds(Arrays.asList(ids));
 

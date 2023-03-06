@@ -7,16 +7,17 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CriticalityEnum {
 
-    Low(0,"Low"),
-    Normal(10,"Normal"),
-    High(20,"High"),
-    Critical(30,"Critical");
+    Low(0, "Low"),
+    Normal(10, "Normal"),
+    High(20, "High"),
+    Critical(30, "Critical");
 
     private final Integer code;
     private final String message;
 
     /**
      * 判断参数合法性
+     *
      * @param value 危险等级
      * @return
      */

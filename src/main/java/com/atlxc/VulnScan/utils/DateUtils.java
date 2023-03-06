@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2016-2019 人人开源 All rights reserved.
- *
+ * <p>
  * https://www.renren.io
- *
+ * <p>
  * 版权所有，侵权必究！
  */
 
@@ -23,10 +23,10 @@ import java.util.Date;
  * @author Mark sunlightcs@gmail.com
  */
 public class DateUtils {
-	/** 时间格式(yyyy-MM-dd) */
-	public final static String DATE_PATTERN = "yyyy-MM-dd";
-	/** 时间格式(yyyy-MM-dd HH:mm:ss) */
-	public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    /** 时间格式(yyyy-MM-dd) */
+    public final static String DATE_PATTERN = "yyyy-MM-dd";
+    /** 时间格式(yyyy-MM-dd HH:mm:ss) */
+    public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public final static String DATETIME_FILE_PATTERN = "yyyyMMddHHmmss";
     /** 时间格式(yyyy-MM-ddTHH:mm:ss.SSSSSS+00:00)带时区 */
     public final static String DATE_TIME_ZONE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZZ";
@@ -34,9 +34,9 @@ public class DateUtils {
     /**
      * 日期格式化 日期格式为：yyyy-MM-dd
      * @param date  日期
-     * @return  返回yyyy-MM-dd格式日期
+     * @return 返回yyyy-MM-dd格式日期
      */
-	public static String format(Date date) {
+    public static String format(Date date) {
         return format(date, DATE_PATTERN);
     }
 
@@ -44,10 +44,10 @@ public class DateUtils {
      * 日期格式化 日期格式为：yyyy-MM-dd
      * @param date  日期
      * @param pattern  格式，如：DateUtils.DATE_TIME_PATTERN
-     * @return  返回yyyy-MM-dd格式日期
+     * @return 返回yyyy-MM-dd格式日期
      */
     public static String format(Date date, String pattern) {
-        if(date != null){
+        if (date != null) {
             SimpleDateFormat df = new SimpleDateFormat(pattern);
             return df.format(date);
         }
@@ -60,7 +60,7 @@ public class DateUtils {
      * @param pattern 日期的格式，如：DateUtils.DATE_TIME_PATTERN
      */
     public static Date stringToDate(String strDate, String pattern) {
-        if (StringUtils.isBlank(strDate)){
+        if (StringUtils.isBlank(strDate)) {
             return null;
         }
 
@@ -71,7 +71,7 @@ public class DateUtils {
     /**
      * 根据周数，获取开始日期、结束日期
      * @param week  周期  0本周，-1上周，-2上上周，1下周，2下下周
-     * @return  返回date[0]开始日期、date[1]结束日期
+     * @return 返回date[0]开始日期、date[1]结束日期
      */
     public static Date[] getWeekStartAndEnd(int week) {
         DateTime dateTime = new DateTime();

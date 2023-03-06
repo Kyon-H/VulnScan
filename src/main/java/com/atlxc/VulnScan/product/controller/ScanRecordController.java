@@ -1,18 +1,17 @@
 package com.atlxc.VulnScan.product.controller;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
-import com.atlxc.VulnScan.product.apiservice.VulnService;
+import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
+import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +19,13 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
-import com.atlxc.VulnScan.product.service.ScanRecordService;
-import com.atlxc.VulnScan.utils.PageUtils;
-import com.atlxc.VulnScan.utils.R;
-
 import javax.validation.Valid;
+import java.security.Principal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -67,7 +67,7 @@ public class ScanRecordController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
+//    @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") Integer id) {
         ScanRecordEntity scanRecord = scanRecordService.getById(id);
 
@@ -124,14 +124,13 @@ public class ScanRecordController {
         JSONObject result = scanService.postScans(scanRecord);
         scanRecordService.save(scanRecord);
         connectorService.getScanRecordStatus(scanRecord.getScanId());
-        //connectorService.getStatus(scanRecord);
         return R.ok(result);
     }
 
     /**
      * 修改
      */
-    @RequestMapping("/update")
+//    @RequestMapping("/update")
     public R update(@RequestBody ScanRecordEntity scanRecord) {
         scanRecordService.updateById(scanRecord);
 
@@ -154,18 +153,20 @@ public class ScanRecordController {
     public R delete(@PathVariable("id") Integer id, @NotNull Principal principal) {
         Integer userId = usersServices.getIdByName(principal.getName());
         ScanRecordEntity scanRecord = scanRecordService.getById(id, userId);
-        if(scanRecord == null) return R.error(400, "扫描记录不存在");
+        if (scanRecord == null) return R.error(400, "扫描记录不存在");
         List<VulnInfoEntity> vulnInfoEntityList = vulnInfoService.getByScanRecordId(scanRecord.getId());
         Boolean success;
-        if (vulnInfoEntityList.size()==0){
-            success=scanRecordService.removeById(scanRecord.getId());
-        }else{
-            success=scanRecordService.removeByIds(
+        if (vulnInfoEntityList.size() == 0) {
+            success = scanRecordService.removeById(scanRecord.getId());
+        } else {
+            success = scanRecordService.removeByIds(
                     scanRecord.getId(),
                     vulnInfoEntityList.stream().map(VulnInfoEntity::getId).collect(Collectors.toList())
             );
         }
-        if(!success){return R.error("删除失败");}
+        if (!success) {
+            return R.error("删除失败");
+        }
         scanService.deleteScans(scanRecord.getScanId());
         targetService.deleteTarget(scanRecord.getTargetId());
         return R.ok("删除成功");

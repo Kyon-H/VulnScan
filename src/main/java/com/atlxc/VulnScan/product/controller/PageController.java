@@ -9,40 +9,48 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class PageController {
 
     @GetMapping("/")
-    public String home(){
+    public String home() {
         return "home";
     }
+
     @GetMapping("/login")
-    public String login(){
+    public String login() {
         return "login";
     }
 
     @GetMapping("/register")
-    public String register(){
+    public String register() {
         return "register";
     }
 
     @GetMapping("/failurl")
-    public String error(@NotNull Model model){
-        model.addAttribute("loginfail","T");
+    public String error(@NotNull Model model) {
+        model.addAttribute("loginfail", "T");
         return "login";
     }
+
     @GetMapping("/navbar")
-    public String navbar(){
+    public String navbar() {
         return "navbar";
     }
+
     @GetMapping("/ActiveScan/scans")
-    public String scans(){
+    public String scans() {
         return "ActiveScan/scans";
     }
+
     @GetMapping("/ActiveScan/vulnerabilities")
-    public String vulnerabilities(){
+    public String vulnerabilities() {
         return "ActiveScan/vulnerabilities";
     }
+
     @GetMapping("/ActiveScan/vulnerabilities/detail")
-    public String detail(){return "ActiveScan/detail";}
+    public String detail() {
+        return "ActiveScan/detail";
+    }
+
     @GetMapping("/ActiveScan/reports")
-    public String reports(){
+    public String reports() {
         return "ActiveScan/reports";
     }
 }

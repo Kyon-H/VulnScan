@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/register","/failurl", "/error", "/Login", "/Register","/favicon.ico").permitAll()
+                .antMatchers("/login", "/register", "/failurl", "/error", "/Login", "/Register", "/favicon.ico").permitAll()
                 .antMatchers("/kaptcha/getKaptchaImage").permitAll()
                 .anyRequest().authenticated();
         //对应表单认证相关的配置
@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 设置拦截忽略文件夹，可以对静态资源放行
         web.ignoring().antMatchers("/css/**", "/js/**", "/icon/**", "/img/**");
     }
+
     @Bean
     public LoginFilter loginFilter() throws Exception {
         LoginFilter loginFilter = new LoginFilter();

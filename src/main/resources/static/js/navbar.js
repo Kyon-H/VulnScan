@@ -2,6 +2,7 @@ var scans_reg =new RegExp(".*/ActiveScan/scans.*");
 var vulnInfo_reg=new RegExp(".*/ActiveScan/vulnerabilities.*");
 var report_reg=new RegExp(".*/ActiveScan/reports.*");
 
+console.log("navbar.js")
 if(scans_reg.test(window.location.href)) {
     $('#home').parent().removeClass('active');
     $('#scans').parent().addClass('active');

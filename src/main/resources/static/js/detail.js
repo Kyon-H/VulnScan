@@ -1,4 +1,6 @@
 function load(){
+    $("#nav-placeholder").load("/navbar");
+    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let vulninfo_id=$.getUrlParam("id");
     $.post("/vulninfo/detail",
         {vulninfo_id:vulninfo_id},

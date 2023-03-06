@@ -158,7 +158,8 @@ public class ScanReportController {
     public R delete(@PathVariable("id") Integer id, @NotNull Principal principal){
         Integer userId = usersService.getIdByName(principal.getName());
         ScanReportEntity scanReport=scanReportService.getById(id);
-        if(scanReportService.removeById(id,userId)==0){
+        if(scanReport==null){return R.error(400,"报告不存在");}
+        if(scanReportService.removeById(scanReport.getId(),userId)==0){
             return R.error("删除失败");
         }
         reportService.deleteReport(scanReport.getReportId());

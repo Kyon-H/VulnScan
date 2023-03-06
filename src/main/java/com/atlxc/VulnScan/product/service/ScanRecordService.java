@@ -29,5 +29,8 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
     ScanRecordEntity getByTargetId(String targetId);
     List<ScanRecordEntity> getByUserId(Integer userId);
     List<ScanRecordEntity> getByUserName(String UserName);
+
+    ScanRecordEntity getById(Integer id, Integer userId);
+    Boolean removeByIds(Integer id,List<Integer> vulnIds);
 }
 

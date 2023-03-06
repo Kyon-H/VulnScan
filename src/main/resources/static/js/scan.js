@@ -117,13 +117,29 @@ function addTable(data){
         item+=`<td><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
             data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo" data-id=${m.scanId}>
             生成报告</button></td>
-            <td align="center"><button type="button" class="btn btn-danger btn-sm">删除</button></td></tr>`;
+            <td align="center"><button type="button" class="btn btn-danger btn-sm" data-id=${m.id}>删除</button></td></tr>`;
     });
     $("#tablelist").html(item);
 }
 //report
 $("#tablelist").delegate("td button.btn-primary","click",function(){
     $("#scan_id").attr("value",$(this).data("id"));
+})
+$("#tablelist").delegate("td button.btn-danger","click",function(){
+    let id=$(this).data("id");
+    layer.alert("确定要删除吗?",{icon:3,title:"提示"},function(index){
+        $.get("/scan/delete/"+id,function(data){
+            console.log(data);
+            layer.msg(data.msg);
+            if(data.code==0){
+                setTimeout(function(){
+                    window.location.reload();
+                },1000);
+            }
+        });
+        layer.close(index);
+    });
+
 })
 $("#reportSubmitBtn").click(function(){
     let scanId=$("#scan_id").val();

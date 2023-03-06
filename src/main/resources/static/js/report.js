@@ -53,7 +53,7 @@ function addTable(data){
 //
 $('#tablelist').delegate('td button.btn.btn-danger.btn-sm','click',function(){
     let id=$(this).data('id');
-    layer.alert('确定要删除吗?', function(index){
+    layer.alert('确定要删除吗?',{icon:3,title:"提示"}, function(index){
       $.get('/report/delete/' + id,function(data){
         console.log(data);
         layer.msg(data.msg);

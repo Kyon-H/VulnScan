@@ -118,4 +118,9 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         return detail;
     }
 
+    @Override
+    public List<VulnInfoEntity> getByScanRecordId(Integer scanRecordId) {
+        return baseMapper.selectList(new QueryWrapper<VulnInfoEntity>().eq("scan_record_id",scanRecordId));
+    }
+
 }

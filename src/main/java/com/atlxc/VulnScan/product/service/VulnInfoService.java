@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,5 +22,7 @@ public interface VulnInfoService extends IService<VulnInfoEntity> {
     Boolean updateAll();
 
     JSONObject getDetail(Map<String, Object> params);
+
+    List<VulnInfoEntity> getByScanRecordId(Integer scanRecordId);
 }
 

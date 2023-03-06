@@ -2,16 +2,21 @@ package com.atlxc.VulnScan.product.controller;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
+import com.atlxc.VulnScan.product.apiservice.VulnService;
+import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
+import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.vo.AddTargetVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +49,8 @@ public class ScanRecordController {
     private UsersService usersServices;
     @Autowired
     private ConnectorService connectorService;
+    @Autowired
+    private VulnInfoService vulnInfoService;
 
     /**
      * 列表
@@ -143,11 +150,25 @@ public class ScanRecordController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    public R delete(@RequestBody Integer[] ids) {
-        scanRecordService.removeByIds(Arrays.asList(ids));
-
-        return R.ok();
+    @RequestMapping("/delete/{id}")
+    public R delete(@PathVariable("id") Integer id, @NotNull Principal principal) {
+        Integer userId = usersServices.getIdByName(principal.getName());
+        ScanRecordEntity scanRecord = scanRecordService.getById(id, userId);
+        if(scanRecord == null) return R.error(400, "扫描记录不存在");
+        List<VulnInfoEntity> vulnInfoEntityList = vulnInfoService.getByScanRecordId(scanRecord.getId());
+        Boolean success;
+        if (vulnInfoEntityList.size()==0){
+            success=scanRecordService.removeById(scanRecord.getId());
+        }else{
+            success=scanRecordService.removeByIds(
+                    scanRecord.getId(),
+                    vulnInfoEntityList.stream().map(VulnInfoEntity::getId).collect(Collectors.toList())
+            );
+        }
+        if(!success){return R.error("删除失败");}
+        scanService.deleteScans(scanRecord.getScanId());
+        targetService.deleteTarget(scanRecord.getTargetId());
+        return R.ok("删除成功");
     }
 
 }

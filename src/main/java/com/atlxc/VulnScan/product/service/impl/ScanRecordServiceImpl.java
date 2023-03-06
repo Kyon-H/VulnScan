@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.product.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
+import com.atlxc.VulnScan.product.service.VulnInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.atlxc.VulnScan.utils.Query;
 import com.atlxc.VulnScan.product.dao.ScanRecordDao;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("scanRecordService")
@@ -24,6 +26,8 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
 
     @Autowired
     ScanService scanService;
+    @Autowired
+    VulnInfoService vulnInfoService;
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         Integer userId=(Integer) params.get("userId");
@@ -82,5 +86,19 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     @Override
     public List<ScanRecordEntity> getByUserName(String userName) {
         return baseMapper.selectIdByUserName(userName);
+    }
+
+    @Override
+    public ScanRecordEntity getById(Integer id, Integer userId) {
+        return baseMapper.selectById(id, userId);
+    }
+
+    @Transactional
+    @Override
+    public Boolean removeByIds(Integer id, List<Integer> vulnIds) {
+        if(vulnInfoService.removeByIds(vulnIds)&&baseMapper.deleteById(id)!=0){
+            return true;
+        }
+        return false;
     }
 }

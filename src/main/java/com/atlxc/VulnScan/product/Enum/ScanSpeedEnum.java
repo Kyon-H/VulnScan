@@ -15,7 +15,7 @@ public enum ScanSpeedEnum {
      */
     Sequential("sequential", "Sequential"),
     Low("slow", "Low"),
-    Moderate("moderate","Moderate"),
+    Moderate("moderate", "Moderate"),
     Fast("fast", "Fast");
 
     private final String code;
@@ -23,12 +23,13 @@ public enum ScanSpeedEnum {
 
     /**
      * 判断参数合法性
+     *
      * @param value 扫描速度
      * @return
      */
     public static Boolean isValidValue(String value) {
-        for(ScanSpeedEnum b : ScanSpeedEnum.values()) {
-            if(b.getCode().equals(value)) {
+        for (ScanSpeedEnum b : ScanSpeedEnum.values()) {
+            if (b.getCode().equals(value)) {
                 return true;
             }
         }

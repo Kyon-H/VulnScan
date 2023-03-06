@@ -21,7 +21,6 @@ import java.awt.image.BufferedImage;
  * 验证码Controller
  * 主要生成验证码
  * 获取验证码 String code = (String)request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
- *
  */
 @Slf4j
 @Controller
@@ -34,7 +33,7 @@ public class CaptchaController {
     @RequestMapping("getKaptchaImage")
     public ModelAndView getKaptchaImage(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
-        String code = (String)session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        String code = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
 
         response.setDateHeader("Expires", 0);
 
@@ -55,7 +54,7 @@ public class CaptchaController {
 
         // store the text in the session
         session.setAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
-        log.info("验证码是: {}" , capText);
+        log.info("验证码是: {}", capText);
 
         // create the image with the text
         BufferedImage bi = captchaProducer.createImage(capText);

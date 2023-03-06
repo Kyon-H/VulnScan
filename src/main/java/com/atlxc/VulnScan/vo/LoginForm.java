@@ -13,20 +13,20 @@ public class LoginForm {
     /**
      * 用户名
      */
-    @Length(min = 4,max = 10,message = "用户名不正确")
+    @Length(min = 4, max = 10, message = "用户名不正确")
     @NotEmpty(message = "用户名必须提交")
     private String username;
     /**
      * 密码
      */
-    @Length(min = 6,max = 20,message = "密码不正确")
+    @Length(min = 6, max = 20, message = "密码不正确")
     @NotEmpty(message = "密码必须提交")
     private String password;
     /**
      * 验证码
      */
     @NotEmpty(message = "验证码必须提交")
-    @Length(min = 5,max = 5,message = "验证码不正确")
+    @Length(min = 5, max = 5, message = "验证码不正确")
     private String captcha;
 
 }

@@ -1,18 +1,14 @@
 package com.atlxc.VulnScan.product.controller;
 
-import java.io.*;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
-
 import com.atlxc.VulnScan.config.ConfigConstant;
-import com.atlxc.VulnScan.product.Enum.ScanTypeEnum;
-import com.atlxc.VulnScan.product.Enum.TemplateEnum;
 import com.atlxc.VulnScan.product.apiservice.ReportService;
+import com.atlxc.VulnScan.product.entity.ScanReportEntity;
+import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.utils.DateUtils;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.validator.group.AddGroup;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.atlxc.VulnScan.product.entity.ScanReportEntity;
-import com.atlxc.VulnScan.product.service.ScanReportService;
-import com.atlxc.VulnScan.utils.PageUtils;
-import com.atlxc.VulnScan.utils.R;
-
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.security.Principal;
+import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -52,9 +47,9 @@ public class ScanReportController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal){
+    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
         Integer userId = usersService.getIdByName(principal.getName());
-        params.put("userId",userId);
+        params.put("userId", userId);
         PageUtils page = scanReportService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -64,9 +59,9 @@ public class ScanReportController {
     /**
      * 信息
      */
-    @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Integer id){
-		ScanReportEntity scanReport = scanReportService.getById(id);
+//    @RequestMapping("/info/{id}")
+    public R info(@PathVariable("id") Integer id) {
+        ScanReportEntity scanReport = scanReportService.getById(id);
 
         return R.ok().put("scanReport", scanReport);
     }
@@ -75,31 +70,37 @@ public class ScanReportController {
      * 保存
      */
     @PostMapping("/save")
-    public R add(@NotNull @Validated(AddGroup.class) @RequestBody ScanReportEntity scanReport, @NotNull Principal principal){
-        log.info("/report/sava {}",scanReport.toString());
+    public R add(@NotNull @Validated(AddGroup.class) @RequestBody ScanReportEntity scanReport, @NotNull Principal principal) {
+        log.info("/report/sava {}", scanReport.toString());
         //保存基本数据
-        String userName= principal.getName();
+        String userName = principal.getName();
         Integer userId = usersService.getIdByName(userName);
         scanReport.setUserId(userId);
         scanReport.setStatus("processing");
         switch (scanReport.getTemplateId()) {
             case ConfigConstant.templateId_OWASPTop102013:
-                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102013);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102013);
+                break;
             case ConfigConstant.templateId_AffectedItems:
-                scanReport.setTemplateName(ConfigConstant.templateName_AffectedItems);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_AffectedItems);
+                break;
             case ConfigConstant.templateId_CWE2011:
-                scanReport.setTemplateName(ConfigConstant.templateName_CWE2011);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_CWE2011);
+                break;
             case ConfigConstant.templateId_OWASPTop102017:
-                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102017);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102017);
+                break;
             case ConfigConstant.templateId_HIPAA:
-                scanReport.setTemplateName(ConfigConstant.templateName_HIPAA);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_HIPAA);
+                break;
             case ConfigConstant.templateId_ISO27001:
-                scanReport.setTemplateName(ConfigConstant.templateName_ISO27001);break;
+                scanReport.setTemplateName(ConfigConstant.templateName_ISO27001);
+                break;
             default:
                 return R.error();
         }
         scanReport.setGenerationDate(new Date());
-        String reportId=reportService.addReport(scanReport);
+        String reportId = reportService.addReport(scanReport);
         scanReport.setReportId(reportId);
         scanReportService.save(scanReport);
         //获取status、download_url、description
@@ -110,42 +111,45 @@ public class ScanReportController {
     /**
      * 修改
      */
-    @RequestMapping("/update")
-    public R update(@RequestBody ScanReportEntity scanReport){
-		scanReportService.updateById(scanReport);
+//    @RequestMapping("/update")
+    public R update(@RequestBody ScanReportEntity scanReport) {
+        scanReportService.updateById(scanReport);
 
         return R.ok();
     }
+
     @RequestMapping("/download")
-    public R download(@RequestParam Integer id, @RequestParam String type, @NotNull Principal principal, HttpServletResponse response){
+    public R download(@RequestParam Integer id, @RequestParam String type, @NotNull Principal principal, HttpServletResponse response) {
         Integer userId = usersService.getIdByName(principal.getName());
-        ScanReportEntity scanReport=scanReportService.getById(id,userId);
-        if(scanReport==null){return R.error();}
+        ScanReportEntity scanReport = scanReportService.getById(id, userId);
+        if (scanReport == null) {
+            return R.error();
+        }
         // 下载文件
-        String path = scanReportService.downloadReport(scanReport,type);
+        String path = scanReportService.downloadReport(scanReport, type);
         File file = new File(path);
-        if(!file.exists()){
+        if (!file.exists()) {
             return R.ok("下载文件不存在");
         }
         response.reset();
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         response.setContentLength((int) file.length());
-        StringBuilder sb =new StringBuilder();
-        sb.append(DateUtils.format(new Date(),DateUtils.DATETIME_FILE_PATTERN))
+        StringBuilder sb = new StringBuilder();
+        sb.append(DateUtils.format(new Date(), DateUtils.DATETIME_FILE_PATTERN))
                 .append("_").append(scanReport.getTemplateName())
                 .append(".").append(type);
         response.setHeader("Content-Disposition", "attachment;filename=" + sb);
-        try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
             byte[] buff = new byte[1024];
-            OutputStream os  = response.getOutputStream();
+            OutputStream os = response.getOutputStream();
             int i = 0;
             while ((i = bis.read(buff)) != -1) {
                 os.write(buff, 0, i);
                 os.flush();
             }
         } catch (IOException e) {
-            log.error("{}",e);
+            log.error("{}", e);
             return R.ok("下载成功");
         }
         return R.ok("下载成功");
@@ -155,11 +159,13 @@ public class ScanReportController {
      * 删除
      */
     @RequestMapping("/delete/{id}")
-    public R delete(@PathVariable("id") Integer id, @NotNull Principal principal){
+    public R delete(@PathVariable("id") Integer id, @NotNull Principal principal) {
         Integer userId = usersService.getIdByName(principal.getName());
-        ScanReportEntity scanReport=scanReportService.getById(id);
-        if(scanReport==null){return R.error(400,"报告不存在");}
-        if(scanReportService.removeById(scanReport.getId(),userId)==0){
+        ScanReportEntity scanReport = scanReportService.getById(id);
+        if (scanReport == null) {
+            return R.error(400, "报告不存在");
+        }
+        if (scanReportService.removeById(scanReport.getId(), userId) == 0) {
             return R.error("删除失败");
         }
         reportService.deleteReport(scanReport.getReportId());

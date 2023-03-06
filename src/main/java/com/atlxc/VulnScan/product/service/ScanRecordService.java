@@ -1,9 +1,9 @@
 package com.atlxc.VulnScan.product.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +18,7 @@ import java.util.Map;
 public interface ScanRecordService extends IService<ScanRecordEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
     Boolean updateStatus(Integer id, String status);
 
     Boolean updateSeverity(Integer id, JSONObject severity);
@@ -27,10 +28,13 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
     Boolean updateAll(Integer userId);
 
     ScanRecordEntity getByTargetId(String targetId);
+
     List<ScanRecordEntity> getByUserId(Integer userId);
+
     List<ScanRecordEntity> getByUserName(String UserName);
 
     ScanRecordEntity getById(Integer id, Integer userId);
-    Boolean removeByIds(Integer id,List<Integer> vulnIds);
+
+    Boolean removeByIds(Integer id, List<Integer> vulnIds);
 }
 

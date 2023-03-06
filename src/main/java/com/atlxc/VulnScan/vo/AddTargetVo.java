@@ -35,7 +35,7 @@ public class AddTargetVo {
      * 扫描类型;
      */
     @NotNull(message = "扫描类型不能为空")
-    @EnumValue(enumClass = ScanTypeEnum.class, enumMethod = "isValidValue", message ="扫描类型错误")
+    @EnumValue(enumClass = ScanTypeEnum.class, enumMethod = "isValidValue", message = "扫描类型错误")
     private String scanType;
     /**
      * 扫描速度;

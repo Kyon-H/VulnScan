@@ -2,9 +2,9 @@ package com.atlxc.VulnScan.product.service;
 
 import com.atlxc.VulnScan.exception.EmailExistException;
 import com.atlxc.VulnScan.exception.UserNameExistException;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.product.entity.UsersEntity;
+import com.atlxc.VulnScan.utils.PageUtils;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
 
@@ -18,10 +18,15 @@ import java.util.Map;
 public interface UsersService extends IService<UsersEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
     Integer getIdByName(String userName);
-    void Register(UsersEntity user) throws UserNameExistException,EmailExistException;
+
+    void Register(UsersEntity user) throws UserNameExistException, EmailExistException;
+
     void CheakUsername(String username) throws UserNameExistException;
+
     void CheckEmail(String email) throws EmailExistException;
+
     UsersEntity Login(UsersEntity user);
 }
 

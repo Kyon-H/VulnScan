@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.product.dao;
 
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -16,4 +17,6 @@ import org.apache.ibatis.annotations.Select;
 public interface ScanReportDao extends BaseMapper<ScanReportEntity> {
 	@Select("select * from scan_report where id = #{id} and user_id = #{userId}")
     ScanReportEntity getById(Integer id, Integer userId);
+    @Delete("delete from scan_report where id = #{id} and user_id = #{userId}")
+    Integer removeById(Integer id, Integer userId);
 }

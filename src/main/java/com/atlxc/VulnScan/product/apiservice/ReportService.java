@@ -98,7 +98,7 @@ public class ReportService {
      * Method:DELETE
      * URL: /api/v1/reports/{report_id}
      */
-    public void deleteReport(int report_id) {
+    public void deleteReport(String report_id) {
         Boolean result = AWVSRequestUtils.DELETE(URL + "/" + report_id);
         if (!result) throw new RRException("删除报告失败");
     }

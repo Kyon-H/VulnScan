@@ -22,5 +22,7 @@ public interface ScanReportService extends IService<ScanReportEntity> {
     String downloadReport(ScanReportEntity scanReport,String type);
 
     ScanReportEntity getById(Integer id, Integer userId);
+
+    Integer removeById(Integer id, Integer userId);
 }
 

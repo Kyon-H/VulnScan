@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.service.impl;
 import com.atlxc.VulnScan.exception.EmailExistException;
 import com.atlxc.VulnScan.exception.UserNameExistException;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -41,7 +42,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
         return baseMapper.selectIdByUsername(userName);
     }
     @Override
-    public void Register(UsersEntity user) throws UserNameExistException, EmailExistException {
+    public void Register(@NotNull UsersEntity user) throws UserNameExistException, EmailExistException {
         CheakUsername(user.getUsername());
         // 密码加密存储
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -66,7 +67,7 @@ public class UsersServiceImpl extends ServiceImpl<UsersDao, UsersEntity> impleme
      * @return
      */
     @Override
-    public UsersEntity Login(UsersEntity user) {
+    public UsersEntity Login(@NotNull UsersEntity user) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         UsersEntity entity = baseMapper.selectOne(new QueryWrapper<UsersEntity>().eq("username", user.getUsername()));
         if(entity==null){

@@ -6,6 +6,7 @@ import com.atlxc.VulnScan.product.entity.UsersEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +44,7 @@ public class LoginController {
 
     @PostMapping("/Login")
     @ResponseBody
-    public R Login(HttpServletRequest request, @Valid LoginForm loginForm){
+    public R Login(HttpServletRequest request, @NotNull @Valid LoginForm loginForm){
         log.info("Login");
         //String sessionCode=(String)request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         //if(sessionCode.equalsIgnoreCase((String)form.getCaptcha())){

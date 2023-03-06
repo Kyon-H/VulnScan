@@ -4,6 +4,7 @@ package com.atlxc.VulnScan.product.controller;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class CaptchaController {
     private Producer captchaProducer;
 
     @RequestMapping("getKaptchaImage")
-    public ModelAndView getKaptchaImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView getKaptchaImage(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response) throws Exception {
         HttpSession session = request.getSession();
         String code = (String)session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
 

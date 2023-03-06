@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,7 +38,7 @@ public class VulnInfoController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params, Principal principal) {
+    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
         params.put("userName", principal.getName());
         PageUtils page = vulnInfoService.queryPage(params);
 
@@ -55,7 +56,7 @@ public class VulnInfoController {
         return R.ok().put("vulnInfo", vulnInfo);
     }
     @RequestMapping("/detail")
-    public R detail(@RequestParam Map<String, Object> params, Principal principal) {
+    public R detail(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
         params.put("userName", principal.getName());
         JSONObject detail = vulnInfoService.getDetail(params);
         return R.ok().put("detail", detail);

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     @Autowired
     VulnInfoService vulnInfoService;
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryPage(@NotNull Map<String, Object> params) {
         Integer userId=(Integer) params.get("userId");
         if(StringUtils.isNotEmpty((String) params.get("sidx"))) {
             Boolean isAsc=params.get("order").toString().equals("asc")?Boolean.TRUE:Boolean.FALSE;
@@ -53,7 +54,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         return baseMapper.updateStatus(id, status);
     }
     @Override
-    public Boolean updateSeverity(Integer id, JSONObject severity) {
+    public Boolean updateSeverity(Integer id, @NotNull JSONObject severity) {
         return baseMapper.updateSeverity(id, severity.toString());
     }
     @Override

@@ -36,7 +36,7 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     ScanRecordService scanRecordService;
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryPage(@NotNull Map<String, Object> params) {
         String userName = params.get("userName").toString();
         List<ScanRecordEntity> scanRecord = scanRecordService.getByUserName(userName);
         List<Integer> scanRecordIds = new ArrayList<>();

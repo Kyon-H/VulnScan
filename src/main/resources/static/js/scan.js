@@ -42,6 +42,8 @@ $("#scanSubmitBtn").on("click", function () {
 });
 //默认查询，page:1,limit:10
 function load(){
+    $("#nav-placeholder").load("/navbar");
+    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
 }
 
@@ -101,12 +103,13 @@ function addTable(data){
             var domain = document.domain;
             var wsurl="ws://"+domain+"/ws";
             initWebSocket(wsurl);
-            sendSock(data,function(backdata){
-                console.log("callback data: " + JSON.stringify(backdata));
-                if(backdata.message!="processing"){
+            setTimeout(function() {
+              sendSock(data, function(backData) {
+                if(backData.message!="processing"){
                     window.location.reload();
                 }
-            });
+              });
+            }, 1000); // 延时 1 秒钟调用 sendSock 方法
         }else{
             item+=`<td>${m.status}</td>`;
         }

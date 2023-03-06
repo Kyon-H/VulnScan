@@ -7,6 +7,8 @@ var sidx="generation_date";
 var order="desc";
 ////////////////////////////////
 function load(){
+    $("#nav-placeholder").load("/navbar");
+    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
 }
 
@@ -31,12 +33,13 @@ function addTable(data){
             var domain = document.domain;
             var wsurl="ws://"+domain+"/ws";
             initWebSocket(wsurl);
-            sendSock(data,function(backdata){
-                console.log("callback data: " + JSON.stringify(backdata));
-                if(backdata.message!="processing"){
+            setTimeout(function() {
+              sendSock(data, function(backData) {
+                if(backData.message!="processing"){
                     window.location.reload();
                 }
-            });
+              });
+            }, 1000); // 延时 1 秒钟调用 sendSock 方法
         }else{
             item+=`<td>${m.status}</td>`;
         }
@@ -47,14 +50,6 @@ function addTable(data){
     });
     $("#tablelist").html(item);
 }
-//
-$("#tablelist").delegate("td a.btn","click",function(){
-    let url="/report/download?id"
-    let postdata={
-        id: $(this).data("id"),
-        type: $(this).data("type")
-    }
-})
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

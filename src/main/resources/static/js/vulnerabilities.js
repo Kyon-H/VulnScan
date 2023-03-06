@@ -7,6 +7,8 @@ var sidx="last_seen";
 var order="desc";
 ////////////////////////////////
 function load(){
+    $("#nav-placeholder").load("/navbar");
+    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let severity=$.getUrlParam("severity");
     let scanRecordId=$.getUrlParam("scan_record_id");
     var params={

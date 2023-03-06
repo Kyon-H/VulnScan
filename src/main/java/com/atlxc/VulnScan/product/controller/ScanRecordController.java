@@ -56,7 +56,7 @@ public class ScanRecordController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params, Principal principal) {
+    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
         Integer userId = usersServices.getIdByName(principal.getName());
         params.put("userId", userId);
         PageUtils page = scanRecordService.queryPage(params);
@@ -80,7 +80,7 @@ public class ScanRecordController {
     @SneakyThrows
     @PostMapping("/save")
     @ResponseBody
-    public R save(@Valid AddTargetVo vo, Principal principal) {
+    public R save(@NotNull @Valid AddTargetVo vo, @NotNull Principal principal) {
         log.info("save()");
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("address", vo.getAddress());
@@ -139,7 +139,7 @@ public class ScanRecordController {
     }
 
     @GetMapping("/update/all")
-    public R updateAll(Principal principal) {
+    public R updateAll(@NotNull Principal principal) {
         log.info("updateAll");
         String username = principal.getName();
         Integer userId = usersServices.getIdByName(username);

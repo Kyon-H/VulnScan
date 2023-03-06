@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ public class PageController {
     }
 
     @GetMapping("/failurl")
-    public String error(Model model){
+    public String error(@NotNull Model model){
         model.addAttribute("loginfail","T");
         return "login";
     }

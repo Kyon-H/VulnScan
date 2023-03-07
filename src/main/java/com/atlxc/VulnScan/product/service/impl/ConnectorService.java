@@ -43,7 +43,7 @@ public class ConnectorService {
         ScanRecordEntity entity = scanRecordService.getByTargetId(targetId);
         try {
             while (true) {
-                Thread.sleep(INTERVAL * 2);
+
                 String tmp = targetService.getScanId(targetId);
                 log.info("getScanId:" + tmp);
                 if (tmp != null) {
@@ -79,6 +79,7 @@ public class ConnectorService {
                     }
                     break;
                 }
+                Thread.sleep(INTERVAL * 2);
             }
         } catch (InterruptedException e) {
             log.error("getScanRecordStatus 监控线程意外中断{}", e.getMessage());

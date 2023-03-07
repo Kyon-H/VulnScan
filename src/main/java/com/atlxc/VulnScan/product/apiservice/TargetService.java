@@ -1,6 +1,7 @@
 package com.atlxc.VulnScan.product.apiservice;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
@@ -59,16 +60,18 @@ public class TargetService {
      * Method: PATCH
      * URL: /api/v1/targets/{target_id}/configuration
      */
-    public void setLogin(String targetId, Map<String, Object> credentials) {
-        if (credentials == null || credentials.equals("")) return;
-        //body
-        JSONObject object = new JSONObject();
-        JSONObject kind = new JSONObject();
-        JSONObject cre = JSONObject.parseObject(JSON.toJSONString(credentials));
-        kind.put("kind", "automatic");
-        kind.put("credentials", cre);
-        object.put("login", kind);
-        Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", object);
+    public void setLogin(String targetId, JSONObject credentials,JSONArray cookies) {
+        JSONObject body = new JSONObject();
+        if(credentials!=null){
+            JSONObject login = new JSONObject();
+            login.put("kind", "automatic");
+            login.put("credentials", credentials);
+            body.put("login", login);
+        }
+        if(cookies!=null&&cookies.size()>0){
+            body.put("custom_cookies", cookies);
+        }
+        Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", body);
         if (!result) throw new RRException("设置网站登录失败");
     }
 

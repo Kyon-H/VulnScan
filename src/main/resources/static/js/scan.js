@@ -12,32 +12,42 @@ function newTarget(){
 }
 $("#scanSubmitBtn").on("click", function () {
     var address=$("#address").val();
-    console.log(address)
     var scanType=$("#ScanType").val();
-    console.log(scanType)
     var scanSpeed=$("input[name=customRadioInline]:checked").val();
     var description=$("#message-text").val();
-    console.log(scanSpeed)
     var username=$("#userName").val();
+    //loginsetting
+    var username=$("input[name=userName]").val();
+    var password=$("input[name=password]").val();
+    var cookie_url=$("input[name=cookie_url]").val();
+    var cookie_value=$("input[name=cookie_value]").val();
+
     var formData={
         address:address,
         scanType:scanType,
         scanSpeed:scanSpeed,
         description:description
     };
+    var loginSettingClass=$("#loginSetting").attr('class');
+    if(loginSettingClass.indexOf("show")>0){
+        formData.username=username;
+        formData.password=password;
+        formData.url=cookie_url;
+        formData.cookie=cookie_value;
+    }
+    console.log("formData:"+JSON.stringify(formData));
     $.post('/scan/save',
         formData,
         function(data){
             console.log(data);
             if(data.code==200||data.code==0){
                 layer.msg("添加描成功", {icon: 1});
-
                 $("#myModal").modal("hide");
                 load();
             }else{
                 layer.msg(data.msg, {icon: 2});
             }
-        },'json'
+        }
     );
 });
 //默认查询，page:1,limit:10
@@ -56,7 +66,8 @@ function addTable(data){
     var item="";
     $.each(data.list,function (i,m) {
         //# address
-        item+=`<tr><td align="center">${i+1}</td><td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
+        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td>
+            <td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
         if(m.description==""){
             m.description="无";
         }

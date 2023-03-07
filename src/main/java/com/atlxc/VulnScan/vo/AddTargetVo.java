@@ -1,6 +1,5 @@
 package com.atlxc.VulnScan.vo;
 
-import com.atlxc.VulnScan.product.Enum.CriticalityEnum;
 import com.atlxc.VulnScan.product.Enum.ScanSpeedEnum;
 import com.atlxc.VulnScan.product.Enum.ScanTypeEnum;
 import com.atlxc.VulnScan.utils.EnumValue;
@@ -27,11 +26,6 @@ public class AddTargetVo {
     @NotNull(message = "地址不能为空")
     private String address;
     /**
-     * 危险程度;范围:[30,20,10,0];默认为10
-     */
-    @EnumValue(enumClass = CriticalityEnum.class, enumMethod = "isValidValue", message = "危险程度设置不正确")
-    private Integer criticality;
-    /**
      * 扫描类型;
      */
     @NotNull(message = "扫描类型不能为空")
@@ -44,7 +38,22 @@ public class AddTargetVo {
     @EnumValue(enumClass = ScanSpeedEnum.class, enumMethod = "isValidValue", message = "扫描速度错误")
     private String scanSpeed;
     /**
+     * login
+     */
+    @NotNull
+    private String username;
+    @NotNull
+    private String password;
+    /**
+     * cookie
+     */
+    @NotNull
+    private String url;
+    @NotNull
+    private String cookie;
+    /**
      * 备注
      */
+    @NotNull
     private String description;
 }

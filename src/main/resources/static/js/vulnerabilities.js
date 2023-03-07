@@ -28,7 +28,7 @@ function addTable(data){
     console.log("currPage:"+currPage);
     $.each(data.list,function(i,m){
         //# address
-        item+=`<tr><td align="center">${i+1}</td>`;
+        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td>`;
         //severity
         switch(m.severity){
             case 0:

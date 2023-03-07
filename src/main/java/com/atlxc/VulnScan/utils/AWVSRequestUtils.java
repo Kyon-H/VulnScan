@@ -53,6 +53,7 @@ public class AWVSRequestUtils {
      * PATCH request
      */
     public static Boolean PATCH(String url, JSONObject body) {
+        log.info("PATCH url: {}", url);
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         restTemplate.setRequestFactory(requestFactory);
@@ -73,6 +74,7 @@ public class AWVSRequestUtils {
      * @param url
      */
     public static Boolean DELETE(String url) {
+        log.info("DELETE url: {}", url);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);

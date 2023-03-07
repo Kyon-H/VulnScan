@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
@@ -93,6 +94,22 @@ public class ScanRecordController {
         scanRecord.setDescription(json.getString("description"));
         scanRecord.setTargetId(json.getString("target_id"));
         targetService.setSpeed(scanRecord.getTargetId(), vo.getScanSpeed());
+        //setLogin
+        JSONObject credentials = new JSONObject();
+        JSONArray cookies = new JSONArray();
+        if (vo.getUsername().length() >= 1 && vo.getPassword().length() >= 1) {
+            credentials.put("enabled", true);
+            credentials.put("username", vo.getUsername());
+            credentials.put("password", vo.getPassword());
+        }
+        if (vo.getCookie().length() >= 1 && vo.getUrl().length() >= 1) {
+            JSONObject cookie = new JSONObject();
+            cookie.put("url", vo.getUrl());
+            cookie.put("cookie", vo.getCookie());
+            cookies.add(cookie);
+        }
+        targetService.setLogin(scanRecord.getTargetId(), credentials, cookies);
+        //settype
         String type;
         switch (vo.getScanType()) {
             case "12":
@@ -123,7 +140,7 @@ public class ScanRecordController {
 
         JSONObject result = scanService.postScans(scanRecord);
         scanRecordService.save(scanRecord);
-        connectorService.getScanRecordStatus(scanRecord.getScanId());
+        connectorService.getScanRecordStatus(scanRecord.getTargetId());
         return R.ok(result);
     }
 

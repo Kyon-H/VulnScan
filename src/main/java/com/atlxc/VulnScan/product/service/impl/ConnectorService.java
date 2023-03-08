@@ -14,7 +14,9 @@ import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +45,6 @@ public class ConnectorService {
         ScanRecordEntity entity = scanRecordService.getByTargetId(targetId);
         try {
             while (true) {
-
                 String tmp = targetService.getScanId(targetId);
                 log.info("getScanId:" + tmp);
                 if (tmp != null) {
@@ -87,17 +88,26 @@ public class ConnectorService {
         }
     }
 
+    /**
+     * websocket调用，获取扫描状态
+     * @param id ScanRecordId
+     * @return 扫描状态和漏洞分布
+     */
     @Async("connectorExecutor")
-    public CompletableFuture<String> getStatus(Integer id) throws InterruptedException {
-        log.info("getStatus id:{}", id);
+    public CompletableFuture<String> getScanStatus(Integer id) {
+        log.info("getScanStatus id:{}", id);
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         try {
             ScanRecordEntity entity = scanRecordService.getById(id);
-            if (entity != null && !entity.getStatus().equals("processing")) {
-                return CompletableFuture.completedFuture(entity.getStatus());
+            if (entity != null && entity.getStatus().equals("completed")) {
+                JSONObject status=new JSONObject();
+                status.put("severity_counts",entity.getSeverityCounts());
+                status.put("status",entity.getStatus());
+                return CompletableFuture.completedFuture(status.toString());
             }
+            //获取scanId
             while (entity.getScanId() == null) {
                 Thread.sleep(INTERVAL * 2);
                 String scanId = targetService.getScanId(entity.getTargetId());
@@ -108,7 +118,7 @@ public class ConnectorService {
                 String scanId = entity.getScanId();
                 ScanRecordEntity status = scanService.getStatus(scanId);
                 if (status.getStatus() == null) continue;
-
+                //TODO
                 entity.setStatus(status.getStatus());
                 entity.setSeverityCounts(status.getSeverityCounts());
 
@@ -126,6 +136,11 @@ public class ConnectorService {
         }
     }
 
+    /**
+     * 获取生成报告状态
+     * @param ReportId
+     * @return 状态信息
+     */
     @Async("connectorExecutor")
     public CompletableFuture<String> getReportStatus(String ReportId) {
         log.info("getReportStatus");

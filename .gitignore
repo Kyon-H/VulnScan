@@ -16,3 +16,4 @@ src/test
 mvnw.cmd
 mvnw
 *.iml
+*.map

@@ -70,12 +70,12 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session) throws ExecutionException, InterruptedException {
-        log.info("服务端接收消息成功，Session ID：{}，消息内容：{}", session.getId(), message);
+        log.info("接收消息，Session ID：{}，消息内容：{}", session.getId(), message);
         JSONObject jsonObject = JSONObject.parseObject(message);
 
         switch (jsonObject.getString("action")) {
             case "getStatus":
-                CompletableFuture<String> getstatus = connectorService.getStatus(jsonObject.getInteger("id"));
+                CompletableFuture<String> getstatus = connectorService.getScanStatus(jsonObject.getInteger("id"));
                 CompletableFuture.allOf(getstatus).join();
                 String status = getstatus.get();
                 log.info("status:{}", status);
@@ -87,6 +87,9 @@ public class WebSocketServer {
                 String rstatus = reportStatus.get();
                 log.info("status:{}", rstatus);
                 this.sendMessage(rstatus, session);
+                break;
+            case "HeartBeat":
+                this.sendMessage("HeartBeat",session);
                 break;
             default:
                 break;
@@ -105,9 +108,8 @@ public class WebSocketServer {
         String response = jsonObject.toString();
         for (Map.Entry<String, Session> sessionEntry : wsServerMAP.entrySet()) {
             Session s = sessionEntry.getValue();
-            //过滤自己
             if ((session.getId().equals(s.getId()))) {
-                log.info("服务端发送消息成功，Session ID：{}，消息内容：{}", s.getId(), response);
+                log.info("发送消息，Session ID：{}，消息内容：{}", s.getId(), response);
                 s.getAsyncRemote().sendText(response);
             }
         }

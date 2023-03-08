@@ -79,6 +79,9 @@ public class TargetService {
      * 获取目标的扫描 id
      * Method:GET
      * URL: /api/v1/targets/{target_id}
+     * @param targetId
+     * @return scanId
+     * @throws RRException
      */
     public String getScanId(String targetId) {
         log.info("getScanId(), targetID {}", targetId);

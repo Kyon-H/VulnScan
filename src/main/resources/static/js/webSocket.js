@@ -20,11 +20,20 @@ function initWebSocket(url) {
   //关闭
   webSocket.onclose = function() {
     webSocketClose();
+    console.log("WebSocket:已关闭");
+    heartCheck.reset();//心跳检测
+//    reconnect();
   };
   //连接发生错误的回调方法
   webSocket.onerror = function() {
     console.log("WebSocket连接发生错误");
+    reconnect();
   };
+  //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+  window.onbeforeunload = function () {
+      webSocket.close();
+  };
+
 }
 
 //连接socket建立时触发
@@ -34,9 +43,11 @@ function webSocketOpen() {
       type: "CONNECT",
       action: "OPEN"
     };
-    sendSock(data, function() {});
+    sendSock(data,function(){});
 
   console.log("WebSocket连接成功");
+  //心跳检测重置
+  heartCheck.reset().start();
 }
 
 //客户端接收服务端数据时触发,e为接受的数据对象
@@ -45,6 +56,7 @@ function webSocketOnMessage(e) {
   const data = JSON.parse(e.data);//根据自己的需要对接收到的数据进行格式化
   console.log("run callback");
   globalCallback(data);//将data传给在外定义的接收数据的函数，至关重要。
+  heartCheck.reset().start();
 }
 
 //发送数据
@@ -54,7 +66,6 @@ function webSocketSend(data) {
 
 //关闭socket
 function webSocketClose() {
-  //因为我建立了多个socket，所以我需要知道我关闭的是哪一个socket，就做了一些判断。
   if (
     webSocket.readyState === 1 &&
     webSocket.url === "ws://1xx.xx.xx.xxx/ws"
@@ -63,7 +74,52 @@ function webSocketClose() {
     console.log("对话连接已关闭");
   }
 }
-
+//避免重复连接
+var lockReconnect = false, tt;
+//websocket重连
+function reconnect() {
+    if(lockReconnect){
+        return;
+    }
+    lockReconnect = true;
+    tt&&clearTimeout(tt);
+    tt=setTimeout(function(){
+        console.log("重连。。。");
+        lockReconnect = false;
+        let url="ws://"+document.domain+"/ws";
+        initWebSocket(url);
+    },4000);
+}
+//心跳检测
+var heartCheck={
+    timeout:5000,
+    timeoutObj:null,
+    serverTimeoutObj:null,
+    reset:function(){
+        clearTimeout(this.timeoutObj);
+        clearTimeout(this.serverTimeoutObj);
+        return this;
+    },
+    start:function(){
+        const data = {
+          type: "CONNECT",
+          action: "HeartBeat"
+        };
+        var self = this;
+        this.timeoutObj&&clearTimeout(this.timeoutObj);
+        this.serverTimeoutObj&&clearTimeout(this.serverTimeoutObj);
+        this.timeoutObj=setTimeout(function(){
+            //发送心跳消息
+            webSocketSend(data);
+            console.log("ping");
+            self.serverTimeoutObj=setTimeout(function(){
+                // 如果超过一定时间还没重置，说明后端主动断开了
+                console.log("关闭websocket");
+                //webSocket.close();
+            },self.timeout);
+        },this.timeout);
+    }
+};
 
 //在其他需要socket地方调用的函数，用来发送数据及接受数据
 function sendSock(agentData, callback) {

@@ -4,70 +4,12 @@
 
 根据上述需求，我们可以设计如下数据库：
 
-数据库名：vulnerability_scanner，字符集：utf8mb4，排序规则：utf8mb4_unicode_ci 
+数据库名：vulnscan，字符集：utf8mb4，排序规则：utf8mb4_unicode_ci 
 
-1. 用户表（user）：记录用户信息，包括用户名、密码、邮箱、角色等字段。
-2. 扫描记录表（scan_record）：记录扫描记录信息，包括扫描类型（主动或被动）、扫描网站地址、扫描时间、用户名等字段。
-3. 漏洞信息表（vulnerability_info）：记录漏洞信息，包括漏洞名称、级别、详细描述、修复建议等字段。
-4. 漏洞扫描结果表（vulnerability_result）：记录漏洞扫描结果，包括扫描记录ID、漏洞信息ID、状态（已修复或未修复）等字段。
-5. 扫描报告表（scan_report）：记录扫描报告信息，包括扫描记录ID、报告文件名、生成时间等字段。
-
-```mysql
-CREATE DATABASE vulnscan
-USE vulnscan
--- 用户表
-CREATE TABLE users (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(255) ,
-  password VARCHAR(255) ,
-  email VARCHAR(255) ,
-  role VARCHAR(255) ,
-  create_time DATETIME 
-)COMMENT='用户表';
-
--- 扫描记录表
-CREATE TABLE scan_record (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT COMMENT '用户ID',
-    target_id INT COMMENT '目标ID',
-    address VARCHAR(255) COMMENT 'URL',
-    type VARCHAR(255) COMMENT '扫描类型',
-    severity_counts JSON COMMENT '漏洞等级分布',
-    status VARCHAR(255) COMMENT '状态',
-    scan_time DATETIME COMMENT '扫描时间',
-    description VARCHAR(255) COMMENT '描述'
-)COMMENT='扫描记录表';
-
--- 漏洞信息表
-CREATE TABLE vuln_info (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(255) ,
-  level VARCHAR(255) ,
-  description TEXT ,
-  fix_suggestion TEXT 
-)COMMENT='漏洞信息表';
-
--- 漏洞扫描结果表
-CREATE TABLE vuln_result (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  scan_record_id INT ,
-  vulnerability_info_id INT ,
-  status VARCHAR(255) 
-)COMMENT='漏洞扫描结果表';
--- FOREIGN KEY (scan_record_id) REFERENCES scan_record(id),
---  FOREIGN KEY (vulnerability_info_id) REFERENCES vulnerability_info(id)
-
--- 扫描报告表
-CREATE TABLE scan_report (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  scan_record_id INT ,
-  report_filename VARCHAR(255) ,
-  generate_time DATETIME 
-)COMMENT='扫描报告表';
--- FOREIGN KEY (scan_record_id) REFERENCES scan_record(id)
-```
-
-
+1. 用户表（users）：记录用户信息，包括用户名、密码、邮箱、角色等字段。
+2. 扫描记录表（scan_record）：记录扫描记录信息，包括扫描类型、扫描网站地址、扫描时间、用户名等字段。
+3. 漏洞信息表（vuln_info）：记录漏洞基本信息。
+4. 漏洞报告表(scan_roport)：记录生成的扫描报告，漏洞报告。
 
 ## renren-fast-vue
 

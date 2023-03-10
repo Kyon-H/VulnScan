@@ -34,7 +34,7 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
     List<ScanRecordEntity> getByUserName(String UserName);
 
     ScanRecordEntity getById(Integer id, Integer userId);
-
+    ScanRecordEntity getById(Integer id);
     Boolean removeByIds(Integer id, List<Integer> vulnIds);
 }
 

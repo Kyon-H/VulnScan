@@ -1,23 +1,12 @@
 
 //分页查询
-function loadPage(URL,page=1,limit=10,sidx,order="desc",callback,params){
+function loadPage(URL,page=1,limit=10,sidx,order="desc",callback){
     if(arguments.length==6){
         var postdata={
             page:page,
             limit:limit,
             sidx:sidx,
             order:order
-        }
-
-    }
-    if(arguments.length==7){
-        var postdata={
-            page:page,
-            limit:limit,
-            sidx:sidx,
-            order:order,
-            scan_record_id:params.scan_record_id,
-            severity:params.severity
         }
     }
     $.post(URL,

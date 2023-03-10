@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("vulnInfoService")
@@ -37,16 +38,13 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     public PageUtils queryPage(@NotNull Map<String, Object> params) {
         String userName = params.get("userName").toString();
         List<ScanRecordEntity> scanRecord = scanRecordService.getByUserName(userName);
-        List<Integer> scanRecordIds = new ArrayList<>();
-        scanRecord.forEach(scanRecordEntity -> {
-            Integer scanRecordId = scanRecordEntity.getId();
-            scanRecordIds.add(scanRecordId);
-        });
+        List<Integer> scanRecordIds = scanRecord.stream().map(ScanRecordEntity::getId).collect(Collectors.toList());
+
         QueryWrapper<VulnInfoEntity> queryWrapper = new QueryWrapper<>();
-        if (StringUtils.isNotEmpty((String) params.get("scan_record_id"))) {
-            queryWrapper.eq("scan_record_id", params.get("scan_record_id").toString());
+        if (params.get("scanRecordId")!= null) {
+            queryWrapper.eq("scan_record_id", params.get("scanRecordId").toString());
         }
-        if (StringUtils.isNotEmpty((String) params.get("severity"))) {
+        if (params.get("severity")!=null) {
             queryWrapper.eq("severity", params.get("severity").toString());
         }
         if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
@@ -121,6 +119,11 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     @Override
     public List<VulnInfoEntity> getByScanRecordId(Integer scanRecordId) {
         return baseMapper.selectList(new QueryWrapper<VulnInfoEntity>().eq("scan_record_id", scanRecordId));
+    }
+
+    @Override
+    public VulnInfoEntity getByVulnId(String vulnId) {
+        return baseMapper.selectOne(new QueryWrapper<VulnInfoEntity>().eq("vuln_id", vulnId));
     }
 
 }

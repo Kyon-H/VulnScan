@@ -4,12 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +37,7 @@ public class WebSocketServer {
     public static TargetService targetService;
     public static ScanRecordService scanRecordService;
     public static ConnectorService connectorService;
+    public static Boolean heartCheck =true;
 
     /**
      * 连接成功
@@ -54,7 +58,7 @@ public class WebSocketServer {
      * @param session
      */
     @OnClose
-    public void onClose(Session session) {
+    public void onClose(@NotNull Session session) {
         log.info("连接关闭");
         // 在线数减1
         onlineCount.decrementAndGet();
@@ -69,27 +73,31 @@ public class WebSocketServer {
      * @param message
      */
     @OnMessage
-    public void onMessage(String message, Session session) throws ExecutionException, InterruptedException {
+    public void onMessage(String message, @NotNull Session session) throws ExecutionException, InterruptedException {
         log.info("接收消息，Session ID：{}，消息内容：{}", session.getId(), message);
         JSONObject jsonObject = JSONObject.parseObject(message);
-
         switch (jsonObject.getString("action")) {
-            case "getStatus":
-                CompletableFuture<String> getstatus = connectorService.getScanStatus(jsonObject.getInteger("id"));
-                CompletableFuture.allOf(getstatus).join();
-                String status = getstatus.get();
-                log.info("status:{}", status);
-                this.sendMessage(status, session);
+            case "getRecordStatus":
+                JSONObject status;
+                do {
+                    CompletableFuture<JSONObject> getstatus = connectorService.getScanStatus(jsonObject.getInteger("id"));
+                    CompletableFuture.allOf(getstatus).join();
+                    status = getstatus.get();
+                    this.sendMessage(status.toString(), session);
+                }while (!status.getString("status").equals("completed"));
+                heartCheck=false;
                 break;
             case "getReportStatus":
                 CompletableFuture<String> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
                 CompletableFuture.allOf(reportStatus).join();
                 String rstatus = reportStatus.get();
-                log.info("status:{}", rstatus);
                 this.sendMessage(rstatus, session);
+                heartCheck=false;
                 break;
-            case "HeartBeat":
-                this.sendMessage("HeartBeat",session);
+            case "HeartCheck":
+                JSONObject heartCheck = new JSONObject();
+                heartCheck.put("HeartCheck", heartCheck);
+                this.sendMessage(heartCheck.toString(),session);
                 break;
             default:
                 break;
@@ -122,7 +130,7 @@ public class WebSocketServer {
      * @param error
      */
     @OnError
-    public void onError(Session session, Throwable error) {
+    public void onError(Session session, @NotNull Throwable error) {
         log.error("连接异常：{}", error.toString());
     }
 }

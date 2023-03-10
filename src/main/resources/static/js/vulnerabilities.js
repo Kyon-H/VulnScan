@@ -11,12 +11,13 @@ function load(){
     $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let severity=$.getUrlParam("severity");
     let scanRecordId=$.getUrlParam("scan_record_id");
-    var params={
-        scan_record_id:scanRecordId,
-        severity:severity,
-    };
-
-    loadPage(URL,currPage,pageSize,sidx,order,addTable,params);
+    if(scanRecordId){
+        URL+="/"+scanRecordId;
+        if(severity){
+            URL+="/"+severity;
+        }
+    }
+    loadPage(URL,currPage,pageSize,sidx,order,addTable);
 }
 //
 function addTable(data){

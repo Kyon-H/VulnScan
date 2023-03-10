@@ -26,15 +26,12 @@ $("#scanSubmitBtn").on("click", function () {
         address:address,
         scanType:scanType,
         scanSpeed:scanSpeed,
-        description:description
+        description:description,
+        username:username,
+        password:password,
+        url:cookie_url,
+        cookie:cookie_value
     };
-    var loginSettingClass=$("#loginSetting").attr('class');
-    if(loginSettingClass.indexOf("show")>0){
-        formData.username=username;
-        formData.password=password;
-        formData.url=cookie_url;
-        formData.cookie=cookie_value;
-    }
     console.log("formData:"+JSON.stringify(formData));
     $.post('/scan/save',
         formData,
@@ -55,6 +52,7 @@ function load(){
     $("#nav-placeholder").load("/navbar");
     $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
+
 }
 
 //获取扫描记录
@@ -109,14 +107,22 @@ function addTable(data){
             var data={
                 id:m.id,
                 targetId:m.targetId,
-                action:"getStatus"
+                action:"getRecordStatus"
                 };
             var domain = document.domain;
             var wsurl="ws://"+domain+"/ws";
             initWebSocket(wsurl);
             setTimeout(function() {
               sendSock(data, function(backData) {
-                if(backData.message!="processing"){
+                var message=JSON.parse(backData.message);
+                var status=message.status;
+                var severity_counts=message.severity_counts;
+                $('a.badge.badge-danger').val(severity_counts.high);
+                $('a.badge.badge-warning').val(severity_counts.medium);
+                $('a.badge.badge-primary').val(severity_counts.low);
+                $('a.badge.badge-success').val(severity_counts.info);
+
+                if(status=="completed"){
                     window.location.reload();
                 }
               });

@@ -99,6 +99,11 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         return baseMapper.selectById(id, userId);
     }
 
+    @Override
+    public ScanRecordEntity getById(Integer id) {
+        return baseMapper.selectOne(new QueryWrapper<ScanRecordEntity>().eq("id", id));
+    }
+
     @Transactional
     @Override
     public Boolean removeByIds(Integer id, List<Integer> vulnIds) {

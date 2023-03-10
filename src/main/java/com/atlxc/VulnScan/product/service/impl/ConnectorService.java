@@ -14,7 +14,6 @@ import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +33,11 @@ import java.util.concurrent.CompletableFuture;
 public class ConnectorService {
     private static final int INTERVAL = 1000;
 
+    /**
+     * 获取扫描状态
+     *
+     * @param targetId
+     */
     @Async("connectorExecutor")
     public void getScanRecordStatus(String targetId) {
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
@@ -45,42 +49,57 @@ public class ConnectorService {
         ScanRecordEntity entity = scanRecordService.getByTargetId(targetId);
         try {
             while (true) {
+                Thread.sleep(INTERVAL * 10);
+                //获取scanid
                 String tmp = targetService.getScanId(targetId);
-                log.info("getScanId:" + tmp);
-                if (tmp != null) {
-                    String scanId = tmp;
-                    ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
-                    entity.setScanId(scanId);
-                    if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
-                    if (!tmpEntity.getStatus().equals("completed")) continue;
-                    entity.setStatus(tmpEntity.getStatus());
-                    entity.setSeverityCounts(tmpEntity.getSeverityCounts());
-                    entity.setScanSessionId(tmpEntity.getScanSessionId());
-                    if (!scanRecordService.updateById(entity)) continue;
-                    log.info("update success");
-                    //获取漏洞信息
-                    Map<String, Object> params = new HashMap<>();
-                    params.put("target_id", entity.getTargetId());
-                    JSONObject jsonObject = vulnService.selectVulns(params);
-                    JSONArray vulnInfoArray = jsonObject.getJSONArray("vulnerabilities");
-                    Integer scanRecordId = entity.getId();
-                    for (int i = 0; i < vulnInfoArray.size(); i++) {
-                        JSONObject item = vulnInfoArray.getJSONObject(i);
-                        Date date = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
-                        Date lastSeen = DateUtils.addDateHours(date, 8);
-                        VulnInfoEntity vulnInfo = new VulnInfoEntity();
-                        vulnInfo.setScanRecordId(scanRecordId);
-                        vulnInfo.setVulnId(item.getString("vuln_id"));
-                        vulnInfo.setSeverity(item.getInteger("severity"));
-                        vulnInfo.setVulnerability(item.getString("vt_name"));
-                        vulnInfo.setTargetAddress(item.getString("affects_url"));
-                        vulnInfo.setConfidence(item.getInteger("confidence"));
-                        vulnInfo.setLastSeen(lastSeen);
-                        vulnInfoService.save(vulnInfo);
-                    }
+                if (tmp == null) continue;
+                String scanId = tmp;
+                //通过scanid获取扫描状态
+                ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
+                entity.setScanId(scanId);
+                if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
+                // 比较SeverityCounts变化
+                String oldSeverityCount=entity.getSeverityCounts().toString();
+                String newSeverityCount=tmpEntity.getSeverityCounts().toString();
+                if(oldSeverityCount.equals(newSeverityCount)&&tmpEntity.getStatus().equals("completed")){
                     break;
                 }
-                Thread.sleep(INTERVAL * 2);
+                // 在processing状态下，severityCount无变化时
+                if(oldSeverityCount.equals(newSeverityCount)&&tmpEntity.getStatus().equals("processing")){
+                    continue;
+                }
+                //severityCount 变化时，更新severityCount和status
+                //保存status severity
+                entity.setStatus(tmpEntity.getStatus());
+                entity.setSeverityCounts(tmpEntity.getSeverityCounts());
+                entity.setScanSessionId(tmpEntity.getScanSessionId());
+                if (!scanRecordService.updateById(entity)) continue;
+                log.info("update success");
+                //获取漏洞信息
+                Map<String, Object> params = new HashMap<>();
+                params.put("target_id", entity.getTargetId());
+                JSONObject jsonObject = vulnService.selectVulns(params);
+                JSONArray vulnInfoArray = jsonObject.getJSONArray("vulnerabilities");
+                Integer scanRecordId = entity.getId();
+                for (int i = 0; i < vulnInfoArray.size(); i++) {
+                    JSONObject item = vulnInfoArray.getJSONObject(i);
+                    //避免重复保存
+                    if (vulnInfoService.getByVulnId(item.getString("vuln_id")) != null) continue;
+                    //获取数据并保存到数据库
+                    Date date = DateUtils.stringToDate(item.getString("last_seen"), DateUtils.DATE_TIME_ZONE_PATTERN);
+                    Date lastSeen = DateUtils.addDateHours(date, 8);
+                    VulnInfoEntity vulnInfo = new VulnInfoEntity();
+                    vulnInfo.setScanRecordId(scanRecordId);
+                    vulnInfo.setVulnId(item.getString("vuln_id"));
+                    vulnInfo.setSeverity(item.getInteger("severity"));
+                    vulnInfo.setVulnerability(item.getString("vt_name"));
+                    vulnInfo.setTargetAddress(item.getString("affects_url"));
+                    vulnInfo.setConfidence(item.getInteger("confidence"));
+                    vulnInfo.setLastSeen(lastSeen);
+                    vulnInfoService.save(vulnInfo);
+                }
+                if (!entity.getStatus().equals("completed")) continue;
+                break;
             }
         } catch (InterruptedException e) {
             log.error("getScanRecordStatus 监控线程意外中断{}", e.getMessage());
@@ -90,22 +109,20 @@ public class ConnectorService {
 
     /**
      * websocket调用，获取扫描状态
+     *
      * @param id ScanRecordId
      * @return 扫描状态和漏洞分布
      */
     @Async("connectorExecutor")
-    public CompletableFuture<String> getScanStatus(Integer id) {
+    public CompletableFuture<JSONObject> getScanStatus(Integer id) {
         log.info("getScanStatus id:{}", id);
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         try {
             ScanRecordEntity entity = scanRecordService.getById(id);
-            if (entity != null && entity.getStatus().equals("completed")) {
-                JSONObject status=new JSONObject();
-                status.put("severity_counts",entity.getSeverityCounts());
-                status.put("status",entity.getStatus());
-                return CompletableFuture.completedFuture(status.toString());
+            if (entity == null) {
+                throw new RuntimeException("记录不存在");
             }
             //获取scanId
             while (entity.getScanId() == null) {
@@ -114,30 +131,28 @@ public class ConnectorService {
                 entity.setScanId(scanId);
             }
             while (true) {
-                Thread.sleep(INTERVAL * 2);
+                Thread.sleep(INTERVAL * 6);
                 String scanId = entity.getScanId();
                 ScanRecordEntity status = scanService.getStatus(scanId);
-                if (status.getStatus() == null) continue;
                 //TODO
-                entity.setStatus(status.getStatus());
-                entity.setSeverityCounts(status.getSeverityCounts());
-
-                log.info(entity.getSeverityCounts().toString());
-                log.info(entity.getStatus());
-                if (!entity.getStatus().equals("completed")) continue;
-                scanRecordService.updateById(entity);
-                log.info("update success");
-                return CompletableFuture.completedFuture(entity.getStatus());
-
+                if(!entity.getStatus().equals(status.getStatus())) {
+                    log.error("ScanStatus 状态不一致");
+                    this.getScanRecordStatus(entity.getTargetId());
+                }
+                JSONObject result = new JSONObject();
+                result.put("severity_counts", entity.getSeverityCounts());
+                result.put("status", entity.getStatus());
+                return CompletableFuture.completedFuture(result);
             }
         } catch (Exception e) {
-            log.error("getStatus 监控线程意外中断{}", e.getMessage());
+            log.error("getScanStatus 监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     /**
      * 获取生成报告状态
+     *
      * @param ReportId
      * @return 状态信息
      */

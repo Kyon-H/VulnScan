@@ -108,7 +108,9 @@ public class ScanRecordController {
             cookie.put("cookie", vo.getCookie());
             cookies.add(cookie);
         }
-        targetService.setLogin(scanRecord.getTargetId(), credentials, cookies);
+        if(credentials.size() >= 1 || cookies.size() >= 1) {
+            targetService.setLogin(scanRecord.getTargetId(), credentials, cookies);
+        }
         //settype
         String type;
         switch (vo.getScanType()) {

@@ -2,6 +2,8 @@ package com.atlxc.VulnScan.product.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
+import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
@@ -28,13 +30,26 @@ import java.util.Map;
 public class VulnInfoController {
     @Autowired
     private VulnInfoService vulnInfoService;
+    @Autowired
+    private UsersService usersService;
+    @Autowired
+    private ScanRecordService scanRecordService;
 
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
+    @RequestMapping(value = {"/list/{scanRecordId}/{severity}","/list/{scanRecordId}","/list"})
+    public R list(
+            @PathVariable(value = "scanRecordId", required = false) Integer scanRecordId,
+            @PathVariable(value = "severity", required = false) Integer severity,
+            @NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal
+    ) {
+        if(scanRecordId!=null&&scanRecordService.getById(scanRecordId)==null){
+            return R.error("记录不存在");
+        }
         params.put("userName", principal.getName());
+        params.put("scanRecordId", scanRecordId);
+        params.put("severity", severity);
         PageUtils page = vulnInfoService.queryPage(params);
 
         return R.ok().put("page", page);

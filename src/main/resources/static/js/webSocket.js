@@ -1,6 +1,6 @@
 var webSocket = null;
 var globalCallback = null;//定义外部接收数据的回调函数
-
+var reconn = true;
 //初始化websocket
 function initWebSocket(url) {
   if ("WebSocket" in window) {
@@ -22,7 +22,7 @@ function initWebSocket(url) {
     webSocketClose();
     console.log("WebSocket:已关闭");
     heartCheck.reset();//心跳检测
-//    reconnect();
+    if(reconn) reconnect();
   };
   //连接发生错误的回调方法
   webSocket.onerror = function() {
@@ -54,6 +54,9 @@ function webSocketOpen() {
 function webSocketOnMessage(e) {
     console.log("e.data:"+e.data);
   const data = JSON.parse(e.data);//根据自己的需要对接收到的数据进行格式化
+  if(data.HeartCheck!= undefined){
+    reconn=data.HeartCheck;
+  }
   console.log("run callback");
   globalCallback(data);//将data传给在外定义的接收数据的函数，至关重要。
   heartCheck.reset().start();
@@ -92,7 +95,7 @@ function reconnect() {
 }
 //心跳检测
 var heartCheck={
-    timeout:5000,
+    timeout:10000,
     timeoutObj:null,
     serverTimeoutObj:null,
     reset:function(){
@@ -103,7 +106,7 @@ var heartCheck={
     start:function(){
         const data = {
           type: "CONNECT",
-          action: "HeartBeat"
+          action: "HeartCheck"
         };
         var self = this;
         this.timeoutObj&&clearTimeout(this.timeoutObj);
@@ -115,7 +118,7 @@ var heartCheck={
             self.serverTimeoutObj=setTimeout(function(){
                 // 如果超过一定时间还没重置，说明后端主动断开了
                 console.log("关闭websocket");
-                //webSocket.close();
+                webSocket.close();
             },self.timeout);
         },this.timeout);
     }

@@ -7,6 +7,7 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -30,7 +31,7 @@ public class TargetService {
      * @return
      */
     public JSONObject addTargets(Map<String, Object> param) {
-        log.info("addTargets() {}", param);
+        log.debug("addTargets() {}", param);
         //请求体
         JSONObject body = new JSONObject();
         body.put("address", param.get("address"));
@@ -60,15 +61,15 @@ public class TargetService {
      * Method: PATCH
      * URL: /api/v1/targets/{target_id}/configuration
      */
-    public void setLogin(String targetId, JSONObject credentials,JSONArray cookies) {
+    public void setLogin(String targetId, @NotNull JSONObject credentials, JSONArray cookies) {
         JSONObject body = new JSONObject();
-        if(credentials!=null){
+        if(credentials.size()>0){
             JSONObject login = new JSONObject();
             login.put("kind", "automatic");
             login.put("credentials", credentials);
             body.put("login", login);
         }
-        if(cookies!=null&&cookies.size()>0){
+        if(cookies.size()>0){
             body.put("custom_cookies", cookies);
         }
         Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", body);
@@ -84,13 +85,13 @@ public class TargetService {
      * @throws RRException
      */
     public String getScanId(String targetId) {
-        log.info("getScanId(), targetID {}", targetId);
+        log.debug("getScanId(), targetID {}", targetId);
         //request
         JSONObject responseEntity = AWVSRequestUtils.GET(URL + "/" + targetId);
         if (responseEntity == null) {
             throw new RRException("获取扫描id失败");
         }
-        log.info(responseEntity.getString("last_scan_id"));
+        log.debug(responseEntity.getString("last_scan_id"));
         return responseEntity.getString("last_scan_id");
     }
 

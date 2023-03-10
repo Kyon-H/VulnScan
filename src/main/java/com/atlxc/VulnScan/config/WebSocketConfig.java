@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.config;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.utils.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,4 +45,5 @@ public class WebSocketConfig {
     public void setConnectorService(ConnectorService connectorService) {
         WebSocketServer.connectorService = connectorService;
     }
+
 }

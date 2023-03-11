@@ -12,8 +12,10 @@ import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.query.MPJQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,33 +38,26 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
 
     @Override
     public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        String userName = params.get("userName").toString();
-        List<ScanRecordEntity> scanRecord = scanRecordService.getByUserName(userName);
-        List<Integer> scanRecordIds = scanRecord.stream().map(ScanRecordEntity::getId).collect(Collectors.toList());
+        Integer userId =(Integer) params.get("userId");
 
-        QueryWrapper<VulnInfoEntity> queryWrapper = new QueryWrapper<>();
+        MPJQueryWrapper<VulnInfoEntity> queryWrapper = new MPJQueryWrapper<>();
+        queryWrapper.selectAll(VulnInfoEntity.class)
+                .leftJoin("scan_record on t.scan_record_id = scan_record.id")
+                .eq("scan_record.user_id",userId);
         if (params.get("scanRecordId")!= null) {
-            queryWrapper.eq("scan_record_id", params.get("scanRecordId").toString());
+            queryWrapper.eq("t.scan_record_id", params.get("scanRecordId").toString());
         }
         if (params.get("severity")!=null) {
             queryWrapper.eq("severity", params.get("severity").toString());
         }
-        if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
-            Boolean isAsc = params.get("order").toString().equals("asc") ? Boolean.TRUE : Boolean.FALSE;
-            //排序
-            queryWrapper.in("scan_record_id", scanRecordIds);
-            IPage<VulnInfoEntity> page = this.page(
-                    new Query<VulnInfoEntity>().getPage(params, params.get("sidx").toString(), isAsc),
-                    queryWrapper
-            );
-            return new PageUtils(page);
-        } else {
-            IPage<VulnInfoEntity> page = this.page(
-                    new Query<VulnInfoEntity>().getPage(params),
-                    queryWrapper
-            );
-            return new PageUtils(page);
-        }
+        Boolean isAsc= params.get("isAsc") == null || params.get("order").toString().equals("asc");
+        String sidx=params.get("sidx")==null?"":params.get("sidx").toString();
+        //排序
+        IPage<VulnInfoEntity> page = this.page(
+                new Query<VulnInfoEntity>().getPage(params, sidx, isAsc),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override

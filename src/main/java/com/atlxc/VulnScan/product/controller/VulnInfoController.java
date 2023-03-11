@@ -44,9 +44,8 @@ public class VulnInfoController {
             @PathVariable(value = "severity", required = false) Integer severity,
             @NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal
     ) {
-        if(scanRecordId!=null&&scanRecordService.getById(scanRecordId)==null){
-            return R.error("记录不存在");
-        }
+        Integer ueserId = usersService.getIdByName(principal.getName());
+        params.put("userId", ueserId);
         params.put("userName", principal.getName());
         params.put("scanRecordId", scanRecordId);
         params.put("severity", severity);

@@ -12,12 +12,10 @@ import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.yulichang.query.MPJQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service("vulnInfoService")
@@ -38,21 +35,23 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
 
     @Override
     public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        Integer userId =(Integer) params.get("userId");
-
+        Integer userId = (Integer) params.get("userId");
         MPJQueryWrapper<VulnInfoEntity> queryWrapper = new MPJQueryWrapper<>();
+//        基本查询
         queryWrapper.selectAll(VulnInfoEntity.class)
                 .leftJoin("scan_record on t.scan_record_id = scan_record.id")
-                .eq("scan_record.user_id",userId);
-        if (params.get("scanRecordId")!= null) {
-            queryWrapper.eq("t.scan_record_id", params.get("scanRecordId").toString());
+                .eq("scan_record.user_id", userId);
+//        可变条件
+        if (params.get("scanRecordId") != null) {
+            queryWrapper.eq("t.scan_record_id", Integer.parseInt(params.get("scanRecordId").toString()));
         }
-        if (params.get("severity")!=null) {
-            queryWrapper.eq("severity", params.get("severity").toString());
+        if (params.get("severity") != null) {
+            queryWrapper.eq("severity", Integer.parseInt(params.get("severity").toString()));
         }
-        Boolean isAsc= params.get("isAsc") == null || params.get("order").toString().equals("asc");
-        String sidx=params.get("sidx")==null?"":params.get("sidx").toString();
-        //排序
+        Boolean isAsc = params.get("isAsc") == null || params.get("order").toString().equals("asc");
+        String sidx = params.get("sidx") == null ? "" : params.get("sidx").toString();
+//        分页查询
+//        params: page, limit
         IPage<VulnInfoEntity> page = this.page(
                 new Query<VulnInfoEntity>().getPage(params, sidx, isAsc),
                 queryWrapper
@@ -90,20 +89,9 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     }
 
     @Override
-    public JSONObject getDetail(@NotNull Map<String, Object> params) {
-        String userName = params.get("userName").toString();
-        Integer vulnInfoId = Integer.parseInt(params.get("vulninfo_id").toString());
-        List<ScanRecordEntity> scanRecordEntities = scanRecordService.getByUserName(userName);
-        List<Integer> scanRecordIds = new ArrayList<>();
-        scanRecordEntities.forEach(scanRecordEntity -> {
-            scanRecordIds.add(scanRecordEntity.getId());
-        });
-        VulnInfoEntity vulnInfoEntity = baseMapper.selectOne(
-                new QueryWrapper<VulnInfoEntity>()
-                        .in("scan_record_id", scanRecordIds)
-                        .eq("id", vulnInfoId)
-        );
-        if (vulnInfoEntity == null) {
+    public JSONObject getDetail(Integer vulnInfoId, Integer userId) {
+        VulnInfoEntity vulnInfoEntity = baseMapper.selectOneByIds(userId, vulnInfoId);
+        if (vulnInfoEntity==null) {
             return null;
         }
         String vulnId = vulnInfoEntity.getVulnId();

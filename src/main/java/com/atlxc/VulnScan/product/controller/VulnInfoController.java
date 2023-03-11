@@ -32,13 +32,11 @@ public class VulnInfoController {
     private VulnInfoService vulnInfoService;
     @Autowired
     private UsersService usersService;
-    @Autowired
-    private ScanRecordService scanRecordService;
 
     /**
      * 列表
      */
-    @RequestMapping(value = {"/list/{scanRecordId}/{severity}","/list/{scanRecordId}","/list"})
+    @RequestMapping(value = {"/list/{scanRecordId}/{severity}", "/list/{scanRecordId}", "/list"})
     public R list(
             @PathVariable(value = "scanRecordId", required = false) Integer scanRecordId,
             @PathVariable(value = "severity", required = false) Integer severity,
@@ -46,7 +44,6 @@ public class VulnInfoController {
     ) {
         Integer ueserId = usersService.getIdByName(principal.getName());
         params.put("userId", ueserId);
-        params.put("userName", principal.getName());
         params.put("scanRecordId", scanRecordId);
         params.put("severity", severity);
         PageUtils page = vulnInfoService.queryPage(params);
@@ -54,21 +51,13 @@ public class VulnInfoController {
         return R.ok().put("page", page);
     }
 
-
     /**
      * 信息
      */
-//    @RequestMapping("/info/{id}")
-    public R info(@PathVariable("id") Integer id) {
-        VulnInfoEntity vulnInfo = vulnInfoService.getById(id);
-
-        return R.ok().put("vulnInfo", vulnInfo);
-    }
-
-    @RequestMapping("/detail")
-    public R detail(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
-        params.put("userName", principal.getName());
-        JSONObject detail = vulnInfoService.getDetail(params);
+    @RequestMapping("/detail/{id}")
+    public R detail(@PathVariable("id") Integer id, @NotNull Principal principal) {
+        Integer userId = usersService.getIdByName(principal.getName());
+        JSONObject detail = vulnInfoService.getDetail(id, userId);
         return R.ok().put("detail", detail);
     }
 

@@ -50,9 +50,11 @@ $("#scanSubmitBtn").on("click", function () {
 //默认查询，page:1,limit:10
 function load(){
     $("#nav-placeholder").load("/navbar");
-    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
-
+    setTimeout(function(){
+            $('#home').parent().removeClass('active');
+            $('#scans').parent().addClass('active');
+        },100);
 }
 
 //获取扫描记录

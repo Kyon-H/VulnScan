@@ -21,7 +21,7 @@ public interface VulnInfoService extends IService<VulnInfoEntity> {
 
     Boolean updateAll();
 
-    JSONObject getDetail(Map<String, Object> params);
+    JSONObject getDetail(Integer vulnInfoId, Integer userId);
 
     List<VulnInfoEntity> getByScanRecordId(Integer scanRecordId);
 

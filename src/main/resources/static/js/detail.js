@@ -1,9 +1,7 @@
 function load(){
     $("#nav-placeholder").load("/navbar");
-    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let vulninfo_id=$.getUrlParam("id");
-    $.post("/vulninfo/detail",
-        {vulninfo_id:vulninfo_id},
+    $.get("/vulninfo/detail/"+vulninfo_id,
         function(data){
             if(data.code==0){
                 console.log(data.detail);
@@ -12,8 +10,10 @@ function load(){
                 layer.msg(data.msg,{icon:2});
             }
         }
-    )
-
+    );
+    setTimeout(function(){
+            $('#home').parent().removeClass('active');
+        },100);
 }
 
 function addDetail(data){

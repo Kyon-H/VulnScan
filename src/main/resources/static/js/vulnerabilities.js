@@ -8,7 +8,7 @@ var order="desc";
 ////////////////////////////////
 function load(){
     $("#nav-placeholder").load("/navbar");
-    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
+//    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let severity=$.getUrlParam("severity");
     let scanRecordId=$.getUrlParam("scan_record_id");
     if(scanRecordId){
@@ -18,6 +18,10 @@ function load(){
         }
     }
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    setTimeout(function(){
+        $('#home').parent().removeClass('active');
+        $('#vulnerabilities').parent().addClass('active');
+    },100);
 }
 //
 function addTable(data){

@@ -8,8 +8,11 @@ var order="desc";
 ////////////////////////////////
 function load(){
     $("#nav-placeholder").load("/navbar");
-    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    setTimeout(function(){
+            $('#home').parent().removeClass('active');
+            $('#reports').parent().addClass('active');
+        },100);
 }
 
 function addTable(data){

@@ -19,6 +19,8 @@ import java.util.List;
 public interface VulnInfoDao extends BaseMapper<VulnInfoEntity> {
     @Select("select vuln_info.* from scan_record vuln_info where scan_record_id = #{scanRecordId}")
     List<VulnInfoEntity> selectByTargetId(Integer scanRecordId);
-    @Select("select vuln_info.* from vuln_info join scan_record on vuln_info.scan_record_id = scan_record.id where scan_record.user_id = #{userId}")
-    List<VulnInfoEntity> selectByUserId(Integer userId);
+    @Select("select vuln_info.* from vuln_info " +
+            "join scan_record on vuln_info.scan_record_id = scan_record.id " +
+            "where scan_record.user_id = #{userId} and vuln_info.id=#{vulnInfoId}")
+    VulnInfoEntity selectOneByIds(Integer userId,Integer vulnInfoId);
 }

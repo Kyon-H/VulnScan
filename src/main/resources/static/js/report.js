@@ -23,23 +23,26 @@ function addTable(data){
     var item="";
     $.each(data.list,function(i,m){
         item+=`<tr><td align="center">${i+1}</td><td>${m.templateName}</td><td>${m.listType}</td>
-            <td>${formData(m.generationDate)}</td><td>${m.description}</td>`;
+            <td>${formData(m.generationDate)}</td><td><div class="description" name="${m.id}">${m.description}</div></td>`;
         if(m.status=="processing"){
-            item+=`<td><div class="d-flex align-items-center">
+            item+=`<td><div name="${m.id}" class="d-flex align-items-center">
                <strong>processing...</strong>
                <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
                </div></td>`;
             var data={
+                id:m.id,
                 reportId:m.reportId,
                 action:"getReportStatus"
                 };
-            var domain = document.domain;
-            var wsurl="ws://"+domain+"/ws";
-            initWebSocket(wsurl);
+            initWebSocket();
             setTimeout(function() {
               sendSock(data, function(backData) {
-                if(backData.message!="processing"){
-                    window.location.reload();
+                if(backData.status!="processing"){
+//                    window.location.reload();
+                    $(`div[name="${data.id}"].d-flex`).empty();
+                    $(`div[name="${data.id}"].d-flex`).append(backData.status);
+                    $(`div[name="${data.id}"].description`).empty();
+                    $(`div[name="${data.id}"].description`).append(backData.description);
                 }
               });
             }, 1000); // 延时 1 秒钟调用 sendSock 方法

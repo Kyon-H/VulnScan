@@ -93,10 +93,10 @@ function addTable(data){
         //扫描结果分布
         let counts=m.severityCounts;
         item+=`<td>
-            <a href="/ActiveScan/vulnerabilities?severity=3&scan_record_id=${m.id}" class="badge badge-danger">${counts.high}</a>
-            <a href="/ActiveScan/vulnerabilities?severity=2&scan_record_id=${m.id}" class="badge badge-warning">${counts.medium}</a>
-            <a href="/ActiveScan/vulnerabilities?severity=1&scan_record_id=${m.id}" class="badge badge-primary">${counts.low}</a>
-            <a href="/ActiveScan/vulnerabilities?severity=0&scan_record_id=${m.id}" class="badge badge-success">${counts.info}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=3&scan_record_id=${m.id}" name="${m.id}" class="badge badge-danger">${counts.high}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=2&scan_record_id=${m.id}" name="${m.id}" class="badge badge-warning">${counts.medium}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=1&scan_record_id=${m.id}" name="${m.id}" class="badge badge-primary">${counts.low}</a>
+            <a href="/ActiveScan/vulnerabilities?severity=0&scan_record_id=${m.id}" name="${m.id}" class="badge badge-success">${counts.info}</a>
         </td>`;
         //添加时间
         item+=`<td>${formData(m.scanTime)}</td>`;
@@ -111,19 +111,16 @@ function addTable(data){
                 targetId:m.targetId,
                 action:"getRecordStatus"
                 };
-            var domain = document.domain;
-            var wsurl="ws://"+domain+"/ws";
-            initWebSocket(wsurl);
+            initWebSocket();
             setTimeout(function() {
               sendSock(data, function(backData) {
-                var message=JSON.parse(backData.message);
-                var status=message.status;
-                var severity_counts=message.severity_counts;
-                $('a.badge.badge-danger').val(severity_counts.high);
-                $('a.badge.badge-warning').val(severity_counts.medium);
-                $('a.badge.badge-primary').val(severity_counts.low);
-                $('a.badge.badge-success').val(severity_counts.info);
-
+                var status=backData.status;
+                var severity_counts=backData.severity_counts;
+                console.log(data.id);
+                $(`a[name="${data.id}"].badge.badge-danger`).text(severity_counts.high);
+                $(`a[name="${data.id}"].badge.badge-warning`).text(severity_counts.medium);
+                $(`a[name="${data.id}"].badge.badge-primary`).text(severity_counts.low);
+                $(`a[name="${data.id}"].badge.badge-success`).text(severity_counts.info);
                 if(status=="completed"){
                     window.location.reload();
                 }

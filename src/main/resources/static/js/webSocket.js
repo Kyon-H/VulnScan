@@ -2,8 +2,9 @@ var webSocket = null;
 var globalCallback = null;//定义外部接收数据的回调函数
 var reconn = true;
 //初始化websocket
-function initWebSocket(url) {
+function initWebSocket() {
   if ("WebSocket" in window) {
+    let url="ws://"+document.domain+"/ws";
     webSocket = new WebSocket(url);//创建socket对象
     console.log(webSocket)
   } else {
@@ -54,12 +55,18 @@ function webSocketOpen() {
 function webSocketOnMessage(e) {
     console.log("e.data:"+e.data);
   const data = JSON.parse(e.data);//根据自己的需要对接收到的数据进行格式化
-  if(data.HeartCheck!= undefined){
+  if(data.message.HeartCheck!= undefined){
     reconn=data.HeartCheck;
   }
-  console.log("run callback");
-  globalCallback(data);//将data传给在外定义的接收数据的函数，至关重要。
-  heartCheck.reset().start();
+  if(data.message.status!= undefined){
+      console.log("run callback");
+      globalCallback(data.message);//将data传给在外定义的接收数据的函数，至关重要。
+  }
+  if(reconn){
+    heartCheck.reset().start();
+  }else{
+    heartCheck.reset();
+  }
 }
 
 //发送数据
@@ -81,6 +88,9 @@ function webSocketClose() {
 var lockReconnect = false, tt;
 //websocket重连
 function reconnect() {
+    if(!reconn){
+        return;
+    }
     if(lockReconnect){
         return;
     }
@@ -89,13 +99,12 @@ function reconnect() {
     tt=setTimeout(function(){
         console.log("重连。。。");
         lockReconnect = false;
-        let url="ws://"+document.domain+"/ws";
-        initWebSocket(url);
+        initWebSocket();
     },4000);
 }
 //心跳检测
 var heartCheck={
-    timeout:10000,
+    timeout:20000,
     timeoutObj:null,
     serverTimeoutObj:null,
     reset:function(){

@@ -10,6 +10,7 @@ import com.atlxc.VulnScan.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -47,7 +48,6 @@ public class VulnInfoController {
         params.put("scanRecordId", scanRecordId);
         params.put("severity", severity);
         PageUtils page = vulnInfoService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 

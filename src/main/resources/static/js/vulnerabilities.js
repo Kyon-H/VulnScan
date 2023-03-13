@@ -33,28 +33,28 @@ function addTable(data){
     console.log("currPage:"+currPage);
     $.each(data.list,function(i,m){
         //# address
-        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td>`;
+        item+=`<tr><td>${(currPage-1)*pageSize+1+i}</td>`;
         //severity
         switch(m.severity){
             case 0:
-                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:ForestGreen" title="informational"></i></td>`;
+                item+=`<td><i class="bi bi-bug-fill" style="color:ForestGreen" title="informational"></i></td>`;
                 break;
             case 1:
-                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:cornflowerblue" title="low"></i></td>`;
+                item+=`<td><i class="bi bi-bug-fill" style="color:cornflowerblue" title="low"></i></td>`;
                 break;
             case 2:
-                item+=`<td align="center"><i class="bi bi-bug-fill" style="color:GoldenRod" title="medium"></i></td>`;
+                item+=`<td><i class="bi bi-bug-fill" style="color:GoldenRod" title="medium"></i></td>`;
                 break;
             case 3:
-                item+=`<td align="center"><i class="bi bi-bug-fill"style="color:Crimson" title="high"></i></td>`;
+                item+=`<td><i class="bi bi-bug-fill"style="color:Crimson" title="high"></i></td>`;
                 break;
         }
         //vulnerability
-        item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}">${m.vulnerability}</a></td>`;
+        item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}" title="${m.vulnerability}">${m.vulnerability}</a></td>`;
         //targetAddress
-        item+=`<td>${m.targetAddress}</td>`;
+        item+=`<td><span title="${m.targetAddress}">${m.targetAddress}</span></td>`;
         //confidence
-        item+=`<td align="center">${m.confidence}</td>`;
+        item+=`<td>${m.confidence}</td>`;
         //lastSeen
         item+=`<td>${formData(m.lastSeen)}</td>`;
         //导出文档

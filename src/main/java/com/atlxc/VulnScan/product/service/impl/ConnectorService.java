@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -48,24 +49,32 @@ public class ConnectorService {
         //
         ScanRecordEntity entity = scanRecordService.getByTargetId(targetId);
         try {
-            while (true) {
-                Thread.sleep(INTERVAL * 10);
+            while (entity.getScanId() == null) {
+                Thread.sleep(INTERVAL);
                 //获取scanid
-                String tmp = targetService.getScanId(targetId);
-                if (tmp == null) continue;
-                String scanId = tmp;
+                String scanId = targetService.getScanId(targetId);
+                entity.setScanId(scanId);
+            }
+            while (true) {
+                Thread.sleep(INTERVAL * 5);
+                String scanId = entity.getScanId();
                 //通过scanid获取扫描状态
                 ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
-                entity.setScanId(scanId);
+
                 if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
                 // 比较SeverityCounts变化
-                String oldSeverityCount=entity.getSeverityCounts().toString();
-                String newSeverityCount=tmpEntity.getSeverityCounts().toString();
-                if(oldSeverityCount.equals(newSeverityCount)&&tmpEntity.getStatus().equals("completed")){
+                JSONObject oldSC=entity.getSeverityCounts();
+                JSONObject newSC=tmpEntity.getSeverityCounts();
+                if(entity.getStatus().equals("completed")){
                     break;
                 }
                 // 在processing状态下，severityCount无变化时
-                if(oldSeverityCount.equals(newSeverityCount)&&tmpEntity.getStatus().equals("processing")){
+                if(
+                    oldSC.getInteger("high").equals(newSC.getInteger("high"))&&
+                    oldSC.getInteger("medium").equals(newSC.getInteger("medium"))&&
+                    oldSC.getInteger("low").equals(newSC.getInteger("low"))&&
+                    oldSC.getInteger("info").equals(newSC.getInteger("info"))&&
+                    tmpEntity.getStatus().equals("processing")) {
                     continue;
                 }
                 //severityCount 变化时，更新severityCount和status
@@ -126,22 +135,21 @@ public class ConnectorService {
             }
             //获取scanId
             while (entity.getScanId() == null) {
-                Thread.sleep(INTERVAL * 2);
+                Thread.sleep(INTERVAL);
                 String scanId = targetService.getScanId(entity.getTargetId());
                 entity.setScanId(scanId);
             }
             while (true) {
-                Thread.sleep(INTERVAL * 6);
+                Thread.sleep(INTERVAL * 5);
                 String scanId = entity.getScanId();
                 ScanRecordEntity status = scanService.getStatus(scanId);
-                //TODO
                 if(!entity.getStatus().equals(status.getStatus())) {
                     log.error("ScanStatus 状态不一致");
                     this.getScanRecordStatus(entity.getTargetId());
                 }
                 JSONObject result = new JSONObject();
-                result.put("severity_counts", entity.getSeverityCounts());
-                result.put("status", entity.getStatus());
+                result.put("severity_counts", status.getSeverityCounts());
+                result.put("status", status.getStatus());
                 return CompletableFuture.completedFuture(result);
             }
         } catch (Exception e) {
@@ -157,7 +165,7 @@ public class ConnectorService {
      * @return 状态信息
      */
     @Async("connectorExecutor")
-    public CompletableFuture<String> getReportStatus(String ReportId) {
+    public CompletableFuture<JSONObject> getReportStatus(String ReportId) {
         log.info("getReportStatus");
         ScanReportService scanReportService = (ScanReportService) SpringContextUtils.getBean("scanReportService");
         ReportService reportService = (ReportService) SpringContextUtils.getBean("reportService");
@@ -176,7 +184,10 @@ public class ConnectorService {
                 entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/", ""));
                 entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/", ""));
                 if (!scanReportService.updateById(entity)) continue;
-                return CompletableFuture.completedFuture(entity.getStatus());
+                JSONObject result=new JSONObject();
+                result.put("status",entity.getStatus());
+                result.put("description",entity.getDescription());
+                return CompletableFuture.completedFuture(result);
             }
         } catch (Exception e) {
             log.error("getReportStatus 监控线程意外中断{}", e.getMessage());

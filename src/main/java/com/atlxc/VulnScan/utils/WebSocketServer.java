@@ -37,7 +37,7 @@ public class WebSocketServer {
     public static TargetService targetService;
     public static ScanRecordService scanRecordService;
     public static ConnectorService connectorService;
-    public static Boolean heartCheck =true;
+    public static Boolean HeartCheck =true;
 
     /**
      * 连接成功
@@ -83,21 +83,20 @@ public class WebSocketServer {
                     CompletableFuture<JSONObject> getstatus = connectorService.getScanStatus(jsonObject.getInteger("id"));
                     CompletableFuture.allOf(getstatus).join();
                     status = getstatus.get();
-                    this.sendMessage(status.toString(), session);
+                    this.sendMessage(status, session);
                 }while (!status.getString("status").equals("completed"));
-                heartCheck=false;
+                HeartCheck=false;
                 break;
             case "getReportStatus":
-                CompletableFuture<String> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
+                CompletableFuture<JSONObject> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
                 CompletableFuture.allOf(reportStatus).join();
-                String rstatus = reportStatus.get();
-                this.sendMessage(rstatus, session);
-                heartCheck=false;
+                this.sendMessage(reportStatus.get(), session);
+                HeartCheck=false;
                 break;
             case "HeartCheck":
                 JSONObject heartCheck = new JSONObject();
-                heartCheck.put("HeartCheck", heartCheck);
-                this.sendMessage(heartCheck.toString(),session);
+                heartCheck.put("HeartCheck", HeartCheck);
+                this.sendMessage(heartCheck,session);
                 break;
             default:
                 break;
@@ -110,7 +109,7 @@ public class WebSocketServer {
      * @param message 客户端发送的消息内容
      * @param session 客户端连接对象
      */
-    public void sendMessage(String message, Session session) {
+    public void sendMessage(JSONObject message, Session session) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("message", message);
         String response = jsonObject.toString();

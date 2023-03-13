@@ -24,7 +24,7 @@ public class KaptchaConfig {
         //边框厚度
         properties.setProperty("kaptcha.border.thickness", "1");
         // 图片宽
-        properties.setProperty("kaptcha.image.width", "200");
+        properties.setProperty("kaptcha.image.width", "150");
         // 图片高
         properties.setProperty("kaptcha.image.height", "50");
         //图片实现类

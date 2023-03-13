@@ -5,8 +5,16 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -42,7 +50,7 @@ public class VulnService {
      * Method:GET
      * URL: /api/v1/vulnerabilities?q=severity:{int};status:{string};target_id:{target_id};confidence:{confidence};
      */
-    public JSONObject selectVulns(Map<String, Object> params) {
+    public JSONObject selectVulns(@NotNull Map<String, Object> params) {
         StringBuilder sb = new StringBuilder().append(URL + "?q=");
         if (params.get("severity") != null) {
             sb.append("severity:").append(params.get("severity").toString()).append(";");
@@ -71,5 +79,28 @@ public class VulnService {
         JSONObject result = AWVSRequestUtils.GET(URL + "/" + vuln_id);
         if (result == null) throw new RRException("获取单个漏洞信息失败");
         return result;
+    }
+
+    /**
+     * 获取单个漏洞信息的http_response信息
+     * Method:GET
+     * URL: api/v1/vulnerabilities/{vuln_id}/http_response
+     */
+    public byte[] getHttpResponse(String vuln_id) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("Content-Type", "application/json;charset=UTF-8");
+        HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
+        String url=URL + "/" + vuln_id + "/http_response";
+        log.debug("http_response url:{}",url);
+        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new RRException("获取response信息失败");
+        }
+        byte[] body = responseEntity.getBody();
+
+        if (body == null) throw new RRException("下载报告失败");
+        return body;
     }
 }

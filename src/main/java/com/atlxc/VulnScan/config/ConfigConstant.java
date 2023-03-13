@@ -1,23 +1,10 @@
-/**
- * Copyright  = c) 2016-2019 人人开源 All rights reserved.
- * <p>
- * https://www.renren.io
- * <p>
- * 版权所有，侵权必究！
- */
-
 package com.atlxc.VulnScan.config;
 
 /**
  * 系统参数相关Key
  *
- * @author Mark sunlightcs@gmail.com
  */
 public class ConfigConstant {
-    /**
-     * 云存储配置KEY
-     */
-    public final static String CLOUD_STORAGE_CONFIG_KEY = "CLOUD_STORAGE_CONFIG_KEY";
     /**
      * AWVS api路径
      */
@@ -51,11 +38,6 @@ public class ConfigConstant {
      * 恶意软件扫描
      */
     public static final String SCAN_TYPE_Malware_Scan = "11111111-1111-1111-1111-111111111120";
-    /**
-     * AWVS response code
-     */
-    public static final String RESPONSE_DELETE = "204";
-    public static final String RESPONSE_PATCH = "204";
     /**
      * AWVS templateId
      */

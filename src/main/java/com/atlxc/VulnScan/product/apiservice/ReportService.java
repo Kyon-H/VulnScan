@@ -8,6 +8,7 @@ import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -64,7 +65,7 @@ public class ReportService {
      * 返回201状态码
      * headers: {location: "/api/v1/reports/{report_id}"}
      */
-    public String addReport(ScanReportEntity scanReport) {
+    public String addReport(@NotNull ScanReportEntity scanReport) {
         JSONObject body = new JSONObject();
         JSONObject source = new JSONObject();
         JSONArray list = new JSONArray();
@@ -107,11 +108,8 @@ public class ReportService {
     public String downloadReport(String filename, String URI) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        String filePath = "D:/upload/" + filename;
+        String filePath = ConfigConstant.FILE_PATH + filename;
         String url = URL + "/download/" + URI;
-        //headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
-        //headers.add("Content-Type", "application/json;charset=UTF-8");
-        //HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
         try {
             ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);
             if (!response.getStatusCode().is2xxSuccessful()) {
@@ -131,8 +129,6 @@ public class ReportService {
         } catch (HttpClientErrorException e) {
             // uri已失效，需重新获取
             return null;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

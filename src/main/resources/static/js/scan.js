@@ -51,6 +51,7 @@ $("#scanSubmitBtn").on("click", function () {
 function load(){
     $("#nav-placeholder").load("/navbar");
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    initWebSocket();
     setTimeout(function(){
             $('#home').parent().removeClass('active');
             $('#scans').parent().addClass('active');
@@ -102,7 +103,7 @@ function addTable(data){
         item+=`<td>${formData(m.scanTime)}</td>`;
         //扫描状态
         if(m.status=="processing"){
-            item+=`<td><div class="d-flex align-items-center">
+            item+=`<td><div name="${m.id}" class="d-flex align-items-center">
                    <strong>processing...</strong>
                    <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
                    </div></td>`;
@@ -111,18 +112,24 @@ function addTable(data){
                 targetId:m.targetId,
                 action:"getRecordStatus"
                 };
-            initWebSocket();
+
             setTimeout(function() {
               sendSock(data, function(backData) {
                 var status=backData.status;
                 var severity_counts=backData.severity_counts;
-                console.log(data.id);
-                $(`a[name="${data.id}"].badge.badge-danger`).text(severity_counts.high);
-                $(`a[name="${data.id}"].badge.badge-warning`).text(severity_counts.medium);
-                $(`a[name="${data.id}"].badge.badge-primary`).text(severity_counts.low);
-                $(`a[name="${data.id}"].badge.badge-success`).text(severity_counts.info);
-                if(status=="completed"){
-                    window.location.reload();
+                $(`a[name="${backData.id}"].badge.badge-danger`).text(severity_counts.high);
+                $(`a[name="${backData.id}"].badge.badge-warning`).text(severity_counts.medium);
+                $(`a[name="${backData.id}"].badge.badge-primary`).text(severity_counts.low);
+                $(`a[name="${backData.id}"].badge.badge-success`).text(severity_counts.info);
+                if(status!="processing"){
+                    $(`div[name="${backData.id}"].d-flex`).empty();
+                    $(`div[name="${backData.id}"].d-flex`).append(backData.status);
+                }else{
+                    var appendItem=`<strong>processing...</strong>${backData.progress}%
+                                    <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true">
+                                    </div>`
+                    $(`div[name="${backData.id}"].d-flex`).empty();
+                    $(`div[name="${backData.id}"].d-flex`).append(appendItem);
                 }
               });
             }, 1000); // 延时 1 秒钟调用 sendSock 方法

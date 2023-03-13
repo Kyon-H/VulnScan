@@ -15,14 +15,12 @@ import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -63,18 +61,18 @@ public class ConnectorService {
 
                 if (tmpEntity.getStatus() == null || tmpEntity.getSeverityCounts() == null) continue;
                 // 比较SeverityCounts变化
-                JSONObject oldSC=entity.getSeverityCounts();
-                JSONObject newSC=tmpEntity.getSeverityCounts();
-                if(entity.getStatus().equals("completed")){
+                JSONObject oldSC = entity.getSeverityCounts();
+                JSONObject newSC = tmpEntity.getSeverityCounts();
+                if (entity.getStatus().equals("completed")) {
                     break;
                 }
                 // 在processing状态下，severityCount无变化时
-                if(
-                    oldSC.getInteger("high").equals(newSC.getInteger("high"))&&
-                    oldSC.getInteger("medium").equals(newSC.getInteger("medium"))&&
-                    oldSC.getInteger("low").equals(newSC.getInteger("low"))&&
-                    oldSC.getInteger("info").equals(newSC.getInteger("info"))&&
-                    tmpEntity.getStatus().equals("processing")) {
+                if (
+                        oldSC.getInteger("high").equals(newSC.getInteger("high")) &&
+                                oldSC.getInteger("medium").equals(newSC.getInteger("medium")) &&
+                                oldSC.getInteger("low").equals(newSC.getInteger("low")) &&
+                                oldSC.getInteger("info").equals(newSC.getInteger("info")) &&
+                                tmpEntity.getStatus().equals("processing")) {
                     continue;
                 }
                 //severityCount 变化时，更新severityCount和status
@@ -117,41 +115,57 @@ public class ConnectorService {
     }
 
     /**
-     * websocket调用，获取扫描状态
+     * websocket调用，获取扫描状态、漏洞分布、进度%
      *
-     * @param id ScanRecordId
-     * @return 扫描状态和漏洞分布
+     * @param id
+     * @return
      */
     @Async("connectorExecutor")
-    public CompletableFuture<JSONObject> getScanStatus(Integer id) {
-        log.info("getScanStatus id:{}", id);
+    public CompletableFuture<JSONObject> getStatistics(Integer id) {
+        log.info("getStatistics id:{}", id);
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         try {
+            Thread.sleep(INTERVAL * 5);
             ScanRecordEntity entity = scanRecordService.getById(id);
             if (entity == null) {
                 throw new RuntimeException("记录不存在");
             }
-            //获取scanId
+            //获取scanId scanSessionId
             while (entity.getScanId() == null) {
                 Thread.sleep(INTERVAL);
                 String scanId = targetService.getScanId(entity.getTargetId());
                 entity.setScanId(scanId);
             }
-            while (true) {
-                Thread.sleep(INTERVAL * 5);
-                String scanId = entity.getScanId();
-                ScanRecordEntity status = scanService.getStatus(scanId);
-                if(!entity.getStatus().equals(status.getStatus())) {
-                    log.error("ScanStatus 状态不一致");
-                    this.getScanRecordStatus(entity.getTargetId());
-                }
-                JSONObject result = new JSONObject();
-                result.put("severity_counts", status.getSeverityCounts());
-                result.put("status", status.getStatus());
-                return CompletableFuture.completedFuture(result);
+            while (entity.getScanSessionId() == null) {
+                Thread.sleep(INTERVAL);
+                ScanRecordEntity tmpEntity = scanService.getStatus(entity.getScanId());
+                entity.setScanSessionId(tmpEntity.getScanSessionId());
             }
+            String scanId = entity.getScanId();
+            String scanSessionId = entity.getScanSessionId();
+            JSONObject statistics = scanService.getStatistics(scanId, scanSessionId);
+            String status = statistics.getString("status");
+            JSONObject severity_counts = statistics.getJSONObject("severity_counts");
+            String progress = statistics.getJSONObject("scanning_app")
+                    .getJSONObject("wvs").getJSONObject("main").getString("progress");
+            //
+            if (!entity.getStatus().equals(status)) {
+                log.error("ScanStatus 状态不一致");
+                this.getScanRecordStatus(entity.getTargetId());
+            }
+            JSONObject result = new JSONObject();
+            if (severity_counts.getInteger("high") == null) {
+                severity_counts.put("high", 0);
+                severity_counts.put("low", 0);
+                severity_counts.put("info", 0);
+                severity_counts.put("medium", 0);
+            }
+            result.put("severity_counts", severity_counts);
+            result.put("status", status);
+            result.put("progress", progress);
+            return CompletableFuture.completedFuture(result);
         } catch (Exception e) {
             log.error("getScanStatus 监控线程意外中断{}", e.getMessage());
             throw new RuntimeException(e);
@@ -184,9 +198,9 @@ public class ConnectorService {
                 entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/", ""));
                 entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/", ""));
                 if (!scanReportService.updateById(entity)) continue;
-                JSONObject result=new JSONObject();
-                result.put("status",entity.getStatus());
-                result.put("description",entity.getDescription());
+                JSONObject result = new JSONObject();
+                result.put("status", entity.getStatus());
+                result.put("description", entity.getDescription());
                 return CompletableFuture.completedFuture(result);
             }
         } catch (Exception e) {

@@ -39,10 +39,10 @@ function addTable(data){
               sendSock(data, function(backData) {
                 if(backData.status!="processing"){
 //                    window.location.reload();
-                    $(`div[name="${data.id}"].d-flex`).empty();
-                    $(`div[name="${data.id}"].d-flex`).append(backData.status);
-                    $(`div[name="${data.id}"].description`).empty();
-                    $(`div[name="${data.id}"].description`).append(backData.description);
+                    $(`div[name="${backData.id}"].d-flex`).empty();
+                    $(`div[name="${backData.id}"].d-flex`).append(backData.status);
+                    $(`div[name="${backData.id}"].description`).empty();
+                    $(`div[name="${backData.id}"].description`).append(backData.description);
                 }
               });
             }, 1000); // 延时 1 秒钟调用 sendSock 方法

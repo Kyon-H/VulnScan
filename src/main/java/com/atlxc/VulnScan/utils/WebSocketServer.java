@@ -37,7 +37,7 @@ public class WebSocketServer {
     public static TargetService targetService;
     public static ScanRecordService scanRecordService;
     public static ConnectorService connectorService;
-    public static Boolean HeartCheck =true;
+    public static Boolean HeartCheck =false;
 
     /**
      * 连接成功
@@ -78,19 +78,24 @@ public class WebSocketServer {
         JSONObject jsonObject = JSONObject.parseObject(message);
         switch (jsonObject.getString("action")) {
             case "getRecordStatus":
+                HeartCheck=true;
                 JSONObject status;
                 do {
-                    CompletableFuture<JSONObject> getstatus = connectorService.getScanStatus(jsonObject.getInteger("id"));
+                    CompletableFuture<JSONObject> getstatus = connectorService.getStatistics(jsonObject.getInteger("id"));
                     CompletableFuture.allOf(getstatus).join();
                     status = getstatus.get();
+                    status.put("id", jsonObject.getInteger("id"));
                     this.sendMessage(status, session);
                 }while (!status.getString("status").equals("completed"));
                 HeartCheck=false;
                 break;
             case "getReportStatus":
+                HeartCheck=true;
                 CompletableFuture<JSONObject> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
                 CompletableFuture.allOf(reportStatus).join();
-                this.sendMessage(reportStatus.get(), session);
+                JSONObject report=reportStatus.get();
+                report.put("id", jsonObject.getInteger("id"));
+                this.sendMessage(report, session);
                 HeartCheck=false;
                 break;
             case "HeartCheck":

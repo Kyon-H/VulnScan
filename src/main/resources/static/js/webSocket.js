@@ -56,7 +56,7 @@ function webSocketOnMessage(e) {
     console.log("e.data:"+e.data);
   const data = JSON.parse(e.data);//根据自己的需要对接收到的数据进行格式化
   if(data.message.HeartCheck!= undefined){
-    reconn=data.HeartCheck;
+    reconn=data.message.HeartCheck;
   }
   if(data.message.status!= undefined){
       console.log("run callback");
@@ -65,12 +65,13 @@ function webSocketOnMessage(e) {
   if(reconn){
     heartCheck.reset().start();
   }else{
-    heartCheck.reset();
+    webSocket.close();
   }
 }
 
 //发送数据
 function webSocketSend(data) {
+    reconn=true;
   webSocket.send(JSON.stringify(data));//在这里根据自己的需要转换数据格式
 }
 
@@ -104,7 +105,7 @@ function reconnect() {
 }
 //心跳检测
 var heartCheck={
-    timeout:20000,
+    timeout:10000,
     timeoutObj:null,
     serverTimeoutObj:null,
     reset:function(){
@@ -157,6 +158,10 @@ function sendSock(agentData, callback) {
     //CLOSED：值为3，表示连接已经关闭，或者打开连接失败。
     case webSocket.CLOSED:
       // do something
+      initWebSocket();
+      setTimeout(function() {
+              webSocketSend(agentData, callback);
+      }, 1000);
       break;
     default:
       // this never happens

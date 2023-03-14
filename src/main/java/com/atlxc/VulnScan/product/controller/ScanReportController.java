@@ -119,17 +119,17 @@ public class ScanReportController {
     }
 
     @RequestMapping("/download")
-    public R download(@RequestParam Integer id, @RequestParam String type, @NotNull Principal principal, HttpServletResponse response) {
+    public void download(@RequestParam Integer id, @RequestParam String type, @NotNull Principal principal, HttpServletResponse response) {
         Integer userId = usersService.getIdByName(principal.getName());
         ScanReportEntity scanReport = scanReportService.getById(id, userId);
         if (scanReport == null) {
-            return R.error();
+            return;
         }
         // 下载文件
         String path = scanReportService.downloadReport(scanReport, type);
         File file = new File(path);
         if (!file.exists()) {
-            return R.ok("下载文件不存在");
+            return;
         }
         response.reset();
         response.setContentType("application/octet-stream");
@@ -148,11 +148,9 @@ public class ScanReportController {
                 os.write(buff, 0, i);
                 os.flush();
             }
-        } catch (IOException e) {
-            log.error("{}", e);
-            return R.ok("下载成功");
+        } catch (Exception e) {
+            log.error("error {}", e.getMessage());
         }
-        return R.ok("下载成功");
     }
 
     /**

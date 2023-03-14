@@ -5,6 +5,7 @@ var totalPage
 var URL="/scan/list";
 var sidx="scan_time";
 var order="desc";
+var initWSed=false;
 ////////////////////////////////
 function newTarget(){
     var address=$('#targetUrl').val();
@@ -51,7 +52,6 @@ $("#scanSubmitBtn").on("click", function () {
 function load(){
     $("#nav-placeholder").load("/navbar");
     loadPage(URL,currPage,pageSize,sidx,order,addTable);
-    initWebSocket();
     setTimeout(function(){
             $('#home').parent().removeClass('active');
             $('#scans').parent().addClass('active');
@@ -112,7 +112,9 @@ function addTable(data){
                 targetId:m.targetId,
                 action:"getRecordStatus"
                 };
-
+            if(!initWSed){
+                initWebSocket();
+            }
             setTimeout(function() {
               sendSock(data, function(backData) {
                 var status=backData.status;

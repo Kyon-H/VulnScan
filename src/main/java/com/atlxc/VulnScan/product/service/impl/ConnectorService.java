@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class ConnectorService {
     private static final int INTERVAL = 1000;
+    private static Integer ASYNC_SCAN_STATUS = 0;
 
     /**
      * 获取扫描状态
@@ -39,6 +40,7 @@ public class ConnectorService {
      */
     @Async("connectorExecutor")
     public void getScanRecordStatus(String targetId) {
+        ASYNC_SCAN_STATUS = 1;
         TargetService targetService = (TargetService) SpringContextUtils.getBean("targetService");
         ScanRecordService scanRecordService = (ScanRecordService) SpringContextUtils.getBean("scanRecordService");
         ScanService scanService = (ScanService) SpringContextUtils.getBean("scanService");
@@ -106,10 +108,12 @@ public class ConnectorService {
                     vulnInfoService.save(vulnInfo);
                 }
                 if (!entity.getStatus().equals("completed")) continue;
+                ASYNC_SCAN_STATUS = 0;
                 break;
             }
         } catch (InterruptedException e) {
             log.error("getScanRecordStatus 监控线程意外中断{}", e.getMessage());
+            ASYNC_SCAN_STATUS = -1;
             throw new RuntimeException(e);
         }
     }
@@ -151,7 +155,7 @@ public class ConnectorService {
             String progress = statistics.getJSONObject("scanning_app")
                     .getJSONObject("wvs").getJSONObject("main").getString("progress");
             //
-            if (!entity.getStatus().equals(status)) {
+            if (!entity.getStatus().equals(status) && ASYNC_SCAN_STATUS != 1) {
                 log.error("ScanStatus 状态不一致");
                 this.getScanRecordStatus(entity.getTargetId());
             }

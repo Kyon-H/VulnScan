@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
@@ -26,5 +27,7 @@ public interface VulnInfoService extends IService<VulnInfoEntity> {
     List<VulnInfoEntity> getByScanRecordId(Integer scanRecordId);
 
     VulnInfoEntity getByVulnId(String vulnId);
+
+    JSONArray getSeverityCount(Integer userId);
 }
 

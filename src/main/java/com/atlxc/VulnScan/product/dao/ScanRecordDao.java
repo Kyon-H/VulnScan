@@ -26,9 +26,13 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
     @Select("select * from scan_record where user_id = #{userId}")
     List<ScanRecordEntity> selectByUserId(Integer userId);
 
-    @Select("select scan_record.* from scan_record, users where scan_record.user_id = users.id and users.username = #{userName}")
+    @Select("select scan_record.* from scan_record, users " +
+            "where scan_record.user_id = users.id and users.username = #{userName}")
     List<ScanRecordEntity> selectIdByUserName(String userName);
 
     @Select("select * from scan_record where id = #{id} and user_id = #{userId}")
     ScanRecordEntity selectById(Integer id, Integer userId);
+
+    @Select("select count(1) from scan_record where user_id = #{userId}")
+    Integer selectCountByUserId(Integer userId);
 }

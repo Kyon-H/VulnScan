@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -96,32 +95,32 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     @SneakyThrows
     public JSONObject getDetail(Integer vulnInfoId, Integer userId) {
         VulnInfoEntity vulnInfoEntity = baseMapper.selectOneByIds(userId, vulnInfoId);
-        if (vulnInfoEntity==null) {
+        if (vulnInfoEntity == null) {
             return null;
         }
         String vulnId = vulnInfoEntity.getVulnId();
         JSONObject result = vulnService.getVuln(vulnId);
         JSONObject detail = new JSONObject();
         detail.put("vt_name", result.getString("vt_name"));
-        detail.put("description",result.getString("description"));
-        detail.put("affects_url",result.getString("affects_url"));
-        detail.put("request",result.getString("request"));
-        detail.put("impact",result.getString("impact"));
-        detail.put("recommendation",result.getString("recommendation"));
-        detail.put("long_description",result.getString("long_description"));
-        detail.put("details",result.getString("details"));
-        detail.put("references",result.getJSONArray("references"));
-        detail.put("tags",result.getJSONArray("tags"));
-        detail.put(("cvss_score"),result.getString("cvss_score"));
-        detail.put("cvss3",result.getString("cvss3"));
-        detail.put("cvss2",result.getString("cvss2"));
+        detail.put("description", result.getString("description"));
+        detail.put("affects_url", result.getString("affects_url"));
+        detail.put("request", result.getString("request"));
+        detail.put("impact", result.getString("impact"));
+        detail.put("recommendation", result.getString("recommendation"));
+        detail.put("long_description", result.getString("long_description"));
+        detail.put("details", result.getString("details"));
+        detail.put("references", result.getJSONArray("references"));
+        detail.put("tags", result.getJSONArray("tags"));
+        detail.put(("cvss_score"), result.getString("cvss_score"));
+        detail.put("cvss3", result.getString("cvss3"));
+        detail.put("cvss2", result.getString("cvss2"));
         //获取httpresponse
         byte[] httpResponse = vulnService.getHttpResponse(vulnId);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(httpResponse));
         byte[] buffer = new byte[1024];
         int len = -1;
-        while((len=gis.read(buffer, 0, buffer.length))!=-1) {
+        while ((len = gis.read(buffer, 0, buffer.length)) != -1) {
             baos.write(buffer, 0, len);
         }
         detail.put("http_response", baos.toString());
@@ -136,6 +135,13 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     @Override
     public VulnInfoEntity getByVulnId(String vulnId) {
         return baseMapper.selectOne(new QueryWrapper<VulnInfoEntity>().eq("vuln_id", vulnId));
+    }
+
+    @Override
+    public JSONArray getSeverityCount(Integer userId) {
+        List<Map<String, Integer>> maps = baseMapper.selectCountByUserId(userId);
+        String jsonString = JSONObject.toJSONString(maps);
+        return JSONArray.parseArray(jsonString);
     }
 
 }

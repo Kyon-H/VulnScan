@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/failurl", "/error", "/Login", "/Register", "/favicon.ico").permitAll()
+                .antMatchers("/login", "/register", "/failurl", "/Login", "/Register", "/favicon.ico").permitAll()
                 .antMatchers("/kaptcha/getKaptchaImage").permitAll()
                 .anyRequest().authenticated();
         //对应表单认证相关的配置

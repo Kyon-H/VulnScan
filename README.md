@@ -2,7 +2,9 @@
 
 ## 技术架构
 
-**Spring Boot，Spring Security，Mybatis-plus，MySQL，Bootstrap，layer，WebSocket**
+开发环境：Windows10操作系统，JAVA语言，JDK版本15，数据库MySQL，IDE工具为IDEA。
+
+系统框架Spring Boot、Spring Security，持久层框架MyBatis-Plus，前端框架Bootstrap，通信技术WebSocket，验证码工具Kaptcha。
 
 ## 功能介绍
 
@@ -33,7 +35,7 @@ WebSocket功能：1.调用异步线程获取扫描状态信息。2.调用异步�
 3. 漏洞信息表（vuln_info）：记录漏洞基本信息。
 4. 漏洞报告表(scan_roport)：记录生成的扫描报告，漏洞报告。
 
-## renren-fast-vue
+## ~~renren-fast-vue~~
 
 VSCode打开文件夹，控制台运行命令：
 
@@ -138,7 +140,7 @@ y
 
 
 
-## VulnScan-vue
+## ~~VulnScan-vue~~
 
 全局安装webpack、cli
 

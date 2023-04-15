@@ -29,5 +29,7 @@ public interface VulnInfoService extends IService<VulnInfoEntity> {
     VulnInfoEntity getByVulnId(String vulnId);
 
     JSONArray getSeverityCount(Integer userId);
+
+    JSONArray getTopVuln(Integer userId, Integer topNumber);
 }
 

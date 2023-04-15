@@ -138,6 +138,114 @@ D:\Program Files\Java\jdk-15\bin> keytool -import -file "D:/MyComputer/Desktop/d
 y
 ```
 
+### 多线程设计
+
+添加扫描后调用的更新扫描状态方法
+
+```java
+@Async("connectorExecutor")
+public void getScanRecordStatus(String targetId) {
+    //手动注入bean,获取TargetService、ScanRecordService、ScanService、VulnService、VulnInfoService
+    ......
+    //循环获取scanid
+    ......
+    while (true) {
+        Thread.sleep(INTERVAL);
+        //通过scanid获取扫描状态
+        ScanRecordEntity tmpEntity = scanService.getStatus(scanId);
+        // 比较SeverityCounts变化
+        ......
+        //severityCount 变化时，更新severityCount和status
+        //更新status severity
+        ......
+        scanRecordService.updateById(entity);
+        //条件筛选获取漏洞信息
+        ......
+        JSONObject jsonObject = vulnService.selectVulns(params);
+        JSONArray vulnInfoArray = jsonObject.getJSONArray("vulnerabilities");
+        for (int i = 0; i < vulnInfoArray.size(); i++) {
+            JSONObject item = vulnInfoArray.getJSONObject(i);
+            //避免重复保存
+            ......
+            //获取数据并保存到数据库
+           ......
+            vulnInfoService.save(vulnInfo);
+        }
+        ......
+```
+
+由WebSocket调用的getStatistics方法用于前端显示扫描进度等信息，只进行查询操作，不涉及数据库保存。
+
+```java
+@Async("connectorExecutor")
+public CompletableFuture<JSONObject> getStatistics(Integer id) {
+    //手动注入bean,获取ScanService TargetService ScanRecordService
+    ......
+    ScanRecordEntity entity = scanRecordService.getById(id);
+    //循环获取scanId scanSessionId
+    ......
+    //获取扫描概况信息
+    JSONObject statistics = scanService.getStatistics(scanId, scanSessionId);
+    String status = statistics.getString("status");
+    JSONObject severity_counts = statistics.getJSONObject("severity_counts");
+    String progress = statistics.getJSONObject("scanning_app")
+            .getJSONObject("wvs").getJSONObject("main").getString("progress");
+    //将漏洞分布、扫描进度、扫描状态信息封装并返回
+    return CompletableFuture.completedFuture(result);
+}
+```
+
+当用户调用生成报告功能后，系统先保存基本信息，然后调用getReportStatus方法监测报告生成状态。
+
+```java
+@Async("connectorExecutor")
+public CompletableFuture<JSONObject> getReportStatus(String ReportId) {
+    //手动注入bean,ScanReportService ReportService ScanRecordService
+    ......
+    ScanReportEntity entity = scanReportService.getByReportId(ReportId);
+    ......
+    //获取报告状态
+    JSONObject report = reportService.getReport(entity.getReportId());
+    JSONArray download = report.getJSONArray("download");
+    //更新数据库
+    entity.setStatus(report.getString("status"));
+    entity.setDescription(report.getJSONObject("source").getString("description"));
+    entity.setHtmlUrl(download.getString(0).replace("/api/v1/reports/download/", ""));
+    entity.setPdfUrl(download.getString(1).replace("/api/v1/reports/download/", ""));
+    scanReportService.updateById(entity);
+    //将生成状态、报告描述信息封装返回
+    return CompletableFuture.completedFuture(result);
+}
+```
+
+
+
+```java
+switch (jsonObject.getString("action")) {
+    case "getRecordStatus":
+        JSONObject status;
+        do {
+            CompletableFuture<JSONObject> getstatus = connectorService.getStatistics(jsonObject.getInteger("id"));
+            CompletableFuture.allOf(getstatus).join();
+            status = getstatus.get();
+            status.put("id", jsonObject.getInteger("id"));
+            this.sendMessage(status, session);
+        }while (!status.getString("status").equals("completed"));
+        break;
+    case "getReportStatus":
+        CompletableFuture<JSONObject> reportStatus = connectorService.getReportStatus(jsonObject.getString("reportId"));
+        CompletableFuture.allOf(reportStatus).join();
+        JSONObject report=reportStatus.get();
+        report.put("id", jsonObject.getInteger("id"));
+        this.sendMessage(report, session);
+        break;
+    case "HeartCheck":
+        heartCheck.put("HeartCheck", HeartCheck);
+        this.sendMessage(heartCheck,session);
+        break;
+
+```
+
 
 
 ## ~~VulnScan-vue~~

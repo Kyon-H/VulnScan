@@ -144,4 +144,11 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         return JSONArray.parseArray(jsonString);
     }
 
+    @Override
+    public JSONArray getTopVuln(Integer userId, Integer topNumber) {
+        List<Map<String, Integer>> maps = baseMapper.selectTopVuln(userId, topNumber);
+        String jsonString = JSONObject.toJSONString(maps);
+        return JSONArray.parseArray(jsonString);
+    }
+
 }

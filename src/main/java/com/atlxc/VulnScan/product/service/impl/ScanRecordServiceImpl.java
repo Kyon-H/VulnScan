@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.dao.ScanRecordDao;
@@ -11,6 +12,7 @@ import com.atlxc.VulnScan.utils.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 @Service("scanRecordService")
 public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecordEntity> implements ScanRecordService {
 
@@ -111,5 +114,11 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<ScanRecordEntity> getMostTarget(Integer userId, Integer count) {
+        List<ScanRecordEntity> scanRecordEntities = baseMapper.selectMostTarget(userId, count);
+        return scanRecordEntities;
     }
 }

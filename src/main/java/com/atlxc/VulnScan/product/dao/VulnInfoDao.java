@@ -29,4 +29,10 @@ public interface VulnInfoDao extends BaseMapper<VulnInfoEntity> {
             "join scan_record on vuln_info.scan_record_id = scan_record.id " +
             "where scan_record.user_id = #{userId} group by vuln_info.severity")
     List<Map<String, Integer>> selectCountByUserId(Integer userId);
+
+    @Select("select vulnerability,count(1) count from vuln_info " +
+            "join scan_record on scan_record.user_id=#{userId} and scan_record.id=vuln_info.scan_record_id " +
+            "group by vuln_info.vulnerability order by count desc limit #{topNumber}")
+    List<Map<String, Integer>> selectTopVuln(Integer userId, Integer topNumber);
+
 }

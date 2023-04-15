@@ -1,6 +1,5 @@
 package com.atlxc.VulnScan.product.apiservice;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
@@ -63,13 +62,13 @@ public class TargetService {
      */
     public void setLogin(String targetId, @NotNull JSONObject credentials, JSONArray cookies) {
         JSONObject body = new JSONObject();
-        if(credentials.size()>0){
+        if (credentials.size() > 0) {
             JSONObject login = new JSONObject();
             login.put("kind", "automatic");
             login.put("credentials", credentials);
             body.put("login", login);
         }
-        if(cookies.size()>0){
+        if (cookies.size() > 0) {
             body.put("custom_cookies", cookies);
         }
         Boolean result = AWVSRequestUtils.PATCH(URL + "/" + targetId + "/configuration", body);
@@ -80,6 +79,7 @@ public class TargetService {
      * 获取目标的扫描 id
      * Method:GET
      * URL: /api/v1/targets/{target_id}
+     *
      * @param targetId
      * @return scanId
      * @throws RRException

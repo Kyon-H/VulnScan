@@ -1,5 +1,6 @@
 package com.atlxc.VulnScan.product.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -7,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 扫描记录表
@@ -35,4 +37,10 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
 
     @Select("select count(1) from scan_record where user_id = #{userId}")
     Integer selectCountByUserId(Integer userId);
+
+    @Select("select scan_record.* " +
+            "from scan_record where user_id=#{userId} " +
+            "order by (severity_counts -> '$.high' + severity_counts -> '$.medium') desc " +
+            "limit #{count}")
+    List<ScanRecordEntity> selectMostTarget(Integer userId, Integer count);
 }

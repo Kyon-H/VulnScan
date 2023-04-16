@@ -18,6 +18,18 @@
         <div class="justification-content-md-center">
             <br>
             <p class="h2">漏洞信息</p>
+            <div class="input-group w-25 p-3" hidden="hidden">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="severity">严重等级</label>
+                </div>
+                <select class="custom-select" id="severity">
+                    <option value="" selected>Choose...</option>
+                    <option value="3">HIGH</option>
+                    <option value="2">MEDIUM</option>
+                    <option value="1">LOW</option>
+                    <option value="0">INFO</option>
+                </select>
+            </div>
             <div class="table-responsive-xl ">
                 <table class="shadow p-3 mb-5 bg-white rounded table table-striped table-hover table-sm">
                     <thead>

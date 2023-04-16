@@ -11,6 +11,7 @@ import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
+import com.atlxc.VulnScan.xss.SQLFilter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -50,6 +51,9 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         }
         if (params.get("severity") != null) {
             queryWrapper.eq("severity", Integer.parseInt(params.get("severity").toString()));
+        }
+        if(params.get("vulnerability") != null) {
+            queryWrapper.like("vulnerability", SQLFilter.sqlInject(params.get("vulnerability").toString()));
         }
         Boolean isAsc = params.get("isAsc") == null || params.get("order").toString().equals("asc");
         String sidx = params.get("sidx") == null ? "" : params.get("sidx").toString();

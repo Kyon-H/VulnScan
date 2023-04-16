@@ -1,8 +1,8 @@
 
 //分页查询
-function loadPage(URL,page=1,limit=10,sidx,order="desc",callback){
+function loadPage(URL,page,limit,sidx,order="desc",callback){
     if(arguments.length==6){
-        var postdata={
+        var loadPageData={
             page:page,
             limit:limit,
             sidx:sidx,
@@ -10,7 +10,7 @@ function loadPage(URL,page=1,limit=10,sidx,order="desc",callback){
         }
     }
     $.post(URL,
-        postdata,
+        loadPageData,
         function(data){
             console.log(data.page);
             if(data.code==0){

@@ -1,6 +1,5 @@
 package com.atlxc.VulnScan.product.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
@@ -40,6 +39,6 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
 
     Boolean removeByIds(Integer id, List<Integer> vulnIds);
 
-    List<ScanRecordEntity> getMostTarget(Integer userId, Integer count);
+    List<Map<String, String>> getMostTarget(Integer userId, Integer count);
 }
 

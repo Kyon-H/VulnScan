@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -54,7 +54,7 @@ public class ScanRecordEntity implements Serializable {
     /**
      * 漏洞等级分布
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = FastjsonTypeHandler.class)
     private JSONObject severityCounts;
     /**
      * 状态

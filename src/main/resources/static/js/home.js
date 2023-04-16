@@ -46,29 +46,39 @@ function echart(data){
           {
             type: 'pie',
             data: [
-                {value: low_sever, name: 'Low Severity Vulnerabilities'},
-                {value: info_sever, name: 'Info Severity Vulnerabilities'},
-                {value: medium_sever, name: 'Medium Severity Vulnerabilities'},
-                {value: high_sever, name: 'High Severity Vulnerabilities'}
+                {value: low_sever, name: 'Low Severity Vulnerabilities '+low_sever},
+                {value: info_sever, name: 'Info Severity Vulnerabilities '+info_sever},
+                {value: medium_sever, name: 'Medium Severity Vulnerabilities '+medium_sever},
+                {value: high_sever, name: 'High Severity Vulnerabilities '+high_sever}
             ],
-            radius: ['40%', '70%']
+            radius: ['50%', '90%']
           }
         ]
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 }
+//
 function mostTarget(data) {
     var item="";
     $.each(data,function (i,m) {
-        item+=`<tr><td>${m.address}</td></tr>`;
+        item+=`<tr><td>
+            <a class="text-decoration-none" href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">
+                ${m.address}</a></td>
+            <td><a href="/ActiveScan/vulnerabilities?severity=3&scan_record_id=${m.id}" name="${m.id}"
+                    class="badge badge-pill badge-danger">${m.high}</a></td>
+            <td><a href="/ActiveScan/vulnerabilities?severity=2&scan_record_id=${m.id}" name="${m.id}"
+                    class="badge badge-pill badge-warning">${m.medium}</a></td>
+            </tr>`;
     });
     $("#mostTargetList").html(item);
 }
+//
 function topVulnerability(data) {
     var item="";
     $.each(data,function (i,m) {
-        item+=`<tr><td>${m.vulnerability}</td><td><p class="badge badge-danger">${m.count}</p></td></tr>`;
+        item+=`<tr><td><p>${m.vulnerability}</p></td>
+            <td><p class="text-danger">${m.count}</p></td></tr>`;
     });
     $("#topVulnList").html(item);
 }

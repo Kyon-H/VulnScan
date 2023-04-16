@@ -1,7 +1,6 @@
 package com.atlxc.VulnScan.product.controller;
 
 import com.alibaba.fastjson.JSONArray;
-import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
@@ -30,12 +29,10 @@ public class DashboardController {
 
     @RequestMapping("/severityCount")
     public R info(@NotNull Principal principal) {
-        log.info("info");
         Integer userId = usersService.getIdByName(principal.getName());
         JSONArray severityCount = vulnInfoService.getSeverityCount(userId);
         Map<String, Object> result = new HashMap<>();
         result.put("result", severityCount);
-        log.info(severityCount.toString());
         return R.ok(result);
     }
 
@@ -51,10 +48,9 @@ public class DashboardController {
     @RequestMapping("/mostTarget")
     public R getMostTarget(@NotNull Principal principal) {
         Integer userId = usersService.getIdByName(principal.getName());
-        List<ScanRecordEntity> mostTarget = scanRecordService.getMostTarget(userId, 5);
+        List<Map<String, String>> mostTarget = scanRecordService.getMostTarget(userId, 5);
         Map<String, Object> result = new HashMap<>();
         result.put("result", mostTarget);
-        log.info(mostTarget.toString());
         return R.ok(result);
     }
 }

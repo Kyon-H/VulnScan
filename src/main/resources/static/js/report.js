@@ -22,7 +22,7 @@ function addTable(data){
     totalPage=data.totalPage;
     var item="";
     $.each(data.list,function(i,m){
-        item+=`<tr><td align="center">${i+1}</td><td>${m.templateName}</td><td>${m.listType}</td>
+        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td><td>${m.templateName}</td><td>${m.listType}</td>
             <td>${formData(m.generationDate)}</td><td><div class="description" name="${m.id}">${m.description}</div></td>`;
         if(m.status=="processing"){
             item+=`<td><div name="${m.id}" class="d-flex align-items-center">

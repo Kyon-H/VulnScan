@@ -1,6 +1,5 @@
 package com.atlxc.VulnScan.product.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.dao.ScanRecordDao;
@@ -117,8 +116,8 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     }
 
     @Override
-    public List<ScanRecordEntity> getMostTarget(Integer userId, Integer count) {
-        List<ScanRecordEntity> scanRecordEntities = baseMapper.selectMostTarget(userId, count);
+    public List<Map<String, String>> getMostTarget(Integer userId, Integer count) {
+        List<Map<String, String>> scanRecordEntities = baseMapper.selectMostTarget(userId, count);
         return scanRecordEntities;
     }
 }

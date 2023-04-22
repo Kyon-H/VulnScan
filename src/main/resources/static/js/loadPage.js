@@ -46,9 +46,8 @@ function loadPage(URL,page,limit,sidx,order="desc",callback){
                         $('#pageNext').parent().removeClass('disabled');
                     }
                 }
-
                 callback(data.page);
-            }else{
+            }else{  //data.code!=0
                 layer.msg(data.msg, {icon:2});
             }
         }

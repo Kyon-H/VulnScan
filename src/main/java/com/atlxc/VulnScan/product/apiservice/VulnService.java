@@ -100,7 +100,7 @@ public class VulnService {
         }
         byte[] body = responseEntity.getBody();
 
-        if (body == null) throw new RRException("下载报告失败");
+        if (body == null) throw new RRException("http response body is null");
         return body;
     }
 }

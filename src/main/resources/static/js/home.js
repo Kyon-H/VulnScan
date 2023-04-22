@@ -42,22 +42,63 @@ function echart(data){
           left: 'center',
           top: 'center'
         },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{b} : {c} ({d}%)'
+        },
         series: [
           {
             type: 'pie',
+            emphasis: {
+                itemStyle:{
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            },
             data: [
-                {value: low_sever, name: 'Low Severity Vulnerabilities '+low_sever},
-                {value: info_sever, name: 'Info Severity Vulnerabilities '+info_sever},
-                {value: medium_sever, name: 'Medium Severity Vulnerabilities '+medium_sever},
-                {value: high_sever, name: 'High Severity Vulnerabilities '+high_sever}
+                {value: low_sever, name: 'Low Severity Vulnerabilities'},
+                {value: info_sever, name: 'Info Severity Vulnerabilities'},
+                {value: medium_sever, name: 'Medium Severity Vulnerabilities'},
+                {value: high_sever, name: 'High Severity Vulnerabilities'}
             ],
-            radius: ['50%', '90%']
+            radius: ['50%', '80%']
           }
         ]
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
+    myChart.on('click', function(params) {
+        console.log(params);
+    });
+    //
+    myChart.on('mousedown',function(params) {
+        let currentIndex = params.dataIndex;
+      // 高亮当前图形
+      myChart.dispatchAction({
+        type: 'highlight',
+        seriesIndex: 0,
+        dataIndex: currentIndex
+      });
+      // 显示 tooltip
+      myChart.dispatchAction({
+        type: 'showTip',
+        seriesIndex: 0,
+        dataIndex: currentIndex
+      });
+    });
+    //
+    myChart.on('mouseout',function(params){
+        let currentIndex = params.dataIndex;
+        // 取消之前高亮的图形
+        myChart.dispatchAction({
+          type: 'downplay',
+          seriesIndex: 0,
+          dataIndex: currentIndex
+        });
+    });
 }
+
 //
 function mostTarget(data) {
     var item="";

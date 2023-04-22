@@ -35,6 +35,8 @@ function loadPage(URL,page,limit,sidx,order="desc",callback){
                         $('#pagePre').parent().addClass('disabled');
                         $('#page1').parent().addClass('active');
                     }else if(page==data.page.totalPage){
+                        if(page>1)
+                            $('#pagePre').parent().addClass('active');
                         $('#pageNext').parent().addClass('disabled');
                         $('#page3').parent().addClass('active');
                     }else{

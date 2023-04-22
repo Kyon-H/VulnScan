@@ -10,6 +10,7 @@ import com.atlxc.VulnScan.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,6 +82,7 @@ public class VulnInfoController {
         return R.ok();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping("/update/all")
     public R updateAll() {
         vulnInfoService.updateAll();

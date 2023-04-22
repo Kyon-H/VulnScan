@@ -50,7 +50,12 @@
         <a id="reports" class="nav-link" href="/ActiveScan/reports">扫描报告</a>
       </li>
     </ul>
-    <ul class="">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <div sec:authorize="hasRole('ROLE_ADMIN')">
+          <span style="color:white">管理员</span>
+        </div>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
           <span sec:authentication="name" style="color:#007bff"></span>

@@ -4,6 +4,7 @@ import com.atlxc.VulnScan.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -78,6 +79,12 @@ public class ControllerAdviceException {
     public R handleAuthorizationException(AuthorizationException e) {
         log.error(e.getMessage(), e);
         return R.error("没有权限，请联系管理员授权");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public R handleAccessDeniedException(AccessDeniedException e) {
+        log.error(e.getMessage(), e);
+        return R.error("没有权限,不允许访问");
     }
 
     // 处理任意类型异常

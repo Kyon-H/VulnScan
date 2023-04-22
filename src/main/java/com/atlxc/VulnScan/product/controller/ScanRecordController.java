@@ -6,8 +6,10 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.atlxc.VulnScan.product.entity.ScanTypeEntity;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.product.service.ScanRecordService;
+import com.atlxc.VulnScan.product.service.ScanTypeService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
@@ -52,6 +54,9 @@ public class ScanRecordController {
     private ConnectorService connectorService;
     @Autowired
     private VulnInfoService vulnInfoService;
+
+    @Autowired
+    private ScanTypeService scanTypeService;
 
     /**
      * 列表
@@ -146,6 +151,14 @@ public class ScanRecordController {
         return R.ok(result);
     }
 
+    @GetMapping("/ScanType")
+    public R getScanType() {
+        List<ScanTypeEntity> scanTypes = scanTypeService.getScanTypes();
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("result", scanTypes);
+        return R.ok(result);
+    }
+
     /**
      * 修改
      */
@@ -162,6 +175,7 @@ public class ScanRecordController {
         String username = principal.getName();
         Integer userId = usersServices.getIdByName(username);
         scanRecordService.updateAll(userId);
+        scanTypeService.updateScanType();
         return R.ok();
     }
 

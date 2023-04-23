@@ -43,13 +43,25 @@ function echart(data){
           top: 'center'
         },
         tooltip: {
-            trigger: 'item',
-            formatter: '{b} : {c} ({d}%)'
+            show: true,
+            trigger: 'item'
         },
         series: [
           {
+          name: 'Vulnerabilities',
             type: 'pie',
+            radius: ['45%', '75%'],
+            avoidLabelOverlap: false,
+            label: {
+                emphasis: {
+                    formatter: '{b}'+'\n\r\t'+'{c} ({d}%)',
+                    show: true
+                }
+            },
             emphasis: {
+                label: {
+                    show: true
+                },
                 itemStyle:{
                     shadowBlur: 10,
                     shadowOffsetX: 0,
@@ -61,8 +73,7 @@ function echart(data){
                 {value: info_sever, name: 'Info Severity Vulnerabilities'},
                 {value: medium_sever, name: 'Medium Severity Vulnerabilities'},
                 {value: high_sever, name: 'High Severity Vulnerabilities'}
-            ],
-            radius: ['50%', '80%']
+            ]
           }
         ]
     };

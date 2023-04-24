@@ -1,10 +1,13 @@
 package com.atlxc.VulnScan.product.entity;
 
 import com.alibaba.fastjson.JSONObject;
+import com.atlxc.VulnScan.utils.CustomJsonDeserializer;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -54,7 +57,7 @@ public class ScanRecordEntity implements Serializable {
     /**
      * 漏洞等级分布
      */
-    @TableField(typeHandler = FastjsonTypeHandler.class)
+    @TableField(value = "severity_counts", typeHandler = FastjsonTypeHandler.class)
     private JSONObject severityCounts;
     /**
      * 状态

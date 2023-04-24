@@ -1,8 +1,11 @@
 package com.atlxc.VulnScan.product.dao;
 
+import com.atlxc.VulnScan.dto.ScanRecordDTO;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -42,4 +45,15 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
             "order by (severity_counts -> '$.high' + severity_counts -> '$.medium') desc " +
             "limit #{count}")
     List<Map<String, String>> selectMostTarget(Integer userId, Integer count);
+
+    @Select("select scan_record.id, scan_record.address, scan_record.severity_counts " +
+            "from scan_record where user_id=#{userId} " +
+            "order by (severity_counts -> '$.high' + severity_counts -> '$.medium') desc " +
+            "limit #{count}")
+    List<ScanRecordEntity> selectMostTargetList(Integer userId, Integer count);
+
+    @Select("select scan_record.*, scan_type.name " +
+            "from scan_record left join scan_type on scan_record.type=scan_type.profile_id " +
+            "where scan_record.user_id=#{userId}")
+    IPage<ScanRecordDTO> getScanRecordsWithScanType(IPage<ScanRecordDTO> page, @Param("userId") Integer userId);
 }

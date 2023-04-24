@@ -44,10 +44,19 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
         Integer userId = (Integer) params.get("userId");
         if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
             Boolean isAsc = params.get("order").toString().equals("asc") ? Boolean.TRUE : Boolean.FALSE;
+            MPJQueryWrapper queryWrapper=new MPJQueryWrapper<ScanRecordEntity>()
+                    .selectAll(ScanRecordEntity.class)
+                    .select("scan_type.name")
+                    .leftJoin("scan_type ON scan_type.profile_id = t.type")
+                    .eq("t.user_id", userId);
+//            IPage<ScanRecordDTO> page2=this.baseMapper.getScanRecordsWithScanType(
+//                    new Query<ScanRecordDTO>().getPage(params, params.get("sidx").toString(), isAsc),
+//                    userId
+//            );
             //排序
             IPage<ScanRecordEntity> page = this.page(
                     new Query<ScanRecordEntity>().getPage(params, params.get("sidx").toString(), isAsc),
-                    new QueryWrapper<ScanRecordEntity>().eq("user_id", userId)
+                    queryWrapper
             );
             return new PageUtils(page);
         }
@@ -132,6 +141,7 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     @Override
     public List<Map<String, String>> getMostTarget(Integer userId, Integer count) {
         List<Map<String, String>> scanRecordEntities = baseMapper.selectMostTarget(userId, count);
+        List<ScanRecordEntity> scanRecordEntities1 = baseMapper.selectMostTargetList(userId, count);
         return scanRecordEntities;
     }
 }

@@ -1,11 +1,13 @@
-var currPage=1;
-var pageSize=10;
 var totalCount
 var totalPage
 var URL="/scan/list";
-var sidx="scan_time";
-var order="desc";
 var initWSed=false;
+const options={
+    page: 1,
+    limit: 10,
+    sidx: 'scan_time',
+    order: 'desc'
+}
 ////////////////////////////////
 function newTarget(){
     var address=$('#targetUrl').val();
@@ -51,7 +53,7 @@ $("#scanSubmitBtn").on("click", function () {
 //默认查询，page:1,limit:10
 function load(){
     $("#nav-placeholder").load("/navbar");
-    loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    loadPage(URL,options,addTable);
     setTimeout(function(){
             $('#home').parent().removeClass('active');
             $('#scans').parent().addClass('active');
@@ -60,14 +62,14 @@ function load(){
 
 //获取扫描记录
 function addTable(data){
-    currPage=data.currPage;
-    pageSize=data.pageSize;
+    options.page=data.currPage;
+    options.limit=data.pageSize;
     totalCount=data.totalCount;
     totalPage=data.totalPage;
     var item="";
     $.each(data.list,function (i,m) {
         //# address
-        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td>
+        item+=`<tr><td align="center">${(options.page-1)*options.limit+1+i}</td>
             <td><a href="/ActiveScan/vulnerabilities?scan_record_id=${m.id}">${m.address}</a></td>`;
         if(m.description==""){
             m.description="无";
@@ -150,6 +152,7 @@ function addTable(data){
 $("#tablelist").delegate("td button.btn-primary","click",function(){
     $("#scan_id").attr("value",$(this).data("id"));
 })
+
 $("#tablelist").delegate("td button.btn-danger","click",function(){
     let id=$(this).data("id");
     layer.alert("确定要删除吗?",{icon:3,title:"提示"},function(index){
@@ -164,13 +167,11 @@ $("#tablelist").delegate("td button.btn-danger","click",function(){
         });
         layer.close(index);
     });
-
 })
+
 $("#reportSubmitBtn").click(function(){
     let scanId=$("#scan_id").val();
     let templateId=$("#template_id").val();
-    console.log(scanId)
-    console.log(templateId)
     let postdata={
         "templateId":templateId,
         "listType":"scans",

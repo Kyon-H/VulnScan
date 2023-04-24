@@ -1,16 +1,8 @@
 
 //分页查询
-function loadPage(URL,page,limit,sidx,order="desc",callback){
-    if(arguments.length==6){
-        var loadPageData={
-            page:page,
-            limit:limit,
-            sidx:sidx,
-            order:order
-        }
-    }
+function loadPage(URL,options,callback){
     $.post(URL,
-        loadPageData,
+        options,
         function(data){
             console.log(data.page);
             if(data.code==0){
@@ -18,6 +10,7 @@ function loadPage(URL,page,limit,sidx,order="desc",callback){
                 var $pagination = $('.pagination');
                 var $pages = $pagination.find('.page-item:not(#pagePre,#pageNext)');
                 $pages.removeClass('active');
+                let page=options.page;
                 if(data.page.totalPage<=2){
                     $('#pagePre').parent().addClass('disabled');
                     $('#pageNext').parent().addClass('disabled');
@@ -36,7 +29,7 @@ function loadPage(URL,page,limit,sidx,order="desc",callback){
                         $('#page1').parent().addClass('active');
                     }else if(page==data.page.totalPage){
                         if(page>1)
-                            $('#pagePre').parent().addClass('active');
+                            $('#pagePre').parent().removeClass('disabled');
                         $('#pageNext').parent().addClass('disabled');
                         $('#page3').parent().addClass('active');
                     }else{
@@ -59,18 +52,20 @@ function loadPage(URL,page,limit,sidx,order="desc",callback){
 $('#pagePre').click(function(){
     let currentPage = parseInt($('.page-item.active a').text());
     if (currentPage > 1) {
-      loadPage(URL,currentPage - 1,pageSize,sidx,order,addTable);
+        options.page=options.page-1;
+        loadPage(URL,options,addTable);
     }
 });
 // 绑定下一页按钮点击事件
 $('#pageNext').click(function(){
    let currentPage = parseInt($('.page-item.active a').text());
    if (currentPage < totalPage) {
-     loadPage(URL,currentPage + 1,pageSize,sidx,order,addTable);
+       options.page=options.page+1;
+       loadPage(URL,options,addTable);
    }
 })
 // 绑定页码按钮点击事件
 $('.page-link:not(#pagePre,#pageNext)').click(function(e) {
-    let page = parseInt($(this).text());
-    loadPage(URL,page,pageSize,sidx,order,addTable);
+    options.page=parseInt($(this).text());
+    loadPage(URL,options,addTable);
 });

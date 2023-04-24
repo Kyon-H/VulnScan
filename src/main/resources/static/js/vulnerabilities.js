@@ -1,23 +1,26 @@
-var currPage=1;
-var pageSize=10;
 var totalCount
 var totalPage
 var URL="/vulninfo/list";
-var sidx="last_seen";
-var order="desc";
+const options={
+    page: 1,
+    limit: 10,
+    sidx: 'last_seen',
+    order: 'desc',
+    scanRecordId: undefined,
+    severity: undefined
+}
 ////////////////////////////////
 function load(){
     $("#nav-placeholder").load("/navbar");
-//    $.getScript("/js/navbar.js",function(){console.log("导入script成功");});
     let severity=$.getUrlParam("severity");
     let scanRecordId=$.getUrlParam("scan_record_id");
     if(scanRecordId){
-        URL+="/"+scanRecordId;
-        if(severity){
-            URL+="/"+severity;
-        }
+        options.scanRecordId=scanRecordId;
     }
-    loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    if(severity){
+        options.severity=severity;
+    }
+    loadPage(URL,options,addTable);
     setTimeout(function(){
         $('#home').parent().removeClass('active');
         $('#vulnerabilities').parent().addClass('active');
@@ -25,15 +28,14 @@ function load(){
 }
 //
 function addTable(data){
-    currPage=data.currPage;
-    pageSize=data.pageSize;
+    options.page=data.currPage;
+    options.limit=data.pageSize;
     totalCount=data.totalCount;
     totalPage=data.totalPage;
     let item="";
-    console.log("currPage:"+currPage);
     $.each(data.list,function(i,m){
         //# address
-        item+=`<tr><td>${(currPage-1)*pageSize+1+i}</td>`;
+        item+=`<tr><td>${(options.page-1)*options.limit+1+i}</td>`;
         //severity
         switch(m.severity){
             case 0:

@@ -38,17 +38,11 @@ public class VulnInfoController {
     /**
      * 列表
      */
-    @RequestMapping(value = {"/list/{scanRecordId}/{severity}", "/list/{scanRecordId}", "/list"})
-    public R list(
-            @PathVariable(value = "scanRecordId", required = false) Integer scanRecordId,
-            @PathVariable(value = "severity", required = false) Integer severity,
-            @NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal
-    ) {
+    @RequestMapping("/list")
+    public R list(@NotNull @RequestParam Map<String, Object> options, @NotNull Principal principal) {
         Integer ueserId = usersService.getIdByName(principal.getName());
-        params.put("userId", ueserId);
-        params.put("scanRecordId", scanRecordId);
-        params.put("severity", severity);
-        PageUtils page = vulnInfoService.queryPage(params);
+        options.put("userId", ueserId);
+        PageUtils page = vulnInfoService.queryPage(options);
         return R.ok().put("page", page);
     }
 

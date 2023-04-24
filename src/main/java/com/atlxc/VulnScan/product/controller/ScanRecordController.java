@@ -63,10 +63,10 @@ public class ScanRecordController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@NotNull @RequestParam Map<String, Object> params, @NotNull Principal principal) {
+    public R list(@NotNull @RequestParam Map<String, Object> options, @NotNull Principal principal) {
         Integer userId = usersServices.getIdByName(principal.getName());
-        params.put("userId", userId);
-        PageUtils page = scanRecordService.queryPage(params);
+        options.put("userId", userId);
+        PageUtils page = scanRecordService.queryPage(options);
 
         return R.ok().put("page", page);
     }

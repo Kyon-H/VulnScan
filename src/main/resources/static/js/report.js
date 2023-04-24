@@ -1,14 +1,16 @@
-var currPage=1;
-var pageSize=10;
 var totalCount
 var totalPage
 var URL="/report/list?";
-var sidx="generation_date";
-var order="desc";
+const options={
+    page: 1,
+    limit: 10,
+    sidx: 'generation_date',
+    order: 'desc'
+}
 ////////////////////////////////
 function load(){
     $("#nav-placeholder").load("/navbar");
-    loadPage(URL,currPage,pageSize,sidx,order,addTable);
+    loadPage(URL,options,addTable);
     setTimeout(function(){
             $('#home').parent().removeClass('active');
             $('#reports').parent().addClass('active');
@@ -16,14 +18,16 @@ function load(){
 }
 //loadPage callback方法
 function addTable(data){
-    currPage=data.currPage;
-    pageSize=data.pageSize;
+    options.page=data.currPage;
+    options.limit=data.pageSize;
     totalCount=data.totalCount;
     totalPage=data.totalPage;
     var item="";
     $.each(data.list,function(i,m){
-        item+=`<tr><td align="center">${(currPage-1)*pageSize+1+i}</td><td>${m.templateName}</td><td>${m.listType}</td>
-            <td>${formData(m.generationDate)}</td><td><div class="description" name="${m.id}">${m.description}</div></td>`;
+        item+=`<tr><td align="center">${(options.page-1)*options.limit+1+i}</td>
+            <td>${m.templateName}</td><td>${m.listType}</td>
+            <td>${formData(m.generationDate)}</td>
+            <td><div class="description" name="${m.id}">${m.description}</div></td>`;
         if(m.status=="processing"){
             item+=`<td><div name="${m.id}" class="d-flex align-items-center">
                <strong>processing...</strong>

@@ -66,6 +66,8 @@ $('#pageNext').click(function(){
 })
 // 绑定页码按钮点击事件
 $('.page-link:not(#pagePre,#pageNext)').click(function(e) {
-    options.page=parseInt($(this).text());
-    loadPage(URL,options,addTable);
+    let page=parseInt($(this).text());
+    if(totalPage>=page){
+        loadPage(URL,options,addTable);
+    }
 });

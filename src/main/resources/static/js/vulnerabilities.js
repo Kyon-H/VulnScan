@@ -7,18 +7,23 @@ const options={
     sidx: 'last_seen',
     order: 'desc',
     scanRecordId: undefined,
-    severity: undefined
+    severity: undefined,
+    vulnerability: undefined
 }
 ////////////////////////////////
 function load(){
     $("#nav-placeholder").load("/navbar");
     let severity=$.getUrlParam("severity");
     let scanRecordId=$.getUrlParam("scan_record_id");
+    let vulnerability=$.getUrlParam("vulnerability");
     if(scanRecordId){
         options.scanRecordId=scanRecordId;
     }
     if(severity){
         options.severity=severity;
+    }
+    if(vulnerability){
+        options.vulnerability=vulnerability;
     }
     loadPage(URL,options,addTable);
     setTimeout(function(){

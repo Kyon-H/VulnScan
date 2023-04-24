@@ -69,8 +69,8 @@ function echart(data){
                 }
             },
             data: [
-                {value: low_sever, name: 'Low Severity Vulnerabilities'},
                 {value: info_sever, name: 'Info Severity Vulnerabilities'},
+                {value: low_sever, name: 'Low Severity Vulnerabilities'},
                 {value: medium_sever, name: 'Medium Severity Vulnerabilities'},
                 {value: high_sever, name: 'High Severity Vulnerabilities'}
             ]
@@ -80,23 +80,23 @@ function echart(data){
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
     myChart.on('click', function(params) {
-        console.log(params);
+        window.location.href="/ActiveScan/vulnerabilities?severity="+params.dataIndex;
     });
     //
     myChart.on('mousedown',function(params) {
         let currentIndex = params.dataIndex;
-      // 高亮当前图形
-      myChart.dispatchAction({
-        type: 'highlight',
-        seriesIndex: 0,
-        dataIndex: currentIndex
-      });
-      // 显示 tooltip
-      myChart.dispatchAction({
-        type: 'showTip',
-        seriesIndex: 0,
-        dataIndex: currentIndex
-      });
+        // 高亮当前图形
+        myChart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: currentIndex
+        });
+        // 显示 tooltip
+        myChart.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: currentIndex
+         });
     });
     //
     myChart.on('mouseout',function(params){
@@ -110,7 +110,7 @@ function echart(data){
     });
 }
 
-//
+//Most Vulnerable Targets
 function mostTarget(data) {
     var item="";
     $.each(data,function (i,m) {
@@ -125,12 +125,12 @@ function mostTarget(data) {
     });
     $("#mostTargetList").html(item);
 }
-//
+//Top Vulnerabilities
 function topVulnerability(data) {
     var item="";
     $.each(data,function (i,m) {
-        item+=`<tr><td><p>${m.vulnerability}</p></td>
-            <td><p class="text-danger">${m.count}</p></td></tr>`;
+        item+=`<tr><td><a href="/ActiveScan/vulnerabilities?vulnerability=${m.vulnerability}">${m.vulnerability}</a></td>
+            <td>${m.count}</td></tr>`;
     });
     $("#topVulnList").html(item);
 }

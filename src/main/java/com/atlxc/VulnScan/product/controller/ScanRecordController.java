@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.config.ConfigConstant;
+import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
@@ -118,26 +119,11 @@ public class ScanRecordController {
             targetService.setLogin(scanRecord.getTargetId(), credentials, cookies);
         }
         //settype
-        String type;
-        switch (vo.getScanType()) {
-            case "12":
-                type = ConfigConstant.SCAN_TYPE_HighRisk;
-                break;
-            case "13":
-                type = ConfigConstant.SCAN_TYPE_SQLInjection;
-                break;
-            case "15":
-                type = ConfigConstant.SCAN_TYPE_WeakPasswords;
-                break;
-            case "16":
-                type = ConfigConstant.SCAN_TYPE_CrossSiteScripting;
-                break;
-            default:
-                type = ConfigConstant.SCAN_TYPE_FullScan;
-                break;
-        }
+        ScanTypeEntity scanTypeEntity = scanTypeService.getById(vo.getScanType());
+        if(scanTypeEntity == null)
+            return R.error("Scan type not found");
         scanRecord.setStatus("processing");
-        scanRecord.setType(type);
+        scanRecord.setType(vo.getScanType());
         scanRecord.setScanTime(new Date());
         JSONObject severityCounts = new JSONObject();
         severityCounts.put("high", 0);

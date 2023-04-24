@@ -1,9 +1,9 @@
 package com.atlxc.VulnScan.vo;
 
 import com.atlxc.VulnScan.product.Enum.ScanSpeedEnum;
-import com.atlxc.VulnScan.product.Enum.ScanTypeEnum;
 import com.atlxc.VulnScan.utils.EnumValue;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.NotNull;
@@ -29,7 +29,8 @@ public class AddTargetVo {
      * 扫描类型;
      */
     @NotNull(message = "扫描类型不能为空")
-    @EnumValue(enumClass = ScanTypeEnum.class, enumMethod = "isValidValue", message = "扫描类型错误")
+    //@EnumValue(enumClass = ScanTypeEnum.class, enumMethod = "isValidValue", message = "扫描类型错误")
+    @Length(min = 30, max = 40)
     private String scanType;
     /**
      * 扫描速度;

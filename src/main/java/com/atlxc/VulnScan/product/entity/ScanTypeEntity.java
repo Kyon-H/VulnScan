@@ -17,12 +17,10 @@ import java.io.Serializable;
 public class ScanTypeEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableId
-    private Integer id;
-
     /**
      * 扫描配置id
      */
+    @TableId
     private String profileId;
 
     /**

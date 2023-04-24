@@ -3,6 +3,7 @@ package com.atlxc.VulnScan.product.service;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.vo.AddTargetVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public interface ScanRecordService extends IService<ScanRecordEntity> {
     String getStatusById(Integer id);
 
     Boolean updateAll(Integer userId);
+
+    ScanRecordEntity addTarget(AddTargetVo vo);
 
     ScanRecordEntity getByTargetId(String targetId);
 

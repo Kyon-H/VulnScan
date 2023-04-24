@@ -12,6 +12,17 @@ const options={
 function newTarget(){
     var address=$('#targetUrl').val();
     $('#address').attr('value',address);
+    $.get('/scan/ScanType',
+        function(data){
+            if(data.code==0){
+                let item="";
+                $.each(data.result, function(i,m){
+                    item+=`<option value="${m.profileId}">${m.name}</option>`
+                })
+                $("#ScanType").html(item);
+            }
+        }
+    )
 }
 $("#scanSubmitBtn").on("click", function () {
     var address=$("#address").val();
@@ -89,6 +100,18 @@ function addTable(data){
                 item+="Weak Passwords";break;
             case '11111111-1111-1111-1111-111111111116':
                 item+="Cross Site Scripting";break;
+            case '11111111-1111-1111-1111-111111111117':
+                item+="Crawl Only";break;
+            case '11111111-1111-1111-1111-111111111120':
+                item+="Malware Scan";break;
+            case '11c8d253-3423-4328-af2e-940b3b2c26f7':
+                item+="File Inclusion";break;
+            case '13ee7fa4-d7c2-4c5b-b3fb-c03d83cb584c':
+                item+="File Upload";break;
+            case '6344ff0a-71db-46c4-89b1-06e55c633bfe':
+                item+="Spring Security";break;
+            case 'e2c016c5-e093-437c-8302-8888340cbbb6':
+                item+="CSRF vulnerabilities";break;
             default:
                 item+=m.type;break;
         }

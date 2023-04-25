@@ -10,6 +10,7 @@ function loadPage(URL,options,callback){
                 var $pagination = $('.pagination');
                 var $pages = $pagination.find('.page-item:not(#pagePre,#pageNext)');
                 $pages.removeClass('active');
+                $pages.removeClass('disabled');
                 let page=options.page;
                 if(data.page.totalPage<=2){
                     $('#pagePre').parent().addClass('disabled');
@@ -50,16 +51,14 @@ function loadPage(URL,options,callback){
 }
 //绑定上一页按钮点击事件
 $('#pagePre').click(function(){
-    let currentPage = parseInt($('.page-item.active a').text());
-    if (currentPage > 1) {
+    if (options.page > 1) {
         options.page=options.page-1;
         loadPage(URL,options,addTable);
     }
 });
 // 绑定下一页按钮点击事件
 $('#pageNext').click(function(){
-   let currentPage = parseInt($('.page-item.active a').text());
-   if (currentPage < totalPage) {
+   if (options.page < options.totalPage) {
        options.page=options.page+1;
        loadPage(URL,options,addTable);
    }
@@ -67,7 +66,8 @@ $('#pageNext').click(function(){
 // 绑定页码按钮点击事件
 $('.page-link:not(#pagePre,#pageNext)').click(function(e) {
     let page=parseInt($(this).text());
-    if(totalPage>=page){
+    if(options.totalPage>=page){
+        options.page=page;
         loadPage(URL,options,addTable);
     }
 });

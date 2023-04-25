@@ -1,11 +1,13 @@
-var totalCount
-var totalPage
+var totalCount=0;
+var totalPage=0;
 var URL="/vulninfo/list";
 const options={
     page: 1,
     limit: 10,
     sidx: 'last_seen',
     order: 'desc',
+    totalCount: 0,
+    totalPage: 0,
     scanRecordId: undefined,
     severity: undefined,
     vulnerability: undefined
@@ -35,8 +37,8 @@ function load(){
 function addTable(data){
     options.page=data.currPage;
     options.limit=data.pageSize;
-    totalCount=data.totalCount;
-    totalPage=data.totalPage;
+    options.totalCount=data.totalCount;
+    options.totalPage=data.totalPage;
     let item="";
     $.each(data.list,function(i,m){
         //# address
@@ -59,7 +61,7 @@ function addTable(data){
         //vulnerability
         item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}" title="${m.vulnerability}">${m.vulnerability}</a></td>`;
         //targetAddress
-        item+=`<td><span title="${m.targetAddress}">${m.targetAddress}</span></td>`;
+        item+=`<td><a class="text-reset" target="_blank" title="${m.targetAddress}" href="${m.targetAddress}">${m.targetAddress}</a></td>`;
         //confidence
         item+=`<td>${m.confidence}</td>`;
         //lastSeen
@@ -68,11 +70,12 @@ function addTable(data){
         item+=`<td><button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
             data-target="#reportModal" aria-controls="myCollapse" data-whatever="@mdo"
             data-id=${m.vulnId}>生成报告</button></td></tr>`;
-        $("#tablelist").html(item);
-    })
+    });
+    $("#tablelist").html(item);
 }
 //report
 $("#tablelist").delegate("td button.btn-primary","click",function(){
+
     $("#vuln_id").attr("value",$(this).data("id"));
 })
 $("#reportSubmitBtn").click(function(){
@@ -102,6 +105,40 @@ $("#reportSubmitBtn").click(function(){
       }
     });
 })
+//
+$('#severity_select').change(function(){
+    let severity = $(this).find('option:selected').val();
+    options.severity = severity;
+    if(severity==""){
+        options.severity = undefined;
+    }
+    loadPage(URL,options,addTable);
+});
+//
+$('#vulnerability_input').keypress(function(e){
+    if(e.which==13){
+        let value = $(this).val();
+        value=$.trim(value);
+        options.vulnerability=value;
+        if(value.length<1){
+            options.vulnerability = undefined;
+        }
+        loadPage(URL,options,addTable);
+    }
+});
+//
+//Created After
+laydate.render({
+  elem: '#scan_time', //指定元素
+  done: function(value, date, endDate){
+    if(value){
+        console.log(value); //得到日期生成的值，如：2017-08-18
+        console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+
+    }
+
+  }
+});
 //格式化时间
 function formData(datetime) {
     var date=new Date(datetime);

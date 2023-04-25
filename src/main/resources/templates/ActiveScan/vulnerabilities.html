@@ -18,37 +18,46 @@
         <div class="justification-content-md-center">
             <br>
             <p class="h2">漏洞信息</p>
-            <div class="input-group w-25 p-3" hidden="hidden">
+            <div class="input-group w-85 p-3">
                 <div class="input-group-prepend">
-                    <label class="input-group-text" for="severity">严重等级</label>
+                    <label class="input-group-text" for="severity_select">严重等级</label>
                 </div>
-                <select class="custom-select" id="severity">
+                <select class="custom-select" id="severity_select">
                     <option value="" selected>Choose...</option>
                     <option value="3">HIGH</option>
                     <option value="2">MEDIUM</option>
                     <option value="1">LOW</option>
                     <option value="0">INFO</option>
                 </select>
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="vulnerability_input">漏洞名称</label>
+                </div>
+                <input maxlength="40" type="text" id="vulnerability_input" value="">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="scan_time">扫描时间</label>
+                </div>
+                <input type="text" id="scan_time">
             </div>
-            <div class="table-responsive-xl ">
+            <div class="table-responsive-xl">
                 <table class="shadow p-3 mb-5 bg-white rounded table table-striped table-hover table-sm">
                     <thead>
                     <tr>
-                        <th>#</th>
-                        <th>严重等级</th>
-                        <th>漏洞名称</th>
-                        <th>地址</th>
-                        <th>确定度%</th>
-                        <th>扫描时间</th>
-                        <th>导出文档</th>
+                        <th style="width:26px;">#</th>
+                        <th style="width:80px">严重等级</th>
+                        <th style="width:230px">漏洞名称</th>
+                        <th class="text-truncate" style="width:300px;">地址</th>
+                        <th style="width:80px">确定度%</th>
+                        <th style="width:140px">扫描时间</th>
+                        <th style="width:90px">导出文档</th>
                     </tr>
                     </thead>
-                    <tbody id="tablelist"></tbody>
+                    <tbody id="tablelist">
+                    </tbody>
                 </table>
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end">
-                        <li class="page-item disabled"><a id="pagePre" class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active" aria-current="page"><a id="page1" class="page-link">1</a></li>
+                        <li class="page-item"><a id="pagePre" class="page-link" href="#">Previous</a></li>
+                        <li class="page-item"><a id="page1" class="page-link">1</a></li>
                         <li class="page-item"><a id="page2" class="page-link">2</a></li>
                         <li class="page-item"><a id="page3" class="page-link">3</a></li>
                         <li class="page-item"><a id="pageNext" class="page-link">Next</a></li>
@@ -96,6 +105,7 @@
 <script type="text/javascript" src="/js/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/laydate/laydate.js"></script>
 <script type="text/javascript" src="/js/vulnerabilities.js"></script>
 <script type="text/javascript" src="/js/loadPage.js"></script>
 </body>

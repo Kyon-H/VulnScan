@@ -1,13 +1,10 @@
 package com.atlxc.VulnScan.product.entity;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.utils.CustomJsonDeserializer;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.io.Serializable;

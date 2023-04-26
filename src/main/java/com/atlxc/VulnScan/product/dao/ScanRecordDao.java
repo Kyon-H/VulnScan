@@ -1,13 +1,15 @@
 package com.atlxc.VulnScan.product.dao;
 
+import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.dto.ScanRecordDTO;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
 import java.util.Map;
@@ -46,14 +48,18 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
             "limit #{count}")
     List<Map<String, String>> selectMostTarget(Integer userId, Integer count);
 
+    @Results(id = "ScanRecordEntityMap", value = {
+            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class , typeHandler = FastjsonTypeHandler.class)
+    })
     @Select("select scan_record.id, scan_record.address, scan_record.severity_counts " +
             "from scan_record where user_id=#{userId} " +
             "order by (severity_counts -> '$.high' + severity_counts -> '$.medium') desc " +
             "limit #{count}")
     List<ScanRecordEntity> selectMostTargetList(Integer userId, Integer count);
 
+    @ResultMap(value = "ScanRecordEntityMap")
     @Select("select scan_record.*, scan_type.name " +
             "from scan_record left join scan_type on scan_record.type=scan_type.profile_id " +
-            "where scan_record.user_id=#{userId}")
-    IPage<ScanRecordDTO> getScanRecordsWithScanType(IPage<ScanRecordDTO> page, @Param("userId") Integer userId);
+            "${ew.customSqlSegment}")
+    IPage<ScanRecordDTO> getScanRecordsWithScanType(IPage<ScanRecordDTO> page, @Param(Constants.WRAPPER) QueryWrapper queryWrapper);
 }

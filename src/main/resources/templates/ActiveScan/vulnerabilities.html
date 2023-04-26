@@ -18,7 +18,7 @@
         <div class="justification-content-md-center">
             <br>
             <p class="h2">漏洞信息</p>
-            <div class="input-group w-85 p-3">
+            <div class="input-group">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="severity_select">严重等级</label>
                 </div>
@@ -32,7 +32,7 @@
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="vulnerability_input">漏洞名称</label>
                 </div>
-                <input maxlength="40" type="text" id="vulnerability_input" value="">
+                <input maxlength="40" type="text" id="vulnerability_input" size="40" value="">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="scan_time">扫描时间</label>
                 </div>
@@ -42,13 +42,13 @@
                 <table class="shadow p-3 mb-5 bg-white rounded table table-striped table-hover table-sm">
                     <thead>
                     <tr>
-                        <th style="width:26px;">#</th>
-                        <th style="width:80px">严重等级</th>
-                        <th style="width:230px">漏洞名称</th>
-                        <th class="text-truncate" style="width:300px;">地址</th>
-                        <th style="width:80px">确定度%</th>
-                        <th style="width:140px">扫描时间</th>
-                        <th style="width:90px">导出文档</th>
+                        <th style="width:2px;">#</th>
+                        <th style="width:65px">严重等级</th>
+                        <th style="width:250px">漏洞名称</th>
+                        <th class="text-truncate" style="width:320px;">地址</th>
+                        <th style="width:65px">确定度%</th>
+                        <th style="width:110px">扫描时间</th>
+                        <th style="width:70px">导出文档</th>
                     </tr>
                     </thead>
                     <tbody id="tablelist">

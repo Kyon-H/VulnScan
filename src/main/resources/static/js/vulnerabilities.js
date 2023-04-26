@@ -1,5 +1,4 @@
-var totalCount=0;
-var totalPage=0;
+//
 var URL="/vulninfo/list";
 const options={
     page: 1,
@@ -10,7 +9,8 @@ const options={
     totalPage: 0,
     scanRecordId: undefined,
     severity: undefined,
-    vulnerability: undefined
+    vulnerability: undefined,
+    date: undefined
 }
 ////////////////////////////////
 function load(){
@@ -23,9 +23,11 @@ function load(){
     }
     if(severity){
         options.severity=severity;
+        $("#severity_select").val(severity);
     }
     if(vulnerability){
         options.vulnerability=vulnerability;
+        $("#vulnerability_input").val(vulnerability);
     }
     loadPage(URL,options,addTable);
     setTimeout(function(){
@@ -59,9 +61,11 @@ function addTable(data){
                 break;
         }
         //vulnerability
-        item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}" title="${m.vulnerability}">${m.vulnerability}</a></td>`;
+        item+=`<td><a href="/ActiveScan/vulnerabilities/detail?id=${m.id}" title="${m.vulnerability}">
+            ${m.vulnerability}</a></td>`;
         //targetAddress
-        item+=`<td><a class="text-reset" target="_blank" title="${m.targetAddress}" href="${m.targetAddress}">${m.targetAddress}</a></td>`;
+        item+=`<td><a class="text-reset" target="_blank" title="${m.targetAddress}" href="${m.targetAddress}">
+            <span class="d-inline-block text-truncate" style="max-width: 320px;">${m.targetAddress}</span></a></td>`;
         //confidence
         item+=`<td>${m.confidence}</td>`;
         //lastSeen
@@ -131,12 +135,13 @@ $('#vulnerability_input').keypress(function(e){
 laydate.render({
   elem: '#scan_time', //指定元素
   done: function(value, date, endDate){
-    if(value){
-        console.log(value); //得到日期生成的值，如：2017-08-18
-        console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-
+    console.log(value); //得到日期生成的值，如：2017-08-18
+    console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+    options.date = value;
+    if(value==""){
+        options.date = undefined;
     }
-
+    loadPage(URL,options,addTable);
   }
 });
 //格式化时间

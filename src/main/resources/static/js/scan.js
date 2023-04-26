@@ -1,12 +1,13 @@
-var totalCount
-var totalPage
+//
 var URL="/scan/list";
 var initWSed=false;
 const options={
     page: 1,
     limit: 10,
     sidx: 'scan_time',
-    order: 'desc'
+    order: 'desc',
+    totalCount: 0,
+    totalPage: 0
 }
 ////////////////////////////////
 function newTarget(){

@@ -52,8 +52,13 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         if (params.get("severity") != null) {
             queryWrapper.eq("severity", Integer.parseInt(params.get("severity").toString()));
         }
-        if(params.get("vulnerability") != null) {
+        if (params.get("vulnerability") != null) {
             queryWrapper.like("vulnerability", SQLFilter.sqlInject(params.get("vulnerability").toString()));
+        }
+        if (params.get("date") != null) {
+            Date date = DateUtils.stringToDate(params.get("date").toString(), DateUtils.DATE_PATTERN);
+            date = DateUtils.addDateDays(date, 1);
+            queryWrapper.le("last_seen", DateUtils.format(date, DateUtils.DATE_PATTERN));
         }
         Boolean isAsc = params.get("isAsc") == null || params.get("order").toString().equals("asc");
         String sidx = params.get("sidx") == null ? "" : params.get("sidx").toString();

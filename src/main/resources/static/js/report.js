@@ -1,11 +1,15 @@
-var totalCount
-var totalPage
-var URL="/report/list?";
+//
+var URL="/report/list";
 const options={
     page: 1,
     limit: 10,
     sidx: 'generation_date',
-    order: 'desc'
+    order: 'desc',
+    totalCount: 0,
+    totalPage: 0,
+    templateId: undefined,
+    listType: undefined,
+    date: undefined
 }
 ////////////////////////////////
 function load(){
@@ -20,8 +24,8 @@ function load(){
 function addTable(data){
     options.page=data.currPage;
     options.limit=data.pageSize;
-    totalCount=data.totalCount;
-    totalPage=data.totalPage;
+    options.totalCount=data.totalCount;
+    options.totalPage=data.totalPage;
     var item="";
     $.each(data.list,function(i,m){
         item+=`<tr><td align="center">${(options.page-1)*options.limit+1+i}</td>
@@ -63,29 +67,33 @@ function addTable(data){
 $('#template_id').change(function(){
     //获取option元素上的value值
     var template_id = $(this).find('option:selected').val();
-    if(template_id){
-        console.log(template_id);
-        URL+="templated_id="+template_id+"&";
+    console.log(template_id);
+    options.templateId=template_id;
+    if(template_id==""){
+        options.templateId=undefined;
     }
+    loadPage(URL, options, addTable);
 })
 //报告类型select
 $('#list_type').change(function(){
     var list_type = $(this).find('option:selected').val();
-    if(list_type){
-        console.log(list_type);
-        URL+="list_type"+list_type+"&";
+    console.log(list_type)
+    options.listType=list_type;
+    if(list_type==""){
+        options.listType=undefined;
     }
+    loadPage(URL, options, addTable);
 })
-//Created After
+//生成时间
 laydate.render({
   elem: '#time', //指定元素
   done: function(value, date, endDate){
-    if(value){
-        console.log(value); //得到日期生成的值，如：2017-08-18
-        console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
-        URL+=`year=${date.year}&month=${date.month}&date=${date.date}`;
+    options.date=value;
+    console.log(value)
+    if(value==""){
+        options.date=undefined;
     }
-
+    loadPage(URL, options, addTable);
   }
 });
 //删除按钮click事件

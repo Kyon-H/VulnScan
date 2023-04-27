@@ -15,7 +15,6 @@ import com.atlxc.VulnScan.xss.SQLFilter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.github.yulichang.query.MPJQueryWrapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +39,7 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     @Override
     public PageUtils queryPage(@NotNull Map<String, Object> params) {
         Integer userId = (Integer) params.get("userId");
-        MPJQueryWrapper<VulnInfoEntity> queryWrapper = new MPJQueryWrapper<>();
-//        基本查询
-        queryWrapper.selectAll(VulnInfoEntity.class)
-                .leftJoin("scan_record on t.scan_record_id = scan_record.id")
-                .eq("scan_record.user_id", userId);
+        QueryWrapper queryWrapper = new QueryWrapper<>().eq("scan_record.user_id", userId);
 //        可变条件
         if (params.get("scanRecordId") != null) {
             queryWrapper.eq("t.scan_record_id", Integer.parseInt(params.get("scanRecordId").toString()));
@@ -64,7 +59,7 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
         String sidx = params.get("sidx") == null ? "" : params.get("sidx").toString();
 //        分页查询
 //        params: page, limit
-        IPage<VulnInfoEntity> page = this.page(
+        IPage<VulnInfoEntity> page = this.baseMapper.queryPage(
                 new Query<VulnInfoEntity>().getPage(params, sidx, isAsc),
                 queryWrapper
         );

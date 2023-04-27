@@ -76,8 +76,8 @@ function load(){
 function addTable(data){
     options.page=data.currPage;
     options.limit=data.pageSize;
-    totalCount=data.totalCount;
-    totalPage=data.totalPage;
+    options.totalCount=data.totalCount;
+    options.totalPage=data.totalPage;
     var item="";
     $.each(data.list,function (i,m) {
         //# address

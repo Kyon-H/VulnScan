@@ -77,10 +77,7 @@ function webSocketSend(data) {
 
 //关闭socket
 function webSocketClose() {
-  if (
-    webSocket.readyState === 1 &&
-    webSocket.url === "ws://1xx.xx.xx.xxx/ws"
-  ) {
+  if (webSocket.readyState === 1) {
     webSocket.close();
     console.log("对话连接已关闭");
   }

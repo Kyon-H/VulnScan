@@ -4,7 +4,7 @@ const options={
     page: 1,
     limit: 10,
     sidx: 'last_seen',
-    order: 'desc',
+    isAsc: false,
     totalCount: 0,
     totalPage: 0,
     scanRecordId: undefined,

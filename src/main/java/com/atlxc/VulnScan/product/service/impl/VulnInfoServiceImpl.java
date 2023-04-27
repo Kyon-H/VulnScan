@@ -11,19 +11,20 @@ import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
+import com.atlxc.VulnScan.vo.VulnPageVo;
 import com.atlxc.VulnScan.xss.SQLFilter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -37,30 +38,31 @@ public class VulnInfoServiceImpl extends ServiceImpl<VulnInfoDao, VulnInfoEntity
     ScanRecordService scanRecordService;
 
     @Override
-    public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        Integer userId = (Integer) params.get("userId");
-        QueryWrapper queryWrapper = new QueryWrapper<>().eq("scan_record.user_id", userId);
+    @SneakyThrows
+    public PageUtils queryPage(VulnPageVo vulnPageVo) {
+        QueryWrapper queryWrapper = new QueryWrapper<>().eq("scan_record.user_id", vulnPageVo.getUserId());
 //        可变条件
-        if (params.get("scanRecordId") != null) {
-            queryWrapper.eq("t.scan_record_id", Integer.parseInt(params.get("scanRecordId").toString()));
+        if (vulnPageVo.getScanRecordId() != null) {
+            queryWrapper.eq("t.scan_record_id", vulnPageVo.getScanRecordId());
         }
-        if (params.get("severity") != null) {
-            queryWrapper.eq("severity", Integer.parseInt(params.get("severity").toString()));
+        if (vulnPageVo.getSeverity() != null) {
+            queryWrapper.eq("severity", vulnPageVo.getSeverity());
         }
-        if (params.get("vulnerability") != null) {
-            queryWrapper.like("vulnerability", SQLFilter.sqlInject(params.get("vulnerability").toString()));
+        if (vulnPageVo.getVulnerability() != null) {
+            queryWrapper.like("vulnerability", SQLFilter.sqlInject(vulnPageVo.getVulnerability()));
         }
-        if (params.get("date") != null) {
-            Date date = DateUtils.stringToDate(params.get("date").toString(), DateUtils.DATE_PATTERN);
+        if (vulnPageVo.getDate() != null) {
+            Date date = DateUtils.stringToDate(vulnPageVo.getDate(), DateUtils.DATE_PATTERN);
             date = DateUtils.addDateDays(date, 1);
             queryWrapper.le("last_seen", DateUtils.format(date, DateUtils.DATE_PATTERN));
         }
-        Boolean isAsc = params.get("isAsc") == null || params.get("order").toString().equals("asc");
-        String sidx = params.get("sidx") == null ? "" : params.get("sidx").toString();
 //        分页查询
 //        params: page, limit
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", vulnPageVo.getPage().toString());
+        params.put("limit", vulnPageVo.getLimit().toString());
         IPage<VulnInfoEntity> page = this.baseMapper.queryPage(
-                new Query<VulnInfoEntity>().getPage(params, sidx, isAsc),
+                new Query<VulnInfoEntity>().getPage(params, vulnPageVo.getSidx(), vulnPageVo.getIsAsc()),
                 queryWrapper
         );
         return new PageUtils(page);

@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.VulnInfoEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.vo.VulnPageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 漏洞信息表
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public interface VulnInfoService extends IService<VulnInfoEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(VulnPageVo vulnPage);
 
     Boolean updateAll();
 

@@ -10,6 +10,7 @@ import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.validator.group.AddGroup;
+import com.atlxc.VulnScan.vo.ReportPageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.security.Principal;
 import java.util.Date;
-import java.util.Map;
 
 
 /**
@@ -50,9 +51,9 @@ public class ScanReportController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@NotNull @RequestParam Map<String, Object> options, @NotNull Principal principal) {
+    public R list(@NotNull @Valid ReportPageVo options, @NotNull Principal principal) {
         Integer userId = usersService.getIdByName(principal.getName());
-        options.put("userId", userId);
+        options.setUserId(userId);
         PageUtils page = scanReportService.queryPage(options);
 
         return R.ok().put("page", page);

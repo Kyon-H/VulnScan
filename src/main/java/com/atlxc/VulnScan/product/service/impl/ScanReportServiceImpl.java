@@ -9,17 +9,18 @@ import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.utils.DateUtils;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
+import com.atlxc.VulnScan.vo.ReportPageVo;
 import com.atlxc.VulnScan.xss.SQLFilter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -30,34 +31,27 @@ public class ScanReportServiceImpl extends ServiceImpl<ScanReportDao, ScanReport
     ReportService reportService;
 
     @Override
-    public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        Integer userId = (Integer) params.get("userId");
-        if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
-            Boolean isAsc = params.get("order").toString().equals("asc") ? Boolean.TRUE : Boolean.FALSE;
-            QueryWrapper queryWrapper = new QueryWrapper<ScanReportEntity>().eq("user_id", userId);
-            if (params.get("templateId") != null) {
-                queryWrapper.eq("template_id", SQLFilter.sqlInject(params.get("templateId").toString()));
-            }
-            if (params.get("listType") != null) {
-                queryWrapper.eq("list_type", SQLFilter.sqlInject(params.get("listType").toString()));
-            }
-            if (params.get("date") != null) {
-                Date date = DateUtils.stringToDate(params.get("date").toString(), DateUtils.DATE_PATTERN);
-                date = DateUtils.addDateDays(date, 1);
-                queryWrapper.le("generation_date", DateUtils.format(date, DateUtils.DATE_PATTERN));
-            }
-            IPage<ScanReportEntity> page = this.page(
-                    new Query<ScanReportEntity>().getPage(params, params.get("sidx").toString(), isAsc),
-                    queryWrapper
-            );
-            return new PageUtils(page);
-        } else {
-            IPage<ScanReportEntity> page = this.page(
-                    new Query<ScanReportEntity>().getPage(params),
-                    new QueryWrapper<ScanReportEntity>().eq("user_id", userId)
-            );
-            return new PageUtils(page);
+    public PageUtils queryPage(@NotNull ReportPageVo reportPageVo) {
+        QueryWrapper queryWrapper = new QueryWrapper<ScanReportEntity>().eq("user_id", reportPageVo.getUserId());
+        if (reportPageVo.getTemplateId() != null) {
+            queryWrapper.eq("template_id", SQLFilter.sqlInject(reportPageVo.getTemplateId()));
         }
+        if (reportPageVo.getListType() != null) {
+            queryWrapper.eq("list_type", SQLFilter.sqlInject(reportPageVo.getListType()));
+        }
+        if (reportPageVo.getDate() != null) {
+            Date date = DateUtils.stringToDate(reportPageVo.getDate(), DateUtils.DATE_PATTERN);
+            date = DateUtils.addDateDays(date, 1);
+            queryWrapper.le("generation_date", DateUtils.format(date, DateUtils.DATE_PATTERN));
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", reportPageVo.getPage().toString());
+        params.put("limit", reportPageVo.getLimit().toString());
+        IPage<ScanReportEntity> page = this.page(
+                new Query<ScanReportEntity>().getPage(params, reportPageVo.getSidx(), reportPageVo.getIsAsc()),
+                queryWrapper
+        );
+        return new PageUtils(page);
     }
 
     @Override

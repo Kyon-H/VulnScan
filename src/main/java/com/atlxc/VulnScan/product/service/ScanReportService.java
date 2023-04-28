@@ -2,9 +2,8 @@ package com.atlxc.VulnScan.product.service;
 
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
+import com.atlxc.VulnScan.vo.ReportPageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import java.util.Map;
 
 /**
  * 扫描报告表
@@ -15,7 +14,7 @@ import java.util.Map;
  */
 public interface ScanReportService extends IService<ScanReportEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(ReportPageVo reportPageVo);
 
     ScanReportEntity getByReportId(String reportId);
 

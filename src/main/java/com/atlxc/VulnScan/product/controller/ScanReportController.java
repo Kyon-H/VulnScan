@@ -4,6 +4,7 @@ import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ReportService;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.product.service.ScanReportService;
+import com.atlxc.VulnScan.product.service.TemplateService;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.utils.DateUtils;
@@ -44,6 +45,8 @@ public class ScanReportController {
     private UsersService usersService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private TemplateService templateService;
     @Autowired
     private ConnectorService connectorService;
 
@@ -119,6 +122,12 @@ public class ScanReportController {
     public R update(@RequestBody ScanReportEntity scanReport) {
         scanReportService.updateById(scanReport);
 
+        return R.ok();
+    }
+
+    @GetMapping("/update/all")
+    public R updateAll() {
+        templateService.updateTemplates();
         return R.ok();
     }
 

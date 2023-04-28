@@ -32,6 +32,19 @@ public class ReportService {
     private static final String URL = ConfigConstant.AWVS_API_URL + "reports";
 
     /**
+     * 获取报告模板
+     * Method:GET
+     * URL: /api/v1/report_templates
+     */
+    public JSONObject getTemplates() {
+        JSONObject templates = AWVSRequestUtils.GET(ConfigConstant.AWVS_API_URL + "report_templates");
+        if (templates == null) {
+            throw new RRException("No templates found");
+        }
+        return templates;
+    }
+
+    /**
      * 获取所有扫描报告
      * Method:GET
      * URL: /api/v1/reports?l={count}

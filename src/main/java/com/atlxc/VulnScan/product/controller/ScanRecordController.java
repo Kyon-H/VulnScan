@@ -15,6 +15,7 @@ import com.atlxc.VulnScan.product.service.impl.ConnectorService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 import com.atlxc.VulnScan.vo.AddTargetVo;
+import com.atlxc.VulnScan.vo.ScanPageVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -62,9 +63,9 @@ public class ScanRecordController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@NotNull @RequestParam Map<String, Object> options, @NotNull Principal principal) {
+    public R list(@NotNull @Valid ScanPageVo options, @NotNull Principal principal) {
         Integer userId = usersServices.getIdByName(principal.getName());
-        options.put("userId", userId);
+        options.setUserId(userId);
         PageUtils page = scanRecordService.queryPage(options);
 
         return R.ok().put("page", page);
@@ -118,8 +119,7 @@ public class ScanRecordController {
         }
         //settype
         ScanTypeEntity scanTypeEntity = scanTypeService.getById(vo.getScanType());
-        if (scanTypeEntity == null)
-            return R.error("Scan type not found");
+        if (scanTypeEntity == null) return R.error("Scan type not found");
         scanRecord.setStatus("processing");
         scanRecord.setType(vo.getScanType());
         scanRecord.setScanTime(new Date());

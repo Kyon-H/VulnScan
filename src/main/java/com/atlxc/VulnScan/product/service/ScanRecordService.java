@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.vo.AddTargetVo;
+import com.atlxc.VulnScan.vo.ScanPageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public interface ScanRecordService extends IService<ScanRecordEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(ScanPageVo scanPageVo);
 
     Boolean updateStatus(Integer id, String status);
 

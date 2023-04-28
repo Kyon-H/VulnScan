@@ -2,7 +2,6 @@ package com.atlxc.VulnScan.product.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.atlxc.VulnScan.dto.ScanRecordDTO;
-import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.dao.ScanRecordDao;
@@ -12,11 +11,11 @@ import com.atlxc.VulnScan.product.service.VulnInfoService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.Query;
 import com.atlxc.VulnScan.vo.AddTargetVo;
+import com.atlxc.VulnScan.vo.ScanPageVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,17 +38,15 @@ public class ScanRecordServiceImpl extends ServiceImpl<ScanRecordDao, ScanRecord
     VulnInfoService vulnInfoService;
 
     @Override
-    public PageUtils queryPage(@NotNull Map<String, Object> params) {
-        Integer userId = (Integer) params.get("userId");
-        if (StringUtils.isNotEmpty((String) params.get("sidx"))) {
-            Boolean isAsc = params.get("order").toString().equals("asc") ? Boolean.TRUE : Boolean.FALSE;
-            IPage<ScanRecordDTO> page = this.baseMapper.getScanRecordsWithScanType(
-                    new Query<ScanRecordDTO>().getPage(params, params.get("sidx").toString(), isAsc),
-                    new QueryWrapper<>().eq("user_id", userId)
-            );
-            return new PageUtils(page);
-        }
-        throw new RRException("Invalid");
+    public PageUtils queryPage(@NotNull ScanPageVo scanPageVo) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("page", scanPageVo.getPage().toString());
+        params.put("limit", scanPageVo.getLimit().toString());
+        IPage<ScanRecordDTO> page = this.baseMapper.getScanRecordsWithScanType(
+                new Query<ScanRecordDTO>().getPage(params, scanPageVo.getSidx(), scanPageVo.getIsAsc()),
+                new QueryWrapper<>().eq("user_id", scanPageVo.getUserId())
+        );
+        return new PageUtils(page);
     }
 
     @Override

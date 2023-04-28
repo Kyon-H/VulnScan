@@ -5,7 +5,7 @@ const options={
     page: 1,
     limit: 10,
     sidx: 'scan_time',
-    order: 'desc',
+    isAsc: false,
     totalCount: 0,
     totalPage: 0
 }

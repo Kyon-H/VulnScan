@@ -2,7 +2,6 @@ package com.atlxc.VulnScan.config;
 
 /**
  * 系统参数相关Key
- *
  */
 public class ConfigConstant {
     /**

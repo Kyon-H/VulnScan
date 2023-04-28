@@ -2,11 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
-  <!-- Bootstrap core CSS -->
-  <link href="/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/favicon.ico}"/>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
       .bd-placeholder-img {
         font-size: 1.125rem;
         text-anchor: middle;
@@ -24,49 +24,50 @@
       main{
         margin-top:75px;
       }
+
     </style>
-  <link href="/css/navbar.css" rel="stylesheet">
+    <link href="/css/navbar.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">VulnScan</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
-          aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    <a class="navbar-brand" href="#">VulnScan</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05"
+            aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="collapse navbar-collapse" id="navbarsExample05">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a id="home" class="nav-link" href="/">Home </a>
-      </li>
-      <li class="nav-item">
-        <a id="scans" class="nav-link" href="/ActiveScan/scans">漏洞扫描</a>
-      </li>
-      <li class="nav-item">
-        <a id="vulnerabilities" class="nav-link" href="/ActiveScan/vulnerabilities">漏洞信息</a>
-      </li>
-      <li class="nav-item">
-        <a id="reports" class="nav-link" href="/ActiveScan/reports">扫描报告</a>
-      </li>
-    </ul>
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <div sec:authorize="hasRole('ROLE_ADMIN')">
-          <span style="color:white">管理员</span>
-        </div>
-      </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-          <span sec:authentication="name" style="color:#007bff"></span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right">
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/logout">退出登录</a>
-        </div>
-      </li>
-    </ul>
-  </div>
+    <div class="collapse navbar-collapse" id="navbarsExample05">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a id="home" class="nav-link" href="/">Home </a>
+            </li>
+            <li class="nav-item">
+                <a id="scans" class="nav-link" href="/ActiveScan/scans">漏洞扫描</a>
+            </li>
+            <li class="nav-item">
+                <a id="vulnerabilities" class="nav-link" href="/ActiveScan/vulnerabilities">漏洞信息</a>
+            </li>
+            <li class="nav-item">
+                <a id="reports" class="nav-link" href="/ActiveScan/reports">扫描报告</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <span style="color:white">管理员</span>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                    <span sec:authentication="name" style="color:#007bff"></span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/logout">退出登录</a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </nav>
 </body>
 </html>

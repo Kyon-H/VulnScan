@@ -10,11 +10,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -92,8 +90,8 @@ public class VulnService {
         headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
-        String url=URL + "/" + vuln_id + "/http_response";
-        log.debug("http_response url:{}",url);
+        String url = URL + "/" + vuln_id + "/http_response";
+        log.debug("http_response url:{}", url);
         ResponseEntity<byte[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, byte[].class);
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw new RRException("获取response信息失败");

@@ -49,7 +49,7 @@
                     </thead>
                     <tbody id="tablelist"></tbody>
                 </table>
-<!--                分页工具 -->
+                <!--                分页工具 -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-end">
                         <li class="page-item"><a id="pagePre" class="page-link" href="#">Previous</a></li>
@@ -59,7 +59,7 @@
                         <li class="page-item"><a id="pageNext" class="page-link">Next</a></li>
                     </ul>
                 </nav>
-<!--                分页工具 end -->
+                <!--                分页工具 end -->
             </div>
         </div>
     </div>
@@ -67,7 +67,8 @@
 
 </main>
 <!-- new target modal -->
-<div class="modal fade" id="myModal" data-backdrop="static" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" data-backdrop="static" tabindex="-1" aria-labelledby="myModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -91,62 +92,77 @@
                     <div class="form-group">
                         <label class="col-form-label">扫描速度:</label>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline1" name="customRadioInline" value="sequential" class="custom-control-input">
+                            <input type="radio" id="customRadioInline1" name="customRadioInline" value="sequential"
+                                   class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline1">Slower</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline2" name="customRadioInline" value="slow" class="custom-control-input">
+                            <input type="radio" id="customRadioInline2" name="customRadioInline" value="slow"
+                                   class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline2">Slow</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline3" name="customRadioInline" value="moderate" class="custom-control-input">
+                            <input type="radio" id="customRadioInline3" name="customRadioInline" value="moderate"
+                                   class="custom-control-input">
                             <label class="custom-control-label" for="customRadioInline3">Moderate</label>
                         </div>
                         <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline4" name="customRadioInline" value="fast" class="custom-control-input" checked>
+                            <input type="radio" id="customRadioInline4" name="customRadioInline" value="fast"
+                                   class="custom-control-input" checked>
                             <label class="custom-control-label" for="customRadioInline4">Fast</label>
                         </div>
                     </div>
                     <div class="form-group">
                         <p>
-                            <a class="btn btn-light btn-sm btn-block" data-toggle="collapse" href="#loginSetting" role="button" aria-expanded="false" aria-controls="loginSetting">
+                            <a class="btn btn-light btn-sm btn-block" data-toggle="collapse" href="#loginSetting"
+                               role="button" aria-expanded="false" aria-controls="loginSetting">
                                 登录设置
                             </a>
                         </p>
                         <div class="collapse" id="loginSetting">
                             <div class="list-group list-group-horizontal-sm" id="list-tab" role="tablist">
-                                <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Site Login</a>
-                                <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Custom Cookies</a>
+                                <a class="list-group-item list-group-item-action active" id="list-home-list"
+                                   data-toggle="list" href="#list-home" role="tab" aria-controls="home">Site Login</a>
+                                <a class="list-group-item list-group-item-action" id="list-profile-list"
+                                   data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Custom
+                                    Cookies</a>
                             </div>
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-<!--                                        用户名、密码填写 -->
+                                <div class="tab-pane fade show active" id="list-home" role="tabpanel"
+                                     aria-labelledby="list-home-list">
+                                    <!--                                        用户名、密码填写 -->
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="username">用户名</span>
                                         </div>
-                                        <input type="text" name="userName" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="username">
+                                        <input type="text" name="userName" class="form-control" placeholder="Username"
+                                               aria-label="Username" aria-describedby="username">
                                     </div>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="password">密&emsp;码</span>
                                         </div>
-                                        <input type="text" name="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password">
+                                        <input type="text" name="password" class="form-control" placeholder="Password"
+                                               aria-label="Password" aria-describedby="password">
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-<!--                                        Cookie填写 -->
+                                <div class="tab-pane fade" id="list-profile" role="tabpanel"
+                                     aria-labelledby="list-profile-list">
+                                    <!--                                        Cookie填写 -->
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="cookie_url">URL&ensp;&ensp;&nbsp;</span>
                                         </div>
-                                        <input type="text" name="cookie_url" class="form-control" placeholder="http://example.com" aria-label="http://example.com" aria-describedby="cookie_url">
+                                        <input type="text" name="cookie_url" class="form-control"
+                                               placeholder="http://example.com" aria-label="http://example.com"
+                                               aria-describedby="cookie_url">
                                     </div>
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="cookie_value">Cookie</span>
                                         </div>
-                                        <input type="text" name="cookie_value" class="form-control" placeholder="Cookie" aria-label="Cookie" aria-describedby="cookie_value">
+                                        <input type="text" name="cookie_value" class="form-control" placeholder="Cookie"
+                                               aria-label="Cookie" aria-describedby="cookie_value">
                                     </div>
                                 </div>
                             </div>

@@ -2,8 +2,6 @@ package com.atlxc.VulnScan.product.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.config.ConfigConstant;
-import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.apiservice.ScanService;
 import com.atlxc.VulnScan.product.apiservice.TargetService;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
@@ -115,12 +113,12 @@ public class ScanRecordController {
             cookie.put("cookie", vo.getCookie());
             cookies.add(cookie);
         }
-        if(credentials.size() >= 1 || cookies.size() >= 1) {
+        if (credentials.size() >= 1 || cookies.size() >= 1) {
             targetService.setLogin(scanRecord.getTargetId(), credentials, cookies);
         }
         //settype
         ScanTypeEntity scanTypeEntity = scanTypeService.getById(vo.getScanType());
-        if(scanTypeEntity == null)
+        if (scanTypeEntity == null)
             return R.error("Scan type not found");
         scanRecord.setStatus("processing");
         scanRecord.setType(vo.getScanType());

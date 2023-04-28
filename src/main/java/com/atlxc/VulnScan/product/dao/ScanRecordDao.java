@@ -49,7 +49,7 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
     List<Map<String, String>> selectMostTarget(Integer userId, Integer count);
 
     @Results(id = "ScanRecordEntityMap", value = {
-            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class , typeHandler = FastjsonTypeHandler.class)
+            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class, typeHandler = FastjsonTypeHandler.class)
     })
     @Select("select scan_record.id, scan_record.address, scan_record.severity_counts " +
             "from scan_record where user_id=#{userId} " +

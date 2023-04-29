@@ -1,8 +1,8 @@
 package com.atlxc.VulnScan.product.controller;
 
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.apiservice.ReportService;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
+import com.atlxc.VulnScan.product.entity.TemplateEntity;
 import com.atlxc.VulnScan.product.service.ScanReportService;
 import com.atlxc.VulnScan.product.service.TemplateService;
 import com.atlxc.VulnScan.product.service.UsersService;
@@ -84,28 +84,10 @@ public class ScanReportController {
         Integer userId = usersService.getIdByName(userName);
         scanReport.setUserId(userId);
         scanReport.setStatus("processing");
-        switch (scanReport.getTemplateId()) {
-            case ConfigConstant.templateId_OWASPTop102013:
-                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102013);
-                break;
-            case ConfigConstant.templateId_AffectedItems:
-                scanReport.setTemplateName(ConfigConstant.templateName_AffectedItems);
-                break;
-            case ConfigConstant.templateId_CWE2011:
-                scanReport.setTemplateName(ConfigConstant.templateName_CWE2011);
-                break;
-            case ConfigConstant.templateId_OWASPTop102017:
-                scanReport.setTemplateName(ConfigConstant.templateName_OWASPTop102017);
-                break;
-            case ConfigConstant.templateId_HIPAA:
-                scanReport.setTemplateName(ConfigConstant.templateName_HIPAA);
-                break;
-            case ConfigConstant.templateId_ISO27001:
-                scanReport.setTemplateName(ConfigConstant.templateName_ISO27001);
-                break;
-            default:
-                return R.error();
-        }
+        //保存模板信息
+        TemplateEntity templateEntity = templateService.getById(scanReport.getTemplateId());
+        scanReport.setTemplateName(templateEntity.getName());
+        //
         scanReport.setGenerationDate(new Date());
         String reportId = reportService.addReport(scanReport);
         scanReport.setReportId(reportId);

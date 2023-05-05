@@ -17,3 +17,5 @@ mvnw.cmd
 mvnw
 *.iml
 *.map
+
+.idea

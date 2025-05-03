@@ -1,9 +1,10 @@
 package com.atlxc.VulnScan.product.apiservice;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +14,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScanProfileService {
 
-    private static final String URL = ConfigConstant.AWVS_API_URL + "scanning_profiles";
+    private final String URL;
+
+    @Autowired
+    private ScanProfileService(@Value("${api.url}") String apiUrl) {
+        URL = apiUrl + "scanning_profiles";
+    }
 
     /**
      * 获取扫描类型

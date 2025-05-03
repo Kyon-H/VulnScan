@@ -28,10 +28,10 @@ function load(){
 }
 //
 function echart(data){
-    var info_sever=data[0].number;
-    var low_sever=data[1].number;
-    var medium_sever=data[2].number;
-    var high_sever=data[3].number;
+    var info_sever=(data[0] && data[0].number)||0;
+    var low_sever=(data[1] && data[1].number)||0;
+    var medium_sever=(data[2] && data[2].number)||0;
+    var high_sever=(data[3] && data[3].number)||0;
     // 基于准备好的dom，初始化echarts实例
     var chartDom = document.getElementById('myChart');
     var myChart = echarts.init(chartDom,null,{devicePixelRatio : 4});

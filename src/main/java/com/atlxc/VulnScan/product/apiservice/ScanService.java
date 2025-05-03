@@ -1,10 +1,11 @@
 package com.atlxc.VulnScan.product.apiservice;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanRecordEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScanService {
 
-    private static final String URL = ConfigConstant.AWVS_API_URL + "scans";
+    private final String URL;
+
+    @Autowired
+    private ScanService(@Value("${api.url}") String apiUrl) {
+        URL = apiUrl + "scans";
+    }
 
     /**
      * 添加扫描

@@ -3,6 +3,7 @@ $.ajaxSetup({
 });
 function getCaptcha(){
     var timenow = new Date().getTime();
+    console.log(timenow,"  ",Date.now())
     $('#captchaImg').attr('src', '/kaptcha/getKaptchaImage?'+timenow);
 }
 

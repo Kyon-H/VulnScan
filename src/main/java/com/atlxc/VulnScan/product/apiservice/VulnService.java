@@ -1,11 +1,12 @@
 package com.atlxc.VulnScan.product.apiservice;
 
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,8 +23,14 @@ import java.util.Map;
 @Slf4j
 @Service
 public class VulnService {
-    private static final String URL = ConfigConstant.AWVS_API_URL + "vulnerabilities";
+    private final String URL;
+    private final String AWVS_API_KEY;
 
+    @Autowired
+    private VulnService(@Value("${api.url}") String apiUrl, @Value("${api.key}") String apiKey) {
+        URL = apiUrl + "vulnerabilities";
+        AWVS_API_KEY = apiKey;
+    }
     /**
      * 获取所有漏洞信息
      * Method:GET
@@ -74,6 +81,7 @@ public class VulnService {
      * URL: api/v1/vulnerabilities/{vuln_id}
      */
     public JSONObject getVuln(String vuln_id) {
+        log.info("baseUrl: {}", URL);
         JSONObject result = AWVSRequestUtils.GET(URL + "/" + vuln_id);
         if (result == null) throw new RRException("获取单个漏洞信息失败");
         return result;
@@ -87,7 +95,7 @@ public class VulnService {
     public byte[] getHttpResponse(String vuln_id) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("X-Auth", AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(headers);
         String url = URL + "/" + vuln_id + "/http_response";

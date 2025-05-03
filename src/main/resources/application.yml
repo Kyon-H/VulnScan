@@ -1,12 +1,12 @@
 server:
-  port: 80
+  port: 8012
 spring:
   thymeleaf:
     cache: false
   datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://localhost:3306/vulnscan?useUnicode=true&characterEncoding=utf8&useSSL=false&&serverTimezone=GMT%2b8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWD}
+    url: ${DB_URL}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
@@ -18,3 +18,9 @@ mybatis-plus:
       id-type: auto
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+init:
+  file:
+    path: ./init.flag
+api:
+  url: ${API_URL}
+  key: ${API_KEY}

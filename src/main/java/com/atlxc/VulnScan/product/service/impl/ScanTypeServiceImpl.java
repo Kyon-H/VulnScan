@@ -40,7 +40,7 @@ public class ScanTypeServiceImpl extends ServiceImpl<ScanTypeDao, ScanTypeEntity
     }
 
     @Override
-    public Boolean updateScanType() {
+    public Integer updateScanType() {
         JSONArray scanProfiles = scanProfileService.scanProfiles().getJSONArray("scanning_profiles");
         List<ScanTypeEntity> scanTypes = scanProfiles.stream().map(profile -> {
             String profileId = ((Map) profile).get("profile_id").toString();
@@ -50,20 +50,24 @@ public class ScanTypeServiceImpl extends ServiceImpl<ScanTypeDao, ScanTypeEntity
             scanType.setProfileId(profileId);
             return scanType;
         }).collect(Collectors.toList());
+        log.info("API获取扫描类型,共{}条", scanTypes.size());
+        int count = 0;
         for (ScanTypeEntity scanTypeEntity : scanTypes) {
             ScanTypeEntity selectOne = baseMapper.selectOne(new QueryWrapper<ScanTypeEntity>()
                     .eq("profile_id", scanTypeEntity.getProfileId()));
             if (selectOne == null) {
                 baseMapper.insert(scanTypeEntity);
+                count++;
             } else {
                 if (selectOne.getName().equals(scanTypeEntity.getName())) {
                     continue;
                 }
                 selectOne.setName(scanTypeEntity.getName());
                 baseMapper.updateById(selectOne);
+                count++;
             }
         }
-        return true;
+        return count;
     }
 
     @Override

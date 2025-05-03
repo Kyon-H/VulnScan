@@ -10,6 +10,7 @@ import com.atlxc.VulnScan.utils.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service("templateService")
 public class TemplateServiceImpl extends ServiceImpl<TemplateDao, TemplateEntity> implements TemplateService {
 
@@ -35,7 +36,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateDao, TemplateEntity
     }
 
     @Override
-    public Boolean updateTemplates() {
+    public Integer updateTemplates() {
         JSONArray templateArray = reportService.getTemplates().getJSONArray("templates");
         List<TemplateEntity> templates = templateArray.stream().map(template -> {
             String templateId = ((Map) template).get("template_id").toString();
@@ -45,20 +46,24 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateDao, TemplateEntity
             templateEntity.setName(name);
             return templateEntity;
         }).collect(Collectors.toList());
+        log.info("use API updated templates, count:{}", templates.size());
+        int count = 0;
         for (TemplateEntity templateEntity : templates) {
             TemplateEntity selectOne = baseMapper.selectOne(new QueryWrapper<TemplateEntity>()
                     .eq("template_id", templateEntity.getTemplateId()));
             if (selectOne == null) {
                 baseMapper.insert(templateEntity);
+                count++;
             } else {
                 if (selectOne.getName().equals(templateEntity.getName())) {
                     continue;
                 }
                 selectOne.setName(templateEntity.getName());
                 baseMapper.updateById(selectOne);
+                count++;
             }
         }
-        return true;
+        return count;
     }
 
 }

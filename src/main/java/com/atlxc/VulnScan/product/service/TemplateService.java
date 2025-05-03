@@ -15,6 +15,6 @@ public interface TemplateService extends IService<TemplateEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    Boolean updateTemplates();
+    Integer updateTemplates();
 }
 

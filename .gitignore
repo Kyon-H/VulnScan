@@ -17,5 +17,9 @@ mvnw.cmd
 mvnw
 *.iml
 *.map
+.env
+init.flag
 
+upload
+.run
 .idea

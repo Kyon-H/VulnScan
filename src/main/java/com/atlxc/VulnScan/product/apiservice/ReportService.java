@@ -9,6 +9,8 @@ import com.atlxc.VulnScan.utils.AWVSRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,7 +31,16 @@ import java.net.URI;
 @Slf4j
 @Service
 public class ReportService {
-    private static final String URL = ConfigConstant.AWVS_API_URL + "reports";
+    private final String URL;
+    private final String AWVS_API_URL;
+    private final String AWVS_API_KEY;
+
+    @Autowired
+    private ReportService(@Value("${api.url}") String apiUrl, @Value("${api.key}") String apiKey) {
+        URL = apiUrl + "report_templates";
+        AWVS_API_URL = apiUrl;
+        AWVS_API_KEY = apiKey;
+    }
 
     /**
      * 获取报告模板
@@ -37,7 +48,7 @@ public class ReportService {
      * URL: /api/v1/report_templates
      */
     public JSONObject getTemplates() {
-        JSONObject templates = AWVSRequestUtils.GET(ConfigConstant.AWVS_API_URL + "report_templates");
+        JSONObject templates = AWVSRequestUtils.GET(AWVS_API_URL + "report_templates");
         if (templates == null) {
             throw new RRException("No templates found");
         }
@@ -92,7 +103,7 @@ public class ReportService {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth", ConfigConstant.AWVS_API_KEY);
+        headers.add("X-Auth", AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(body, headers);
 

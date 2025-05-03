@@ -15,7 +15,7 @@ public interface ScanTypeService extends IService<ScanTypeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
 
-    Boolean updateScanType();
+    Integer updateScanType();
 
     List<ScanTypeEntity> getScanTypes();
 }

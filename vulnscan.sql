@@ -14,8 +14,6 @@
  Date: 05/05/2023 12:11:13
 */
 
-CREATE DATABASE IF NOT EXISTS vulnscan;
-USE vulnscan;
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 

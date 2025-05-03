@@ -1,5 +1,49 @@
 # VulnScan
 
+## 前置安装
+
+安装acunetix，获取APIKEY，将证书添加到java信任库
+
+### **步骤 1：导出服务器证书**
+
+可以使用浏览器访问该URL，然后导出证书
+
+### **步骤 2：找到 Java 信任库路径**
+
+* Java 默认信任库位于 `JAVA_HOME/lib/security/cacerts`。
+* 可通过 `echo $JAVA_HOME` 或检查环境变量确认路径。
+
+### **步骤 3：将证书导入信任库**
+
+1. **执行 keytool 导入命令**：
+
+    ```
+    keytool -import -alias MyServerCert -keystore $JAVA_HOME/lib/security/cacerts -file server.crt
+    ```
+
+   * 默认密码：`changeit`
+   * 出现提示时输入 `yes` 确认信任。
+
+### **步骤 4：验证导入结果**
+
+```
+keytool -list -alias MyServerCert -keystore $JAVA_HOME/lib/security/cacerts
+```
+
+## 项目安装
+
+1. 手动创建`.env`文件，示例
+
+```
+DB_USERNAME=vulnscan
+DB_PASSWD=xxxx
+DB_URL=jdbc:mysql://localhost:3306/vulnscan?useUnicode=true&characterEncoding=utf8&&serverTimezone=GMT%2b8
+API_URL=https://desktop-jv0cb08:3443/api/v1/
+API_KEY=1986ad8c0a5b3df4xxxxxxcxxxx8c66881d4
+```
+
+2. 手动创建数据库，手动运行`vulnscan.sql`文件创建数据库表
+
 ## 技术架构
 
 开发环境：Windows10操作系统，JAVA语言，JDK版本15，数据库MySQL，IDE工具为IDEA。

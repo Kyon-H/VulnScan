@@ -4,7 +4,9 @@ var reconn = true;
 //初始化websocket
 function initWebSocket() {
   if ("WebSocket" in window) {
-    let url="ws://"+document.domain+"/ws";
+    // 根据当前页面协议自动切换 ws/wss
+    let wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    let url = wsProtocol+"://"+window.location.host+"/ws";
     webSocket = new WebSocket(url);//创建socket对象
     console.log(webSocket)
   } else {

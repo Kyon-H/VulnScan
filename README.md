@@ -43,6 +43,7 @@ API_KEY=1986ad8c0a5b3df4xxxxxxcxxxx8c66881d4
 ```
 
 2. 手动创建数据库，手动运行`vulnscan.sql`文件创建数据库表
+3. 注册用户后在数据库中手动修改用户`role`为`ADMIN`
 
 ## 技术架构
 

@@ -37,7 +37,7 @@ public class ReportService {
 
     @Autowired
     private ReportService(@Value("${api.url}") String apiUrl, @Value("${api.key}") String apiKey) {
-        URL = apiUrl + "report_templates";
+        URL = apiUrl + "reports";
         AWVS_API_URL = apiUrl;
         AWVS_API_KEY = apiKey;
     }
@@ -106,7 +106,7 @@ public class ReportService {
         headers.add("X-Auth", AWVS_API_KEY);
         headers.add("Content-Type", "application/json;charset=UTF-8");
         HttpEntity<JSONObject> httpEntity = new HttpEntity<>(body, headers);
-
+        log.debug(body.toString(), headers.toString());
         URI uri = restTemplate.postForLocation(URL, httpEntity, JSONObject.class);
         String location = uri.toString();
         if (StringUtils.contains(location, "/api/v1/reports/")) {

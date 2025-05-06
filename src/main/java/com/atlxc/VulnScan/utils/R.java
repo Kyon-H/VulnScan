@@ -22,7 +22,7 @@ public class R extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
     public R() {
-        put("code", 0);
+        put("code", HttpStatus.SC_OK);  // 200
         put("msg", "success");
     }
 
@@ -56,6 +56,13 @@ public class R extends HashMap<String, Object> {
 
     public static R ok(Map<String, Object> map) {
         R r = new R();
+        r.putAll(map);
+        return r;
+    }
+
+    public static R ok(int code, Map<String, Object> map) {
+        R r = new R();
+        r.put("code", code);
         r.putAll(map);
         return r;
     }

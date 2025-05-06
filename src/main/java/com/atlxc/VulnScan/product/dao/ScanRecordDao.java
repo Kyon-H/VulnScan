@@ -49,7 +49,7 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
     List<Map<String, String>> selectMostTarget(Integer userId, Integer count);
 
     @Results(id = "ScanRecordEntityMap", value = {
-            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class, typeHandler = FastjsonTypeHandler.class)
+            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class, typeHandler = FastjsonTypeHandler.class),
     })
     @Select("select scan_record.id, scan_record.address, scan_record.severity_counts " +
             "from scan_record where user_id=#{userId} " +
@@ -57,8 +57,12 @@ public interface ScanRecordDao extends BaseMapper<ScanRecordEntity> {
             "limit #{count}")
     List<ScanRecordEntity> selectMostTargetList(Integer userId, Integer count);
 
-    @ResultMap(value = "ScanRecordEntityMap")
-    @Select("select scan_record.*, scan_type.name " +
+    //    @ResultMap(value = "ScanRecordEntityMap")
+    @Results(id = "ScanRecordDTOMap", value = {
+            @Result(column = "severity_counts", property = "severityCounts", jdbcType = JdbcType.JAVA_OBJECT, javaType = JSONObject.class, typeHandler = FastjsonTypeHandler.class),
+            @Result(column = "type_name", property = "typeName")
+    })
+    @Select("select scan_record.*, scan_type.name as type_name " +
             "from scan_record left join scan_type on scan_record.type=scan_type.profile_id " +
             "${ew.customSqlSegment}")
     IPage<ScanRecordDTO> getScanRecordsWithScanType(IPage<ScanRecordDTO> page, @Param(Constants.WRAPPER) QueryWrapper queryWrapper);

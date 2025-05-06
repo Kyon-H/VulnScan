@@ -31,6 +31,7 @@ public class LoginController {
     public R Register(@Valid RegisterForm registerForm) {
         log.info("Register({})", registerForm);
         if (!registerForm.getPassword().equals(registerForm.getRepassword())) {
+            log.info("{} 注册失败: 密码验证失败", registerForm.getUsername());
             return R.error("注册失败");
         }
         UsersEntity usersEntity = new UsersEntity();
@@ -39,10 +40,13 @@ public class LoginController {
         usersEntity.setEmail(registerForm.getEmail());
         usersEntity.setRole("USER");
         usersService.Register(usersEntity);
+        log.info("{}注册成功", registerForm.getUsername());
         return R.ok(200, "注册成功");
     }
 
-    @PostMapping("/Login")
+
+    //登录验证由Spring Security处理
+//    @PostMapping("/Login")
     @ResponseBody
     public R Login(HttpServletRequest request, @NotNull @Valid LoginForm loginForm) {
         return R.ok();

@@ -2,6 +2,7 @@ package com.atlxc.VulnScan.exception;
 
 import com.atlxc.VulnScan.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class ControllerAdviceException {
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public R handleValidException(MethodArgumentNotValidException exception) {
-        log.error("数据校验出现问题{},异常类型{}", exception.getMessage(), exception.getClass());
+        log.error("数据校验出现问题: {}\n异常类型: {}", exception.getMessage(), exception.getClass());
         BindingResult bindingResult = exception.getBindingResult();
         // 获取数据校验的错误结果
         Map<String, String> result = new HashMap<>();
@@ -37,60 +39,63 @@ public class ControllerAdviceException {
 
     @ExceptionHandler(value = UserNameExistException.class)
     public R hadleUserNameExistException(UserNameExistException exception) {
-        log.error("数据校验出现问题{},异常类型{}", exception.getMessage(), exception.getClass());
+        log.error("数据校验出现问题: {}\n异常类型: {}", exception.getMessage(), exception.getClass());
         return R.error(400, "用户已存在").put("data", exception.getMessage());
     }
 
     @ExceptionHandler(value = AuthenticationServiceException.class)
     public R handleAuthenticationException(AuthenticationServiceException exception) {
-        log.error("数据校验出现问题{},异常类型{}", exception.getMessage(), exception.getClass());
+        log.error("数据校验出现问题: {}\n异常类型: {}", exception.getMessage(), exception.getClass());
         return R.error(400, "登录错误").put("data", exception.getMessage());
     }
 
     @ExceptionHandler(value = BindException.class)
     public R handleBindException(BindException exception) {
-        log.error(exception.getMessage());
+        log.error("BindException: {}\n{}", exception.getMessage(), exception.getClass());
         return R.error(400, "数据输入格式错误").put("data", exception.getMessage());
     }
 
     @ExceptionHandler(RRException.class)
     public R handleRRException(RRException e) {
-        log.error("handelRREx()" + e.getMessage());
-        R r = new R();
-        r.put("code", e.getCode());
-        r.put("msg", e.getMessage());
-
-        return r;
+        log.error("handelRREx: {}\n{}", e.getMsg(), e.getClass());
+        return R.error(e.getCode(), e.getMsg());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public R handlerNoFoundException(Exception e) {
-        log.error(e.getMessage(), e);
-        return R.error(404, "路径不存在，请检查路径是否正确");
+        log.error("NoHandlerFoundException: {}", e.getMessage());
+        return R.error(HttpStatus.SC_NOT_FOUND, "路径不存在，请检查路径是否正确");
     }
 
     @ExceptionHandler(DuplicateKeyException.class)
     public R handleDuplicateKeyException(DuplicateKeyException e) {
-        log.error(e.getMessage(), e);
+        log.error("DuplicateKeyException: {}", e.getMessage());
         return R.error("数据库中已存在该记录");
     }
 
     @ExceptionHandler(AuthorizationException.class)
     public R handleAuthorizationException(AuthorizationException e) {
-        log.error(e.getMessage(), e);
-        return R.error("没有权限，请联系管理员授权");
+        log.error("AuthorizationException: {}", e.getMessage());
+        return R.error(HttpStatus.SC_UNAUTHORIZED, "没有权限，请联系管理员授权");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public R handleAccessDeniedException(AccessDeniedException e) {
-        log.error(e.getMessage(), e);
-        return R.error("没有权限,不允许访问");
+        log.error("AccessDeniedException: {}", e.getMessage());
+        log.debug(e.getClass().getName(), e);
+        return R.error(HttpStatus.SC_UNAUTHORIZED, "没有权限,不允许访问");
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public R handleHttpClientErrorException(HttpClientErrorException e) {
+        log.error("HttpClientErrorException: {}", e.getMessage());
+        return R.error(e.getRawStatusCode(), e.getStatusText());
     }
 
     // 处理任意类型异常
     @ExceptionHandler(value = Exception.class)
     public R handleException(Exception exception) {
-        log.error("未知异常{},异常类型{}", exception.getMessage(), exception.getClass());
+        log.error("未知异常: {},异常类型: {}", exception.getMessage(), exception.getClass());
         return R.error();
     }
 }

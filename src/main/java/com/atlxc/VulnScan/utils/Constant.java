@@ -45,6 +45,10 @@ public class Constant {
      * 升序
      */
     public static final String ASC = "asc";
+    /**
+     * 报告存储目录
+     */
+    public static final String FILE_PATH = "upload";
 
     /**
      * 菜单类型

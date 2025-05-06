@@ -2,10 +2,10 @@ package com.atlxc.VulnScan.product.apiservice;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.exception.RRException;
 import com.atlxc.VulnScan.product.entity.ScanReportEntity;
 import com.atlxc.VulnScan.utils.AWVSRequestUtils;
+import com.atlxc.VulnScan.utils.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +131,7 @@ public class ReportService {
     public String downloadReport(String filename, String URI) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        String filePath = ConfigConstant.FILE_PATH + filename;
+        String filePath = Constant.FILE_PATH + filename;
         String url = URL + "/download/" + URI;
         try {
             ResponseEntity<byte[]> response = restTemplate.exchange(url, HttpMethod.GET, null, byte[].class);

@@ -15,7 +15,7 @@ function newTarget(){
     $('#address').attr('value',address);
     $.get('/scan/ScanType',
         function(data){
-            if(data.code==0){
+            if(data.code==200){
                 let item="";
                 $.each(data.result, function(i,m){
                     item+=`<option value="${m.profileId}">${m.name}</option>`
@@ -52,7 +52,7 @@ $("#scanSubmitBtn").on("click", function () {
         formData,
         function(data){
             console.log(data);
-            if(data.code==200||data.code==0){
+            if(data.code==200){
                 layer.msg("添加描成功", {icon: 1});
                 $("#myModal").modal("hide");
                 load();
@@ -89,34 +89,7 @@ function addTable(data){
         //description
         item+=`<td>${m.description}</td>`;
         //type
-        item+="<td>";
-        switch(m.type){
-            case '11111111-1111-1111-1111-111111111111':
-                item+="Full Scan";break;
-            case '11111111-1111-1111-1111-111111111112':
-                item+="High Risk";break;
-            case '11111111-1111-1111-1111-111111111113':
-                item+="SQL Injection";break;
-            case '11111111-1111-1111-1111-111111111115':
-                item+="Weak Passwords";break;
-            case '11111111-1111-1111-1111-111111111116':
-                item+="Cross Site Scripting";break;
-            case '11111111-1111-1111-1111-111111111117':
-                item+="Crawl Only";break;
-            case '11111111-1111-1111-1111-111111111120':
-                item+="Malware Scan";break;
-            case '11c8d253-3423-4328-af2e-940b3b2c26f7':
-                item+="File Inclusion";break;
-            case '13ee7fa4-d7c2-4c5b-b3fb-c03d83cb584c':
-                item+="File Upload";break;
-            case '6344ff0a-71db-46c4-89b1-06e55c633bfe':
-                item+="Spring Security";break;
-            case 'e2c016c5-e093-437c-8302-8888340cbbb6':
-                item+="CSRF vulnerabilities";break;
-            default:
-                item+=m.type;break;
-        }
-        item+="</td>";
+        item+=`<td>${m.typeName}</td>`;
         //扫描结果分布
         let counts=m.severityCounts;
         item+=`<td>
@@ -183,7 +156,7 @@ $("#tablelist").delegate("td button.btn-danger","click",function(){
         $.get("/scan/delete/"+id,function(data){
             console.log(data);
             layer.msg(data.msg);
-            if(data.code==0){
+            if(data.code==200){
                 setTimeout(function(){
                     window.location.reload();
                 },1000);
@@ -210,7 +183,7 @@ $("#reportSubmitBtn").click(function(){
       dataType: 'json',
       success: function(data) {
         console.log(data);
-        if(data.code==200||data.code==0){
+        if(data.code==200){
             window.location.href="/ActiveScan/reports";
         }else{
             layer.msg(data.msg, {icon: 2});

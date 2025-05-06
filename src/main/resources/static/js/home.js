@@ -3,7 +3,7 @@ function load(){
     $("#nav-placeholder").load("/navbar");
     $.get("/dashboard/severityCount",
         function(data){
-            if(data.code==0){
+            if(data.code==200){
                 console.log(data.result);
                 echart(data.result);
             }
@@ -11,7 +11,7 @@ function load(){
     )
     $.get("/dashboard/mostTarget",
         function(data){
-            if(data.code==0){
+            if(data.code==200){
                 console.log(data.result);
                 mostTarget(data.result);
             }
@@ -19,7 +19,7 @@ function load(){
     )
     $.get("/dashboard/topVuln",
         function(data){
-            if(data.code==0){
+            if(data.code==200){
                 console.log(data.result);
                 topVulnerability(data.result);
             }

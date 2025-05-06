@@ -1,5 +1,7 @@
 package com.atlxc.VulnScan.config;
 
+import com.atlxc.VulnScan.handler.JsonAuthenticationFailureHandler;
+import com.atlxc.VulnScan.handler.JsonAuthenticationSuccessHandler;
 import com.atlxc.VulnScan.product.service.impl.CustomUserDetailsServiceImpl;
 import com.atlxc.VulnScan.xss.LoginFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login", "/register", "/failurl", "/Login", "/Register", "/favicon.ico").permitAll()
+                .antMatchers("/login", "/register", "/fail", "/Login", "/Register", "/favicon.ico").permitAll()
                 .antMatchers("/kaptcha/getKaptchaImage").permitAll()
                 .anyRequest().authenticated();
         //对应表单认证相关的配置
@@ -55,9 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordParameter("password")
                 // 用户未登录时，访问任何资源都转跳到该路径，即登录页面
                 .loginPage("/login")
-                .loginProcessingUrl("/Login")
-                .failureUrl("/failurl")
-                .defaultSuccessUrl("/");
+                .loginProcessingUrl("/Login");
         http.addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
         //对应了注销相关的配置
         http.logout()
@@ -78,8 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         LoginFilter loginFilter = new LoginFilter();
         loginFilter.setFilterProcessesUrl("/Login");
         loginFilter.setAuthenticationManager(authenticationManagerBean());
-        loginFilter.setAuthenticationSuccessHandler(new SimpleUrlAuthenticationSuccessHandler("/"));
-        loginFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/failurl"));
+        loginFilter.setAuthenticationSuccessHandler(new JsonAuthenticationSuccessHandler());
+        loginFilter.setAuthenticationFailureHandler(new JsonAuthenticationFailureHandler());
         return loginFilter;
     }
 

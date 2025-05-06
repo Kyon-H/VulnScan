@@ -5,7 +5,7 @@ function loadPage(URL,options,callback){
         options,
         function(data){
             console.log(data.page);
-            if(data.code==0){
+            if(data.code==200){
                 // 更新分页组件
                 var $pagination = $('.pagination');
                 var $pages = $pagination.find('.page-item:not(#pagePre,#pageNext)');

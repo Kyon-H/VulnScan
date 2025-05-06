@@ -3,7 +3,7 @@ function load(){
     let vulninfo_id=$.getUrlParam("id");
     $.get("/vulninfo/detail/"+vulninfo_id,
         function(data){
-            if(data.code==0){
+            if(data.code==200){
                 console.log(data.detail);
                 addDetail(data.detail);
             }else{

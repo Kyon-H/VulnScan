@@ -46,7 +46,7 @@ public class TemplateServiceImpl extends ServiceImpl<TemplateDao, TemplateEntity
             templateEntity.setName(name);
             return templateEntity;
         }).collect(Collectors.toList());
-        log.info("use API updated templates, count:{}", templates.size());
+        log.info("API获取扫描类型,共{}条", templates.size());
         int count = 0;
         for (TemplateEntity templateEntity : templates) {
             TemplateEntity selectOne = baseMapper.selectOne(new QueryWrapper<TemplateEntity>()

@@ -1,6 +1,5 @@
 package com.atlxc.VulnScan.utils;
 
-import com.atlxc.VulnScan.config.ConfigConstant;
 import com.atlxc.VulnScan.product.service.ScanTypeService;
 import com.atlxc.VulnScan.product.service.TemplateService;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +47,7 @@ public class FileInitializer implements CommandLineRunner {
         count = templateService.updateTemplates();
         log.info("templates count:{}", count);
         //
-        File upload = new File(ConfigConstant.FILE_PATH);
+        File upload = new File(Constant.FILE_PATH);
         upload.mkdir();
         log.info("create upload dir{}", upload.getPath());
     }

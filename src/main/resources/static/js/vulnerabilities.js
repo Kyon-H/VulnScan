@@ -101,7 +101,7 @@ $("#reportSubmitBtn").click(function(){
       dataType: 'json',
       success: function(data) {
         console.log(data);
-        if(data.code==200||data.code==0){
+        if(data.code==200){
             window.location.href="/ActiveScan/reports";
         }else{
             layer.msg(data.msg, {icon: 2});

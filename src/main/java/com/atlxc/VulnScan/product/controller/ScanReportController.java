@@ -15,6 +15,7 @@ import com.atlxc.VulnScan.vo.ReportPageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -108,6 +109,7 @@ public class ScanReportController {
     }
 
     @GetMapping("/update/all")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public R updateAll() {
         templateService.updateTemplates();
         return R.ok();

@@ -39,6 +39,8 @@ public class ScanRecordDTO {
      */
     private String type;
 
+    private String typeName;
+
     @JsonAlias("severity_counts") // 指定 JSON 数据的别名
     private JSONObject severityCounts;
     /**
@@ -53,8 +55,4 @@ public class ScanRecordDTO {
      * 描述
      */
     private String description;
-
-    private String profileId;
-
-    private String name;
 }

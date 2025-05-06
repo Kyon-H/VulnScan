@@ -3,7 +3,6 @@ $.ajaxSetup({
 });
 function getCaptcha(){
     var timenow = new Date().getTime();
-    console.log(timenow,"  ",Date.now())
     $('#captchaImg').attr('src', '/kaptcha/getKaptchaImage?'+timenow);
 }
 
@@ -72,7 +71,8 @@ return false;
 function LoginSubmit(){
     var form={
         username: $("#inputUsername").val(),
-        password: $("#inputPassword").val()
+        password: $("#inputPassword").val(),
+        captcha: $('#inputCode').val()
     }
     if(checkUsername(form.username)==false){
         layer.msg("用户名长度必须在4-10之间", {icon: 2});
@@ -82,16 +82,23 @@ function LoginSubmit(){
         layer.msg("密码长度必须在4-20之间", {icon: 2});
         return false;
     }
-    return true;
 
     // 提交
     $.post("/Login",
         form,
         function(data){
-            if(data.code!=200)
+            console.log(data)
+            if(data.code == 200)
             {
-                layer.alert(data.msg,{icon: 2,title:false});
+                window.location.replace("/");
+            }else{
+                layer.alert(data.msg,{icon: 2,title:false},function(index){
+                    getCaptcha();
+                    layer.close(index);
+                    }
+                );
             }
         }
     );
+    return false;
 }

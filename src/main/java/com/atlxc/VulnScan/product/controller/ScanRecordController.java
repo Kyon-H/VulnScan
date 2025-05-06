@@ -175,7 +175,7 @@ public class ScanRecordController {
         if (scanRecord == null) return R.error(400, "扫描记录不存在");
         List<VulnInfoEntity> vulnInfoEntityList = vulnInfoService.getByScanRecordId(scanRecord.getId());
         Boolean success;
-        if (vulnInfoEntityList.size() == 0) {
+        if (vulnInfoEntityList.isEmpty()) {
             success = scanRecordService.removeById(scanRecord.getId());
         } else {
             success = scanRecordService.removeByIds(

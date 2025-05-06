@@ -19,14 +19,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             log.error("Request is not a POST!");
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
-
         String captcha = request.getParameter("captcha");
         String sessionCaptcha = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
         if (!StringUtils.isEmpty(captcha) && !StringUtils.isEmpty(sessionCaptcha) && captcha.equalsIgnoreCase(sessionCaptcha)) {
             log.info("Captcha is right!");
             return super.attemptAuthentication(request, response);
         }
-        log.error("Captcha is wrong!");
+        log.error("Captcha is wrong: {}", captcha);
+        log.info("right captcha: {}", sessionCaptcha);
         throw new AuthenticationServiceException("验证码不正确");
     }
 }

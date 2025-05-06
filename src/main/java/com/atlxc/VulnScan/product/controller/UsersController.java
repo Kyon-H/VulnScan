@@ -1,12 +1,15 @@
 package com.atlxc.VulnScan.product.controller;
 
+import com.atlxc.VulnScan.dto.UserInfoDTO;
 import com.atlxc.VulnScan.product.entity.UsersEntity;
 import com.atlxc.VulnScan.product.service.UsersService;
 import com.atlxc.VulnScan.utils.PageUtils;
 import com.atlxc.VulnScan.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -19,7 +22,7 @@ import java.util.Map;
  * @date 2023-01-01 22:17:22
  */
 @RestController
-@RequestMapping("product/users")
+@RequestMapping("user")
 public class UsersController {
     @Autowired
     private UsersService usersService;
@@ -34,15 +37,40 @@ public class UsersController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 当前登录用户信息
+     */
+    @GetMapping("/info")
+    public R info(Principal principal) {
+        Integer id = usersService.getIdByName(principal.getName());
+        UsersEntity user = usersService.getById(id);
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .createTime(user.getCreateTime())
+                .build();
+        return R.ok().put("user", userInfoDTO);
+    }
 
     /**
-     * 信息
+     * 获取指定用户信息
+     * @param id
+     * @return
      */
-    //@RequestMapping("/info/{id}")
+    @GetMapping("/info/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public R info(@PathVariable("id") Integer id) {
-        UsersEntity users = usersService.getById(id);
-
-        return R.ok().put("users", users);
+        UsersEntity user = usersService.getById(id);
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .createTime(user.getCreateTime())
+                .build();
+        return R.ok().put("user", user);
     }
 
     /**

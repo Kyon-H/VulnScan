@@ -29,7 +29,7 @@
     <link href="css/login.css" rel="stylesheet">
 </head>
 <body class="text-center">
-<form class="form-signin" method="post" action="/Login" onsubmit="return LoginSubmit();">
+<form class="form-signin" method="post" onsubmit="return LoginSubmit();">
     <img class="mb-4" src="img/whitehat.png" alt="" width="98" height="72">
     <h1 class="h3 mb-3 font-weight-normal">VulnScan 登录</h1>
     <span th:if="${loginfail}=='T'">
